@@ -360,6 +360,49 @@ export function Sunrise(props: IconProps) {
   );
 }
 
+/** Sunset: the sunrise mark with the arrow pointing back down. */
+export function Sunset(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 2v5M9.5 4.5L12 7l2.5-2.5M4 14h16M7 14a5 5 0 0 1 10 0M2 18h20"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** Waxing crescent, used for the tithi cell of the panchang strip. */
+export function Moon(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** Small cross used to clear the home search field. */
+export function Close(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Line x1="6" y1="6" x2="18" y2="18" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="18" y1="6" x2="6" y2="18" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
 /** North-Indian style kundli square with the inner diamond. */
 export function KundliChart(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });

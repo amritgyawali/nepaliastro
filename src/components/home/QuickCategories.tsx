@@ -1,9 +1,11 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { quickCategories } from '@/data/content';
 import { BlogReader, Gem, KundliChart, MatchRings, Sunrise } from '@/icons';
 import { colors, fontFamily, weight } from '@/theme';
+
+import { PressableScale } from '../PressableScale';
 
 const ICONS = {
   sunrise: Sunrise,
@@ -19,19 +21,25 @@ export function QuickCategories({ onSelect }: { onSelect?: (id: string) => void 
     <View style={styles.row}>
       {quickCategories.map((category) => {
         const Icon = ICONS[category.icon];
+        const label = category.label.replace('\n', ' ');
+
         return (
-          <Pressable
+          <PressableScale
             key={category.id}
             accessibilityRole="button"
-            accessibilityLabel={category.label.replace('\n', ' ')}
+            accessibilityLabel={label}
             onPress={() => onSelect?.(category.id)}
-            style={({ pressed }) => [styles.item, pressed && styles.pressed]}
+            scaleTo={0.92}
+            containerStyle={styles.item}
+            style={styles.itemInner}
           >
             <View style={styles.circle}>
               <Icon size={34} color="#1A1A1A" strokeWidth={1.6} />
             </View>
-            <Text style={styles.label}>{category.label}</Text>
-          </Pressable>
+            <Text style={styles.label} numberOfLines={2}>
+              {category.label}
+            </Text>
+          </PressableScale>
         );
       })}
     </View>
@@ -48,11 +56,9 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    alignItems: 'center',
   },
-  pressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.96 }],
+  itemInner: {
+    alignItems: 'center',
   },
   circle: {
     width: 62,

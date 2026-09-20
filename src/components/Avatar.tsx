@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { colors, fontFamily, weight } from '@/theme';
+
+import { Skeleton } from './Skeleton';
 
 type AvatarProps = {
   uri?: string;
@@ -14,9 +16,15 @@ type AvatarProps = {
   style?: ViewStyle;
 };
 
+type LoadState = 'loading' | 'ready' | 'failed';
+
 /**
  * Circular portrait with a themed initials fallback, so a slow or dead image
  * URL never leaves a hole in the layout.
+ *
+ * The portraits are fetched from a CDN, so until one arrives the circle holds
+ * a pulsing placeholder rather than empty space — on a cold start a rail of
+ * these reads as "loading" instead of "broken".
  */
 export function Avatar({
   uri,
@@ -27,8 +35,13 @@ export function Avatar({
   ringWidth = 1.5,
   style,
 }: AvatarProps) {
-  const [failed, setFailed] = useState(false);
+  const [state, setState] = useState<LoadState>(uri ? 'loading' : 'failed');
   const inner = ring ? size - ringWidth * 2 - 4 : size;
+
+  // A recycled card can be handed a different portrait; start that one over.
+  useEffect(() => {
+    setState(uri ? 'loading' : 'failed');
+  }, [uri]);
 
   return (
     <View
@@ -48,14 +61,22 @@ export function Avatar({
         style,
       ]}
     >
-      {uri && !failed ? (
-        <Image
-          source={{ uri }}
-          onError={() => setFailed(true)}
-          style={{ width: inner, height: inner, borderRadius: inner / 2 }}
-          resizeMode="cover"
-          accessibilityLabel={name}
-        />
+      {uri && state !== 'failed' ? (
+        <>
+          <Image
+            source={{ uri }}
+            onLoad={() => setState('ready')}
+            onError={() => setState('failed')}
+            style={{ width: inner, height: inner, borderRadius: inner / 2 }}
+            resizeMode="cover"
+            accessibilityLabel={name}
+          />
+          {state === 'loading' ? (
+            <View style={styles.placeholder} pointerEvents="none">
+              <Skeleton width={inner} height={inner} radius={inner / 2} />
+            </View>
+          ) : null}
+        </>
       ) : (
         <View
           style={[
@@ -82,6 +103,15 @@ function initialsOf(name: string): string {
 }
 
 const styles = StyleSheet.create({
+  placeholder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   fallback: {
     backgroundColor: colors.yellowSoft,
     alignItems: 'center',

@@ -1,40 +1,106 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import { ChatDots, Phone } from '@/icons';
-import { SCREEN_MAX_WIDTH, colors, fontFamily, radius, shadow, weight } from '@/theme';
+import {
+  NATIVE_DRIVER,
+  SCREEN_MAX_WIDTH,
+  colors,
+  duration,
+  easing,
+  fontFamily,
+  radius,
+  shadow,
+  weight,
+} from '@/theme';
+
+import { useReduceMotion } from '@/hooks/useReduceMotion';
+import { PressableScale } from '../PressableScale';
 
 type ConsultCTAsProps = {
   onChat?: () => void;
   onCall?: () => void;
   /** Distance from the bottom of the screen, i.e. clear of the tab bar. */
   bottom: number;
+  /** Drop the bar out of the way — set while the reader is scrolling down. */
+  hidden?: boolean;
 };
 
-/** The blue/yellow pair of consultation buttons floating above the tab bar. */
-export function ConsultCTAs({ onChat, onCall, bottom }: ConsultCTAsProps) {
+/**
+ * The blue/yellow pair of consultation buttons floating above the tab bar.
+ *
+ * The bar covers two rows of the feed, so it steps out of the way while the
+ * reader is moving down the page and returns the moment they scroll back,
+ * reach the end, or lift their finger. It is removed from the accessibility
+ * tree and from hit testing while it is away, never merely faded.
+ */
+export function ConsultCTAs({ onChat, onCall, bottom, hidden = false }: ConsultCTAsProps) {
+  const reduceMotion = useReduceMotion();
+  const offset = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const toValue = hidden ? 1 : 0;
+    if (reduceMotion) {
+      offset.setValue(toValue);
+      return;
+    }
+    const animation = Animated.timing(offset, {
+      toValue,
+      duration: duration.base,
+      easing: hidden ? easing.accelerate : easing.decelerate,
+      useNativeDriver: NATIVE_DRIVER,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [hidden, offset, reduceMotion]);
+
   return (
-    <View style={[styles.wrapper, { bottom }]} pointerEvents="box-none">
+    <Animated.View
+      style={[
+        styles.wrapper,
+        {
+          bottom,
+          opacity: offset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
+          transform: [
+            {
+              translateY: offset.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 130],
+              }),
+            },
+          ],
+        },
+      ]}
+      pointerEvents={hidden ? 'none' : 'box-none'}
+      accessibilityElementsHidden={hidden}
+      importantForAccessibility={hidden ? 'no-hide-descendants' : 'auto'}
+    >
       <View style={styles.row}>
-        <Pressable
+        <PressableScale
           accessibilityRole="button"
+          accessibilityLabel="Chat with an astrologer"
           onPress={onChat}
-          style={({ pressed }) => [styles.button, styles.chat, pressed && styles.pressed]}
+          scaleTo={0.97}
+          containerStyle={styles.half}
+          style={[styles.button, styles.chat]}
         >
           <ChatDots size={18} color={colors.white} filled />
           <Text style={[styles.label, styles.chatLabel]}>Chat with Astrologer</Text>
-        </Pressable>
+        </PressableScale>
 
-        <Pressable
+        <PressableScale
           accessibilityRole="button"
+          accessibilityLabel="Call an astrologer"
           onPress={onCall}
-          style={({ pressed }) => [styles.button, styles.call, pressed && styles.pressed]}
+          scaleTo={0.97}
+          containerStyle={styles.half}
+          style={[styles.button, styles.call]}
         >
           <Phone size={17} color="#111111" filled />
           <Text style={[styles.label, styles.callLabel]}>Call with Astrologer</Text>
-        </Pressable>
+        </PressableScale>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -52,8 +118,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-  button: {
+  half: {
     flex: 1,
+  },
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -62,10 +130,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: radius.pill,
     ...shadow(5, 0.18, 14),
-  },
-  pressed: {
-    transform: [{ scale: 0.98 }],
-    opacity: 0.92,
   },
   chat: {
     backgroundColor: colors.blueCta,

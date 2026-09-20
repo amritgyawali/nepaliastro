@@ -95,3 +95,49 @@ export const astroReplies = [
   'A very positive transit is initiating next month! Wear more brass, copper, or warm tones to strengthen your ruling planet Sun.',
   'Regarding your query: The alignment suggests stability. Do not worry about minor delays, as Saturn teaches long-term resilience.',
 ];
+
+/**
+ * Slides in the home promo carousel.
+ *
+ * Each one asks a question a first-time visitor actually arrives with, and
+ * routes to the surface that answers it, so the carousel is navigation
+ * rather than decoration.
+ */
+export const promoSlides = [
+  {
+    id: 'future',
+    question: 'What will my future be in the',
+    emphasis: 'next 5 years?',
+    kicker: 'Ask Astrologer',
+    cta: 'Chat Now',
+    image: photos.vinayyv,
+    target: 'chat-kiran',
+  },
+  {
+    id: 'career',
+    question: 'Is this the right time to',
+    emphasis: 'change my job?',
+    kicker: 'Career & Money reading',
+    cta: 'Call Now',
+    image: photos.vihana,
+    target: 'call',
+  },
+  {
+    id: 'match',
+    question: 'Do our charts actually',
+    emphasis: 'match?',
+    kicker: 'Kundli matching in 10 minutes',
+    cta: 'Check Now',
+    image: photos.vera,
+    target: 'chat',
+  },
+] as const;
+
+export type PromoSlide = (typeof promoSlides)[number];
+
+/** The reassurance row at the foot of the home screen. */
+export const trustStats = [
+  { id: 'experts', value: '7,881', label: 'Verified experts' },
+  { id: 'rating', value: '4.72', label: 'Average rating', star: true },
+  { id: 'live', value: '1,854', label: 'In session now' },
+] as const;

@@ -23,6 +23,8 @@ export type Astrologer = {
   celebrity?: boolean;
   /** Queue label for the call directory, e.g. "wait ~ 2m". */
   waitTime?: string;
+  /** Free to take a consultation right now; drives the green dot on the rail. */
+  online?: boolean;
   /**
    * Renders the condensed card — name, skills and languages only. The designs
    * use this for the third card in each directory, which the live-session
@@ -40,9 +42,13 @@ export const featuredAstrologers: Astrologer[] = [
     photo: photos.vinayyv,
     skills: 'Vedic, Numerology',
     languages: 'Hindi',
+    experience: 18,
     rate: 1.21,
+    orders: '25k+ orders',
+    rating: 5,
     verified: true,
     celebrity: true,
+    online: true,
     specialities: ['all'],
   },
   {
@@ -51,8 +57,12 @@ export const featuredAstrologers: Astrologer[] = [
     photo: photos.vihana,
     skills: 'Vedic, Prashna',
     languages: 'Telugu, Hindi',
+    experience: 9,
     rate: 0.4,
+    orders: '8k+ orders',
+    rating: 5,
     verified: true,
+    online: true,
     specialities: ['all'],
   },
   {
@@ -61,8 +71,12 @@ export const featuredAstrologers: Astrologer[] = [
     photo: photos.vera,
     skills: 'Tarot, Life Coach',
     languages: 'English, Hindi',
+    experience: 7,
     rate: 0.4,
+    orders: '3k+ orders',
+    rating: 4,
     verified: true,
+    waitTime: 'wait ~ 5m',
     specialities: ['all', 'tarot'],
   },
 ];
@@ -80,6 +94,7 @@ export const chatAstrologers: Astrologer[] = [
     orders: '500+ orders',
     rating: 5,
     verified: true,
+    online: true,
     specialities: ['all', 'tarot'],
   },
   {
@@ -93,6 +108,7 @@ export const chatAstrologers: Astrologer[] = [
     orders: '50k+ orders',
     rating: 5,
     verified: true,
+    online: true,
     specialities: ['all', 'palmistry'],
   },
   {
@@ -122,6 +138,7 @@ export const callAstrologers: Astrologer[] = [
     rating: 5,
     verified: true,
     celebrity: true,
+    online: true,
     waitTime: 'wait ~ 2m',
     specialities: ['all'],
   },
