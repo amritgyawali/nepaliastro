@@ -114,6 +114,7 @@ export const profileGroups = [
     title: 'Your chart',
     items: [
       { id: 'kundli', label: 'Your kundli', icon: 'kundli', href: '/kundli' },
+      { id: 'predictions', label: 'Your predictions', icon: 'star', href: '/predictions' },
       { id: 'horoscope', label: 'Daily horoscope', icon: 'star', href: '/horoscope' },
       { id: 'matching', label: 'Kundli matching', icon: 'rings', href: '/matching' },
       { id: 'panchang', label: 'Today’s panchang', icon: 'sunrise', href: '/panchang' },
@@ -124,6 +125,7 @@ export const profileGroups = [
     items: [
       { id: 'birth-details', label: 'Name, gender & birth details', icon: 'calendar', href: '/onboarding/name' },
       { id: 'languages', label: 'Languages you read in', icon: 'message', href: '/onboarding/languages' },
+      { id: 'alerts', label: 'Prediction alerts', icon: 'sunrise', href: '/notifications' },
     ],
   },
 ] as const;

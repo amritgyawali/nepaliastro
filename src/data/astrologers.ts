@@ -215,3 +215,11 @@ export function findAstrologer(id: string): Astrologer | undefined {
     (a) => a.id === id,
   );
 }
+
+/**
+ * The astrologer offered at the bottom of a reading — someone who is free to
+ * take the conversation now, so the button does not open a queue.
+ */
+export function recommendedGuru(): Astrologer {
+  return featuredAstrologers.find((astrologer) => astrologer.online) ?? featuredAstrologers[0];
+}
