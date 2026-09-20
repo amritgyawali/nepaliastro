@@ -276,6 +276,30 @@ export function Close(props: IconProps) {
   );
 }
 
+/** Door with an arrow leaving it — signing out of the saved profile. */
+export function LogOut(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M15 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Polyline
+        points="16 8 20 12 16 16"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Line x1="20" y1="12" x2="10" y2="12" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
 /** North-Indian style kundli square with the inner diamond. */
 export function KundliChart(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
