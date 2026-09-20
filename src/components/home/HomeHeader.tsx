@@ -3,30 +3,52 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { photos } from '@/data/images';
-import { AriesAvatar, Plus, Search, Wallet } from '@/icons';
+import { AriesAvatar, Close, Plus, Search, Wallet } from '@/icons';
 import { colors, fontFamily, radius, shadow, weight } from '@/theme';
 
 import { Avatar } from '../Avatar';
+import { PressableScale } from '../PressableScale';
 
 type HomeHeaderProps = {
   balance: number;
+  /** "Good evening, Amrit" — computed from the clock and the saved profile. */
+  greeting: string;
+  /** Second line, e.g. "Sun 20 Sep · Shukla Navami". */
+  contextLine: string;
   query: string;
   onQueryChange: (value: string) => void;
   onAddCash?: () => void;
+  inputRef?: React.RefObject<TextInput | null>;
 };
 
-/** Home top bar: zodiac avatar, wallet pill and the user's own avatar. */
-export function HomeHeader({ balance, query, onQueryChange, onAddCash }: HomeHeaderProps) {
+/**
+ * Home top bar: zodiac avatar and wallet, the greeting, and the search field.
+ *
+ * The greeting sits between the chrome and the search rather than inside the
+ * bar, so the row keeps the proportions of the reference design while the
+ * screen still opens by telling you what day it is.
+ */
+export function HomeHeader({
+  balance,
+  greeting,
+  contextLine,
+  query,
+  onQueryChange,
+  onAddCash,
+  inputRef,
+}: HomeHeaderProps) {
   const router = useRouter();
+  const hasQuery = query.length > 0;
 
   return (
     <View>
       <View style={styles.bar}>
-        <Pressable
+        <PressableScale
           accessibilityRole="button"
           accessibilityLabel="Profile and settings"
           onPress={() => router.push('/profile')}
-          style={({ pressed }) => [styles.avatarWrap, pressed && styles.pressed]}
+          scaleTo={0.92}
+          style={styles.avatarWrap}
         >
           <View style={styles.zodiacAvatar}>
             <AriesAvatar size={48} />
@@ -36,46 +58,75 @@ export function HomeHeader({ balance, query, onQueryChange, onAddCash }: HomeHea
             <View style={styles.menuLine} />
             <View style={styles.menuLine} />
           </View>
-        </Pressable>
+        </PressableScale>
 
         <View style={styles.right}>
-          <Pressable
+          <PressableScale
             accessibilityRole="button"
             accessibilityLabel={`Wallet balance USD ${balance}. Add cash`}
             onPress={onAddCash}
-            style={({ pressed }) => [styles.walletPill, pressed && styles.pressed]}
+            scaleTo={0.95}
+            style={styles.walletPill}
           >
             <Wallet size={18} color="#4A4E55" />
             <Text style={styles.walletLabel}>USD {balance}</Text>
             <View style={styles.plusCircle}>
               <Plus size={11} color={colors.white} />
             </View>
-          </Pressable>
+          </PressableScale>
 
-          <Pressable
+          <PressableScale
             accessibilityRole="button"
             accessibilityLabel="Your profile"
             onPress={() => router.push('/profile')}
-            style={({ pressed }) => [styles.userAvatar, pressed && styles.pressed]}
+            scaleTo={0.92}
+            style={styles.userAvatar}
           >
             <Avatar uri={photos.userProfile} name="User" size={44} />
-          </Pressable>
+          </PressableScale>
         </View>
+      </View>
+
+      <View style={styles.greetingBlock}>
+        <Text style={styles.greeting} numberOfLines={1}>
+          {greeting}
+        </Text>
+        <Text style={styles.context} numberOfLines={1}>
+          {contextLine}
+        </Text>
       </View>
 
       <View style={styles.searchWrap}>
         <TextInput
+          ref={inputRef}
           value={query}
           onChangeText={onQueryChange}
-          placeholder="Search"
+          placeholder="Search by name, skill or language"
           placeholderTextColor="#9AA0A6"
           style={styles.searchInput}
           returnKeyType="search"
+          autoCorrect={false}
+          autoCapitalize="none"
           accessibilityLabel="Search astrologers"
         />
-        <View style={styles.searchIcon} pointerEvents="none">
-          <Search size={20} color="#9AA0A6" strokeWidth={2} />
-        </View>
+
+        {hasQuery ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Clear search"
+            onPress={() => onQueryChange('')}
+            hitSlop={12}
+            style={({ pressed }) => [styles.searchAction, pressed && styles.clearPressed]}
+          >
+            <View style={styles.clearCircle}>
+              <Close size={11} color={colors.white} />
+            </View>
+          </Pressable>
+        ) : (
+          <View style={styles.searchAction} pointerEvents="none">
+            <Search size={20} color="#9AA0A6" strokeWidth={2} />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -99,9 +150,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     overflow: 'hidden',
-  },
-  pressed: {
-    opacity: 0.75,
   },
   menuBadge: {
     position: 'absolute',
@@ -154,6 +202,25 @@ const styles = StyleSheet.create({
   userAvatar: {
     borderRadius: 24,
   },
+  greetingBlock: {
+    paddingHorizontal: 18,
+    paddingBottom: 12,
+  },
+  greeting: {
+    fontFamily,
+    fontSize: 23,
+    lineHeight: 28,
+    fontWeight: weight.bold,
+    letterSpacing: -0.5,
+    color: colors.inkStrong,
+  },
+  context: {
+    fontFamily,
+    fontSize: 13,
+    lineHeight: 17,
+    color: colors.muted,
+    marginTop: 3,
+  },
   searchWrap: {
     marginHorizontal: 18,
     marginBottom: 6,
@@ -173,8 +240,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.ink,
   },
-  searchIcon: {
+  searchAction: {
     position: 'absolute',
     right: 14,
+  },
+  clearPressed: {
+    opacity: 0.6,
+  },
+  clearCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#B9BCC1',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

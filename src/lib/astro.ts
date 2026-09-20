@@ -105,3 +105,91 @@ export function seededRange(seed: string, min: number, max: number): number {
 export function seededPick<T>(seed: string, items: readonly T[]): T {
   return items[hash(seed) % items.length];
 }
+
+/* ------------------------------------------------------------------ *
+ * The day's reading
+ * ------------------------------------------------------------------ */
+
+export type Aspect = {
+  id: 'love' | 'career' | 'health';
+  label: string;
+  /** 0-100. */
+  score: number;
+};
+
+export type LuckyColour = { name: string; hex: string };
+
+export type DailyReading = {
+  sign: ZodiacSign;
+  /** One-line verdict, e.g. "A good day to ask for what you want". */
+  headline: string;
+  /** Two sentences of detail, revealed when the card is expanded. */
+  body: string;
+  aspects: Aspect[];
+  luckyNumber: number;
+  luckyColour: LuckyColour;
+  /** Single word shown as the mood chip. */
+  mood: string;
+};
+
+const HEADLINES = [
+  'A good day to ask for what you want',
+  'Move slowly and the day moves with you',
+  'Something you have been waiting on finally shifts',
+  'Say the thing you have been rehearsing',
+  'Money matters settle more easily than expected',
+  'Keep the afternoon free — plans will change',
+  'An old contact turns out to be the useful one',
+  'Rest counts as progress today',
+] as const;
+
+const BODIES = [
+  'The morning favours conversations you have been putting off, so start there rather than with your inbox. After sunset, keep commitments light — you will want the evening back.',
+  'Work that needs patience goes further than work that needs speed. If a decision can wait a day without cost, let it wait.',
+  'Money and paperwork are well placed, so file, pay or ask today rather than next week. Avoid lending to someone who has not repaid you before.',
+  'Family brings one small demand you did not plan for. Handle it early and the rest of the day stays yours.',
+  'Your instinct about a person is the accurate one, even if you cannot explain it yet. Do not argue yourself out of it.',
+  'Travel and short journeys go smoothly; long negotiations do not. Split the difference by agreeing the principle now and the detail later.',
+  'A quiet start pays off — the useful opening arrives after midday. Keep some energy in reserve for it.',
+  'Health responds to routine more than effort today. Water, an early night, and a walk you actually take beat any ambitious plan.',
+] as const;
+
+const MOODS = ['Steady', 'Bright', 'Focused', 'Reflective', 'Open', 'Grounded'] as const;
+
+/**
+ * Lucky colours, drawn from the palette the rest of the app already uses so
+ * the swatch never introduces a colour that appears nowhere else.
+ */
+const LUCKY_COLOURS: LuckyColour[] = [
+  { name: 'Saffron', hex: '#EFDA43' },
+  { name: 'Emerald', hex: '#1B873F' },
+  { name: 'Vermilion', hex: '#DC2626' },
+  { name: 'Indigo', hex: '#1E40AF' },
+  { name: 'Brass', hex: '#C79A32' },
+  { name: 'Sandal', hex: '#524438' },
+];
+
+/**
+ * The reading for one sign on one day.
+ *
+ * Every value is derived from `<date>:<sign>` through the seeded helpers
+ * above, so the card is stable for the whole day, differs per sign, and needs
+ * no network call or stored state.
+ */
+export function readingFor(sign: ZodiacSign, date = new Date()): DailyReading {
+  const seed = `${dayKey(date)}:${sign.id}`;
+
+  return {
+    sign,
+    headline: seededPick(`${seed}:headline`, HEADLINES),
+    body: seededPick(`${seed}:body`, BODIES),
+    aspects: [
+      { id: 'love', label: 'Love', score: seededRange(`${seed}:love`, 42, 97) },
+      { id: 'career', label: 'Career', score: seededRange(`${seed}:career`, 42, 97) },
+      { id: 'health', label: 'Health', score: seededRange(`${seed}:health`, 42, 97) },
+    ],
+    luckyNumber: seededRange(`${seed}:number`, 1, 9),
+    luckyColour: seededPick(`${seed}:colour`, LUCKY_COLOURS),
+    mood: seededPick(`${seed}:mood`, MOODS),
+  };
+}
