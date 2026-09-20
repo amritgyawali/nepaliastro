@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Enter your details</title>
+<!-- Tailwind CSS v3 with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Custom Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'app-bg': '#FAF8F0',
+            'app-yellow': '#F9DE2B',
+            'app-dark': '#2D2D2D',
+            'app-subtle': '#DFDDD5',
+            'app-input-border': '#D1CEBA',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Page Layout & Reset Styles -->
+<style data-purpose="layout">
+    body {
+      background-color: #FAF8F0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input {
+      user-select: text;
+    }
+  </style>
+</head>
+<body class="bg-app-bg text-[#272727] font-sans antialiased min-h-screen flex flex-col justify-between">
+<!-- Main Container constrained to standard mobile width -->
+<div class="w-full max-w-md mx-auto flex flex-col min-h-screen relative px-6">
+<!-- BEGIN: iOS Status Bar -->
+<header class="pt-3 pb-2 flex items-center justify-between text-black text-sm font-semibold tracking-tight" data-purpose="ios-status-bar">
+<!-- Left side: Time & Silent Indicator -->
+<div class="flex items-center space-x-1.5 pl-1.5">
+<span class="text-[17px] font-semibold tracking-normal">8:57</span>
+<!-- Mute / Silent bell icon -->
+<svg class="w-3.5 h-3.5 fill-current text-black" viewbox="0 0 24 24">
+<path d="M5.84 4.58a1 1 0 0 0-1.42 1.42l1.6 1.6A9.97 9.97 0 0 0 4 14.5v1.2a1 1 0 0 0 .2.61L6 18.5V19a2 2 0 0 0 2 2h8a2 2 0 0 0 1.25-.44l2.17 2.17a1 1 0 0 0 1.42-1.42L5.84 4.58zM10 21a2 2 0 0 0 4 0h-4zm8.38-5.32L9.2 6.5 9.27 6.4C9.5 5 10.6 3.9 12 3.9c1.66 0 3 1.34 3 3v2.88c2.14 1.33 3.38 3.55 3.38 5.9z"></path>
+</svg>
+</div>
+<!-- Right side: Cellular, Wi-Fi, Battery -->
+<div class="flex items-center space-x-2 pr-1.5">
+<!-- Cellular Signal Strength -->
+<svg class="w-4 h-3.5 fill-current" viewbox="0 0 24 24">
+<rect height="6" rx="1" width="3.2" x="2" y="16"></rect>
+<rect height="10" rx="1" width="3.2" x="7.6" y="12"></rect>
+<rect height="14" rx="1" width="3.2" x="13.2" y="8"></rect>
+<rect height="18" rx="1" width="3.2" x="18.8" y="4"></rect>
+</svg>
+<!-- Wi-Fi Icon -->
+<svg class="w-4 h-3.5 fill-current" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.78 0 7.2 1.5 9.71 3.96L12 19.34 2.29 11.46C4.8 9.02 8.22 7.5 12 7.5z"></path>
+</svg>
+<!-- Battery Icon with Level -->
+<div class="flex items-center space-x-0.5">
+<div class="w-6 h-3 rounded-full border border-black/80 p-0.5 flex items-center justify-center relative">
+<span class="text-[9px] font-bold leading-none text-black">19</span>
+</div>
+<div class="w-0.5 h-1.5 bg-black/80 rounded-r-sm"></div>
+</div>
+</div>
+</header>
+<!-- END: iOS Status Bar -->
+<!-- BEGIN: Navigation Top Bar -->
+<nav class="relative flex items-center justify-center py-4 mb-3" data-purpose="top-navigation-bar">
+<!-- Circular Back Button -->
+<button aria-label="Go back" class="absolute left-0 w-11 h-11 rounded-full bg-[#E5E5EA]/70 flex items-center justify-center active:scale-95 transition-transform" type="button">
+<svg class="w-5 h-5 text-[#2C2C2E] -ml-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+</button>
+<!-- Center Title -->
+<h1 class="text-xl font-bold tracking-tight text-[#1A1A1A]">
+        Enter your details
+      </h1>
+</nav>
+<!-- END: Navigation Top Bar -->
+<!-- BEGIN: Main Form Section -->
+<main class="flex-1 flex flex-col">
+<!-- Step / Progress Indicators -->
+<div class="flex items-center space-x-6 pt-2 pb-8" data-purpose="progress-indicators">
+<!-- Active Step 1: Yellow Avatar Circle -->
+<div class="w-8 h-8 rounded-full bg-app-yellow flex items-center justify-center text-[#2A2A2A] shadow-sm">
+<svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+<circle cx="12" cy="7" r="4"></circle>
+</svg>
+</div>
+<!-- Inactive Step 2 -->
+<div class="w-5 h-5 rounded-full bg-[#E3E0D4]/80"></div>
+<!-- Inactive Step 3 -->
+<div class="w-5 h-5 rounded-full bg-[#E3E0D4]/80"></div>
+<!-- Inactive Step 4 -->
+<div class="w-5 h-5 rounded-full bg-[#E3E0D4]/80"></div>
+<!-- Inactive Step 5 -->
+<div class="w-5 h-5 rounded-full bg-[#E3E0D4]/80"></div>
+<!-- Inactive Step 6 -->
+<div class="w-5 h-5 rounded-full bg-[#E3E0D4]/80"></div>
+</div>
+<!-- Greeting & Prompt Headline -->
+<div class="mb-7" data-purpose="greeting-headings">
+<h2 class="text-3xl font-semibold text-[#484848] tracking-tight leading-tight">
+          Hey there!
+        </h2>
+<h3 class="text-3xl font-semibold text-[#484848] tracking-tight leading-snug mt-0.5">
+          What is your name?
+        </h3>
+</div>
+<!-- Form Input -->
+<form class="space-y-6" data-purpose="user-details-form" onsubmit="event.preventDefault();">
+<!-- Text Input Field -->
+<div>
+<label class="sr-only" for="fullName">Full Name</label>
+<input class="w-full bg-white text-gray-900 text-lg font-normal px-4 py-4 rounded-xl border border-gray-400/80 shadow-none focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all placeholder-gray-400" id="fullName" name="fullName" placeholder="Enter your name" type="text" value="Amrit Gyawali"/>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full bg-app-yellow hover:bg-[#F2D722] active:bg-[#E5CB1A] text-black font-semibold text-lg py-4 px-6 rounded-xl transition duration-150 ease-in-out shadow-sm active:scale-[0.99] flex items-center justify-center cursor-pointer" type="submit">
+          Next
+        </button>
+</form>
+</main>
+<!-- END: Main Form Section -->
+<!-- Safe Area Spacer for iOS bottom home indicator -->
+<div aria-hidden="true" class="h-8"></div>
+</div>
+</body></html>

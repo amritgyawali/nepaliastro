@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Enter your details</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cream: '#FAF8EE',
+              yellow: '#F7E043',
+              yellowDot: '#F5DC38',
+              inactiveDot: '#E5E7EB',
+              heading: '#434A54',
+              backBtn: '#EAECEF',
+              borderGrey: '#C5CBD3'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    /* Subtle custom overrides for exact iOS feel */
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-color: #FAF8EE;
+    }
+  </style>
+</head>
+<body class="bg-brand-cream text-gray-900 min-h-screen flex justify-center selection:bg-brand-yellow">
+<!-- BEGIN: MobileContainer -->
+<!-- Constrained container to mimic native iPhone display dimensions -->
+<div class="w-full max-w-[430px] min-h-screen flex flex-col bg-brand-cream relative pb-10 select-none" data-purpose="mobile-viewport">
+<!-- BEGIN: iOSStatusBar -->
+<header class="w-full pt-3 px-8 flex items-center justify-between z-20 bg-white" data-purpose="status-bar">
+<!-- Left: Clock & Silent Indicator -->
+<div class="flex items-center gap-1.5 pl-1">
+<span class="text-[17px] font-semibold tracking-tight text-black">8:58</span>
+<!-- Muted bell icon -->
+<svg class="w-4 h-4 text-black stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+<path d="M18.63 13A17.89 17.89 0 0 1 18 8A6 6 0 0 0 6 8c0 1 .1 1.9.3 2.8"></path>
+<path d="m2 2 20 20"></path>
+<path d="M6.3 17.6A2 2 0 0 0 8 19h8a2 2 0 0 0 1.7-1.4"></path>
+</svg>
+</div>
+<!-- Right: Cellular, WiFi, Battery -->
+<div class="flex items-center space-x-2 pr-0.5">
+<!-- Cellular Bars -->
+<div class="flex items-end gap-[2px] h-3">
+<div class="w-[3px] h-[4px] bg-black rounded-sm"></div>
+<div class="w-[3px] h-[6px] bg-black rounded-sm"></div>
+<div class="w-[3px] h-[9px] bg-black rounded-sm"></div>
+<div class="w-[3px] h-[12px] bg-black rounded-sm"></div>
+</div>
+<!-- WiFi Icon -->
+<svg class="w-4 h-4 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 4c-4.97 0-9.47 2.02-12.73 5.27l1.41 1.41C3.32 7.96 7.42 6.1 12 6.1c4.58 0 8.68 1.86 11.32 4.58l1.41-1.41C21.47 6.02 16.97 4 12 4zm0 4.5c-3.6 0-6.86 1.46-9.22 3.82l1.41 1.41C5.9 12.02 8.78 10.7 12 10.7c3.22 0 6.1 1.32 7.81 3.03l1.41-1.41C18.86 9.96 15.6 8.5 12 8.5zm0 4.5c-2.22 0-4.23.9-5.71 2.38l1.41 1.41C8.78 15.71 10.29 15 12 15c1.71 0 3.22.71 4.3 1.79l1.41-1.41C16.23 13.9 14.22 13 12 13zm0 4.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"></path>
+</svg>
+<!-- Battery Indicator -->
+<div class="flex items-center">
+<div class="w-6 h-[12.5px] border-[1.2px] border-black rounded-[4px] p-[1.5px] flex items-center relative">
+<div class="h-full bg-black rounded-[1.5px] w-[28%] flex items-center justify-center">
+</div>
+<!-- Battery percentage text overlay -->
+<span class="absolute inset-0 flex items-center justify-center text-[8.5px] font-bold text-black tracking-tighter pl-0.5">19</span>
+</div>
+<div class="w-[1.5px] h-1 bg-black rounded-r-full -ml-[0.5px]"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: NavigationBar -->
+<nav class="w-full px-5 pt-3 pb-4 flex items-center justify-between relative bg-white border-b border-gray-100/60" data-purpose="top-navigation">
+<!-- Back Chevron Button -->
+<button aria-label="Go back" class="w-10 h-10 rounded-full bg-brand-backBtn flex items-center justify-center active:bg-gray-300 transition-colors shadow-none" type="button">
+<svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+</button>
+<!-- Center Title -->
+<h1 class="text-[19px] font-bold text-black tracking-tight absolute left-1/2 -translate-x-1/2">
+        Enter your details
+      </h1>
+<!-- Spacer to maintain balance -->
+<div class="w-10 h-10 opacity-0 pointer-events-none"></div>
+</nav>
+<!-- END: NavigationBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 px-6 pt-5 flex flex-col" data-purpose="form-content">
+<!-- Step Progress Indicator -->
+<section aria-label="Registration Progress" class="flex items-center justify-between px-2 pt-1 pb-9" data-purpose="stepper">
+<!-- Step 1 (Completed) -->
+<div class="w-[19px] h-[19px] rounded-full bg-brand-yellowDot shadow-sm"></div>
+<!-- Step 2 (Completed) -->
+<div class="w-[19px] h-[19px] rounded-full bg-brand-yellowDot shadow-sm"></div>
+<!-- Step 3 (Completed) -->
+<div class="w-[19px] h-[19px] rounded-full bg-brand-yellowDot shadow-sm"></div>
+<!-- Step 4 (Completed) -->
+<div class="w-[19px] h-[19px] rounded-full bg-brand-yellowDot shadow-sm"></div>
+<!-- Step 5 (Current Step with Map Pin) -->
+<div class="w-[27px] h-[27px] rounded-full bg-brand-yellowDot flex items-center justify-center shadow-sm">
+<svg class="w-3.5 h-3.5 text-gray-800 stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+<circle cx="12" cy="10" r="3"></circle>
+</svg>
+</div>
+<!-- Step 6 (Upcoming) -->
+<div class="w-[19px] h-[19px] rounded-full bg-[#E5E5DE]"></div>
+</section>
+<!-- Heading -->
+<h2 class="text-[27px] font-semibold text-brand-heading tracking-tight mb-8">
+        Where were you born?
+      </h2>
+<!-- Input Field -->
+<div class="relative w-full mb-6" data-purpose="search-input-wrapper">
+<input aria-label="City or region of birth" class="w-full h-[54px] bg-white border border-brand-borderGrey/80 rounded-xl pl-4 pr-12 text-[17px] text-gray-900 font-normal focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all shadow-[0_1px_2px_rgba(0,0,0,0.03)]" type="text" value="Kathmandu, P3, Nepal"/>
+<!-- Magnifying Glass Icon -->
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+<svg class="w-5 h-5 text-gray-400 stroke-[2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<circle cx="11" cy="11" r="8"></circle>
+<line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+</svg>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full h-[52px] bg-brand-yellow hover:bg-[#F2D738] active:scale-[0.99] transition-all rounded-xl flex items-center justify-center font-semibold text-[17px] text-gray-900 shadow-sm border border-yellow-300/40" data-purpose="submit-next-button" type="button">
+        Next
+      </button>
+</main>
+<!-- END: MainContent -->
+</div>
+<!-- END: MobileContainer -->
+</body></html>

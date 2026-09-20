@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Enter your details</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#F3D429',
+              'yellow-hover': '#e8c920',
+              cream: '#FAF8EE',
+              dark: '#26292B',
+              muted: '#717579',
+              inactiveChip: '#FFFFFF',
+              borderChip: '#F3EFE0'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="custom-shadows-and-layout">
+    body {
+      background-color: #FAF8EE;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .chip-shadow {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    .btn-action-shadow {
+      box-shadow: 0 2px 4px rgba(243, 212, 41, 0.25);
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="min-h-screen bg-[#FAF8EE] text-[#26292B] flex justify-center items-start antialiased">
+<!-- Mobile Container simulating standard iOS viewport -->
+<div class="w-full max-w-[430px] min-h-screen flex flex-col justify-between px-5 pt-3 pb-8">
+<!-- BEGIN: Top Area (Status Bar, Header, Stepper) -->
+<div class="w-full">
+<!-- iOS Status Bar Simulation -->
+<div class="w-full flex justify-between items-center text-[15px] font-semibold tracking-tight px-3.5 pt-1.5 pb-3">
+<!-- Time & Silent Indicator -->
+<div class="flex items-center gap-1.5 font-medium tracking-normal text-[15px]">
+<span>8:58</span>
+<!-- Silent bell icon -->
+<svg class="w-3.5 h-3.5 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"></path>
+<line stroke="currentColor" stroke-linecap="round" stroke-width="2.2" x1="2" x2="22" y1="2" y2="22"></line>
+</svg>
+</div>
+<!-- Status Icons (Cellular, Wifi, Battery) -->
+<div class="flex items-center gap-1.5">
+<!-- Cellular -->
+<svg class="w-4 h-3 text-black fill-current" viewbox="0 0 17 12">
+<rect height="3" rx="0.5" width="2.5" x="0" y="9"></rect>
+<rect height="5.5" rx="0.5" width="2.5" x="4.5" y="6.5"></rect>
+<rect height="8.5" rx="0.5" width="2.5" x="9" y="3.5"></rect>
+<rect height="11.5" rx="0.5" width="2.5" x="13.5" y="0.5"></rect>
+</svg>
+<!-- Wifi -->
+<svg class="w-4 h-3 text-black fill-current" viewbox="0 0 16 12">
+<path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-4.24-2.83a6 6 0 018.48 0 .8.8 0 001.13-1.13 7.6 7.6 0 00-10.74 0 .8.8 0 101.13 1.13zm-2.12-2.12a9 9 0 0112.72 0 .8.8 0 001.14-1.14 10.6 10.6 0 00-15 0 .8.8 0 001.14 1.14z"></path>
+</svg>
+<!-- Battery -->
+<div class="flex items-center gap-0.5">
+<div class="w-6 h-3 rounded-[4px] border border-black/80 p-[1px] flex items-center">
+<div class="h-full bg-[#EA4E3D] rounded-[2px] w-[55%] flex items-center justify-center">
+<span class="text-[8px] text-white font-bold leading-none hidden">19</span>
+</div>
+</div>
+<div class="w-[1.5px] h-[4px] bg-black/80 rounded-r-sm"></div>
+<span class="text-[11px] font-bold ml-0.5 tracking-tighter text-black">19</span>
+</div>
+</div>
+</div>
+<!-- BEGIN: Navigation Header -->
+<header class="relative flex items-center justify-center py-2.5 mb-5" data-purpose="screen-header">
+<!-- Back Button -->
+<button aria-label="Go back" class="absolute left-0 w-11 h-11 rounded-full bg-[#ECEAE0] flex items-center justify-center active:scale-95 transition-transform" type="button">
+<svg class="w-5 h-5 text-[#2D3139]" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Page Title -->
+<h1 class="text-[21px] font-bold text-[#23272E] tracking-tight">
+          Enter your details
+        </h1>
+</header>
+<!-- END: Navigation Header -->
+<!-- BEGIN: Stepper Progress Dots -->
+<section aria-label="Progress tracker" class="flex items-center justify-center gap-6 pt-3 pb-6" data-purpose="progress-stepper">
+<!-- Dot 1 -->
+<div class="w-4 h-4 rounded-full bg-[#F3D429]"></div>
+<!-- Dot 2 -->
+<div class="w-4 h-4 rounded-full bg-[#F3D429]"></div>
+<!-- Dot 3 -->
+<div class="w-4 h-4 rounded-full bg-[#F3D429]"></div>
+<!-- Dot 4 -->
+<div class="w-4 h-4 rounded-full bg-[#F3D429]"></div>
+<!-- Dot 5 -->
+<div class="w-4 h-4 rounded-full bg-[#F3D429]"></div>
+<!-- Step 6: Active badge with speech icon -->
+<div class="w-7 h-7 rounded-full bg-[#F3D429] flex items-center justify-center shadow-sm">
+<svg class="w-4 h-4 text-[#1E2125]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+</svg>
+</div>
+</section>
+<!-- END: Stepper Progress Dots -->
+<!-- Section Title -->
+<h2 class="text-[25px] font-medium text-[#40444C] mt-2 mb-6 tracking-tight">
+        Select all your languages?
+      </h2>
+<!-- BEGIN: Languages Grid -->
+<div class="grid grid-cols-3 gap-x-2.5 gap-y-3.5" data-purpose="language-selection-grid">
+<!-- English (Selected state) -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-[#F3D429] text-[#1E2125] font-medium text-[14.5px] px-2.5 active:scale-95 transition-transform shadow-sm" type="button">
+<span>English</span>
+<svg class="w-4 h-4 stroke-[3] text-black" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Hindi -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Hindi</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Bengali -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Bengali</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Gujarati -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Gujarati</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Kannada -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Kannada</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Malayalam -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Malayalam</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Marathi -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Marathi</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Punjabi -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Punjabi</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Tamil -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Tamil</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Telugu -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Telugu</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+<!-- Urdu -->
+<button class="flex items-center justify-center gap-2 h-11 rounded-full bg-white chip-shadow border border-white text-[#666B72] font-normal text-[14.5px] px-2.5 active:scale-95 transition-transform hover:border-[#E8E4D5]" type="button">
+<span>Urdu</span>
+<span class="text-base leading-none font-light text-[#7C8086]">+</span>
+</button>
+</div>
+<!-- END: Languages Grid -->
+<!-- BEGIN: Action Button -->
+<div class="mt-8">
+<button class="w-full h-12 bg-[#F3D429] hover:bg-[#ebd028] active:scale-[0.99] transition-all rounded-xl text-[#202328] font-semibold text-[16px] tracking-tight flex items-center justify-center shadow-sm border border-[#ECD137]" data-purpose="submit-button" type="button">
+          Start Chat with Astrologer
+        </button>
+</div>
+<!-- END: Action Button -->
+</div>
+<!-- END: Top Area -->
+</div>
+</body></html>

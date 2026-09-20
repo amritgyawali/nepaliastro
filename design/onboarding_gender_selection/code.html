@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Enter your details</title>
+<!-- Tailwind CSS CDN with forms and container-queries plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            appBg: '#FBF9EF',
+            appYellow: '#F3E526',
+            appDark: '#383838',
+            appMutedDot: '#E1E3DB',
+            appBackBtnBg: '#E9EAE3',
+            appBorderLight: '#E8E5A8'
+          },
+          fontFamily: {
+            sans: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"SF Pro Display"',
+              '"SF Pro Text"',
+              'Helvetica Neue',
+              'sans-serif'
+            ]
+          }
+        }
+      }
+    };
+  </script>
+<!-- Custom CSS for exact typography and icon sizing -->
+<style data-purpose="custom-styling">
+    body {
+      background-color: #FBF9EF;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-appBg text-appDark min-h-screen flex flex-col justify-start items-center selection:bg-appYellow/40 antialiased font-sans">
+<!-- Mobile screen container simulating the native iOS viewport -->
+<div class="w-full max-w-[430px] min-h-screen flex flex-col bg-appBg relative px-6 pb-8">
+<!-- BEGIN: TopStatusBar -->
+<!-- Native iOS Status Bar recreation -->
+<header class="w-full pt-3 pb-1 flex justify-between items-center text-black font-semibold text-[15px] select-none" data-purpose="status-bar">
+<!-- Time and silent icon indicator -->
+<div class="flex items-center space-x-1.5 pl-2 tracking-tight">
+<span class="text-[16px] font-semibold">8:57</span>
+<!-- Bell off / silent icon -->
+<svg class="w-4 h-4 ml-0.5 inline-block text-black" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+<path d="M18.63 13A17.89 17.89 0 0 1 18 8"></path>
+<path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"></path>
+<line x1="1" x2="23" y1="1" y2="23"></line>
+</svg>
+</div>
+<!-- Right side indicators: Signal, WiFi, Battery -->
+<div class="flex items-center space-x-1.5 pr-2">
+<!-- Cellular Bars -->
+<div class="flex items-end space-x-[2px] h-[11px] mb-[1px]">
+<span class="w-[3px] h-[3px] bg-black rounded-[0.5px]"></span>
+<span class="w-[3px] h-[5px] bg-black rounded-[0.5px]"></span>
+<span class="w-[3px] h-[8px] bg-black rounded-[0.5px]"></span>
+<span class="w-[3px] h-[11px] bg-black rounded-[0.5px]"></span>
+</div>
+<!-- WiFi Icon -->
+<svg class="w-[17px] h-[17px] text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 18c-.8 0-1.5.7-1.5 1.5S11.2 21 12 21s1.5-.7 1.5-1.5S12.8 18 12 18zm-4.9-3.2c2.7-2 7.1-2 9.8 0 .4.3 1 .2 1.3-.2.3-.4.2-1-.2-1.3-3.4-2.6-8.6-2.6-12 0-.4.3-.5.9-.2 1.3.3.4.9.5 1.3.2zm-3.6-3.7c4.7-3.6 12.3-3.6 17 0 .4.3 1 .2 1.3-.2.3-.4.2-1-.2-1.3-5.4-4.2-14-4.2-19.4 0-.4.3-.5.9-.2 1.3.3.4.9.5 1.5.2z"></path>
+</svg>
+<!-- Battery Icon with badge '19' -->
+<div class="relative flex items-center">
+<div class="w-[26px] h-[13px] border-[1.5px] border-black/80 rounded-[4px] p-[1.5px] flex items-center justify-center relative">
+<span class="text-[9px] font-bold leading-none text-black">19</span>
+</div>
+<div class="w-[1.5px] h-[4px] bg-black/80 rounded-r-[1px] ml-[1px]"></div>
+</div>
+</div>
+</header>
+<!-- END: TopStatusBar -->
+<!-- BEGIN: NavigationHeader -->
+<!-- App Bar with back button and screen title -->
+<nav class="w-full relative flex items-center justify-center pt-3 pb-6" data-purpose="navigation-header">
+<!-- Back Button -->
+<button aria-label="Go back" class="absolute left-0 w-11 h-11 rounded-full bg-appBackBtnBg flex items-center justify-center text-gray-700 hover:bg-gray-300 transition-colors focus:outline-none" type="button">
+<svg class="w-5 h-5 -ml-0.5 text-[#303030]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+</button>
+<!-- Center Title -->
+<h1 class="text-[20px] font-bold text-black tracking-tight">
+        Enter your details
+      </h1>
+</nav>
+<!-- END: NavigationHeader -->
+<!-- BEGIN: StepperIndicator -->
+<!-- Progress Stepper: 6 dots indicating current multi-step state -->
+<section aria-label="Registration Progress" class="w-full pt-2 pb-7" data-purpose="stepper">
+<div class="flex items-center space-x-4">
+<!-- Step 1: Completed Dot -->
+<div class="w-[18px] h-[18px] rounded-full bg-appYellow"></div>
+<!-- Step 2: Active Step with Gender/Icon Symbol -->
+<div class="w-[26px] h-[26px] rounded-full bg-appYellow flex items-center justify-center shadow-xs">
+<!-- Stylized minimal pin/gender indicator matching the screenshot -->
+<svg class="w-3.5 h-3.5 text-appDark" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<circle cx="12" cy="9" r="5"></circle>
+<path d="M12 14v7"></path>
+</svg>
+</div>
+<!-- Step 3: Inactive -->
+<div class="w-[18px] h-[18px] rounded-full bg-appMutedDot"></div>
+<!-- Step 4: Inactive -->
+<div class="w-[18px] h-[18px] rounded-full bg-appMutedDot"></div>
+<!-- Step 5: Inactive -->
+<div class="w-[18px] h-[18px] rounded-full bg-appMutedDot"></div>
+<!-- Step 6: Inactive -->
+<div class="w-[18px] h-[18px] rounded-full bg-appMutedDot"></div>
+</div>
+</section>
+<!-- END: StepperIndicator -->
+<!-- BEGIN: MainContent -->
+<main class="w-full flex-1 flex flex-col pt-3" data-purpose="main-content">
+<!-- Question Heading -->
+<h2 class="text-[28px] font-bold text-[#4B5047] tracking-tight mb-8">
+        What is your gender?
+      </h2>
+<!-- Gender Selection Circles Row -->
+<fieldset class="w-full flex justify-around items-center px-4 mb-9 border-none p-0 m-0" data-purpose="gender-selection">
+<legend class="sr-only">Select your gender</legend>
+<!-- Option 1: Male (Selected State) -->
+<label class="flex flex-col items-center cursor-pointer group select-none">
+<input checked="" class="sr-only" name="gender" type="radio" value="male"/>
+<!-- Selected circular button with yellow background -->
+<div class="w-[88px] h-[88px] rounded-full bg-appYellow flex items-center justify-center transition-transform active:scale-95 shadow-sm">
+<!-- Male Outline Figure Icon -->
+<svg class="w-8 h-12 text-[#2D2D2D]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 32 48">
+<!-- Head -->
+<circle cx="16" cy="8" r="5" stroke-width="1.8"></circle>
+<!-- Torso and Legs Outline -->
+<path d="M10 17h12c2.2 0 3.5 1.5 3.5 3.5v11.5c0 .6-.4 1-1 1h-1.5c-.6 0-1-.4-1-1v-8h-1.5v21c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5V30h-1v15c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5V25H9.5v8c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V20.5C6 18.5 7.8 17 10 17z"></path>
+</svg>
+</div>
+<span class="mt-3 text-[15px] font-medium text-[#2E312E] tracking-tight">Male</span>
+</label>
+<!-- Option 2: Female (Unselected State) -->
+<label class="flex flex-col items-center cursor-pointer group select-none">
+<input class="sr-only" name="gender" type="radio" value="female"/>
+<!-- Unselected circular button with faint outline border -->
+<div class="w-[88px] h-[88px] rounded-full bg-transparent border border-appBorderLight flex items-center justify-center transition-transform active:scale-95">
+<!-- Female Outline Figure Icon -->
+<svg class="w-8 h-12 text-[#2D2D2D]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 32 48">
+<!-- Head -->
+<circle cx="16" cy="8" r="5" stroke-width="1.8"></circle>
+<!-- Arms, Dress & Legs Outline -->
+<path d="M10.5 17h11c1.5 0 2.8 1.1 3.2 2.5l2.2 9.5c.2.8-.4 1.5-1.2 1.5h-1.4c-.7 0-1.2-.5-1.4-1.2L22 24l2 11.5c.1.7-.4 1.5-1.2 1.5H9.2c-.8 0-1.3-.8-1.2-1.5L10 24l-.9 5.3c-.2.7-.7 1.2-1.4 1.2H6.3c-.8 0-1.4-.7-1.2-1.5l2.2-9.5C7.7 18.1 9 17 10.5 17z"></path>
+<!-- Legs -->
+<path d="M13.5 37v7.5c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5V37"></path>
+<path d="M21.5 37v7.5c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5V37"></path>
+</svg>
+</div>
+<span class="mt-3 text-[15px] font-medium text-[#2E312E] tracking-tight">Female</span>
+</label>
+</fieldset>
+<!-- Primary Action CTA: 'Next' Button -->
+<div class="w-full mt-2" data-purpose="cta-container">
+<button class="w-full py-[15px] bg-appYellow rounded-[14px] text-center font-bold text-[17px] text-[#1E1E1E] tracking-wide active:opacity-90 active:scale-[0.99] transition-all shadow-sm focus:outline-none" type="button">
+          Next
+        </button>
+</div>
+</main>
+<!-- END: MainContent -->
+</div>
+<!-- Interactive script to toggle selection state visually -->
+<script data-purpose="gender-toggle-interaction">
+    document.addEventListener('DOMContentLoaded', () => {
+      const radios = document.querySelectorAll('input[name="gender"]');
+      const labels = document.querySelectorAll('fieldset label');
+
+      radios.forEach((radio, index) => {
+        radio.addEventListener('change', () => {
+          labels.forEach((lbl, i) => {
+            const circle = lbl.querySelector('div');
+            if (i === index) {
+              // Set active state styling
+              circle.className = 'w-[88px] h-[88px] rounded-full bg-appYellow flex items-center justify-center transition-transform active:scale-95 shadow-sm';
+            } else {
+              // Set inactive state styling
+              circle.className = 'w-[88px] h-[88px] rounded-full bg-transparent border border-appBorderLight flex items-center justify-center transition-transform active:scale-95';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body></html>

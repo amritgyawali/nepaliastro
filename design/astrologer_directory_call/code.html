@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Astrology Consultation App</title>
+<!-- Tailwind CSS CDN with forms and container queries plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Phosphor Icons for precise iconography -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandCream: '#FBF8EE',
+            brandYellow: '#FFDC33',
+            brandYellowHover: '#EBCB28',
+            brandRed: '#DC2626',
+            brandGreen: '#16A34A',
+            badgeBg: '#1C1917',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-decorations">
+    /* Subtle custom details and scrollbar hiding */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .ribbon-tag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #1e1e1e;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 18px 3px 14px;
+      border-bottom-right-radius: 12px;
+      letter-spacing: 0.2px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="bg-[#F5F5F0] flex justify-center items-center min-h-screen font-sans text-gray-800 antialiased selection:bg-amber-100">
+<!-- Mobile Screen Container (iPhone Canvas Simulation) -->
+<div class="w-full max-w-[420px] bg-brandCream min-h-screen relative flex flex-col shadow-2xl overflow-hidden pb-24">
+<!-- BEGIN: iOS Status Bar -->
+<div class="pt-3 px-7 flex justify-between items-center text-black text-[15px] font-semibold tracking-tight z-30">
+<!-- Time and Silent Mode -->
+<div class="flex items-center gap-1.5">
+<span>8:59</span>
+<svg class="w-3.5 h-3.5 text-neutral-800" fill="currentColor" viewbox="0 0 24 24">
+<path d="M5.889 16H2a1 1 0 01-1-1V9a1 1 0 011-1h3.889l5.294-4.332a1 1 0 011.617.777v17.11a1 1 0 01-1.617.777L5.889 16zM20.707 3.293a1 1 0 010 1.414L4.707 20.707a1 1 0 01-1.414-1.414L19.293 3.293a1 1 0 011.414 0z"></path>
+</svg>
+</div>
+<!-- Network and Battery Indicators -->
+<div class="flex items-center gap-1.5 text-black">
+<!-- Cellular Signal -->
+<div class="flex items-end gap-[1.5px] h-3">
+<span class="w-[3px] h-1 bg-black rounded-sm"></span>
+<span class="w-[3px] h-1.5 bg-black rounded-sm"></span>
+<span class="w-[3px] h-2.5 bg-black rounded-sm"></span>
+<span class="w-[3px] h-3 bg-black rounded-sm"></span>
+</div>
+<!-- Wifi Icon -->
+<svg class="w-4 h-4 ml-0.5" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 18a2 2 0 100 4 2 2 0 000-4zM2.05 9.05a15.938 15.938 0 0119.9 0 1 1 0 01-1.32 1.5 13.938 13.938 0 00-17.26 0 1 1 0 11-1.32-1.5zm3.53 3.53a10.954 10.954 0 0112.84 0 1 1 0 11-1.32 1.5 8.954 8.954 0 00-10.2 0 1 1 0 01-1.32-1.5z"></path>
+</svg>
+<!-- Battery Icon with 18% -->
+<div class="flex items-center ml-0.5">
+<div class="w-6 h-3 border-[1.5px] border-black rounded-[4px] p-[1px] flex items-center justify-start relative">
+<div class="h-full bg-red-500 rounded-[1px] w-[18%]"></div>
+<span class="absolute inset-0 text-[8px] font-bold flex items-center justify-center leading-none text-black pl-[1px]">18</span>
+</div>
+<div class="w-[1.5px] h-[4px] bg-black rounded-r-sm"></div>
+</div>
+</div>
+</div>
+<!-- END: iOS Status Bar -->
+<!-- BEGIN: Top Navigation Bar -->
+<header class="px-4 py-3 flex items-center justify-between z-20">
+<!-- User Avatar with Menu Badge -->
+<div class="relative cursor-pointer">
+<div class="w-11 h-11 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center overflow-hidden">
+<!-- Aries astrological avatar representation -->
+<svg class="w-9 h-9 text-amber-600" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="#FDE68A" r="40"></circle>
+<path d="M30 45 C30 25, 45 28, 50 42 C55 28, 70 25, 70 45 C70 58, 58 65, 50 82 C42 65, 30 58, 30 45 Z" fill="#F59E0B" opacity="0.6"></path>
+<circle cx="43" cy="46" fill="#1F2937" r="3"></circle>
+<circle cx="57" cy="46" fill="#1F2937" r="3"></circle>
+<path d="M45 58 Q50 63 55 58" fill="none" stroke="#1F2937" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-white border border-gray-200 rounded-full w-5 h-5 flex flex-col justify-center items-center shadow-sm">
+<span class="w-2.5 h-[1.5px] bg-gray-800 rounded-full mb-[1.5px]"></span>
+<span class="w-2.5 h-[1.5px] bg-gray-800 rounded-full mb-[1.5px]"></span>
+<span class="w-2.5 h-[1.5px] bg-gray-800 rounded-full"></span>
+</div>
+</div>
+<!-- Add Cash Capsule -->
+<div class="flex-1 max-w-[170px] mx-3">
+<button class="w-full py-1.5 px-3.5 bg-white border border-gray-200 shadow-sm rounded-full flex items-center justify-center gap-1.5 text-sm font-semibold text-gray-800 active:scale-95 transition-transform">
+<i class="ph ph-handbag text-lg text-gray-700"></i>
+<span>Add Cash</span>
+<i class="ph ph-plus-circle-fill text-gray-700 text-lg ml-0.5"></i>
+</button>
+</div>
+<!-- Right Action Icons: Search & Messenger -->
+<div class="flex items-center gap-2.5">
+<button class="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-700 shadow-sm hover:bg-gray-50">
+<i class="ph ph-magnifying-glass text-xl"></i>
+</button>
+<button class="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-700 shadow-sm hover:bg-gray-50">
+<i class="ph ph-chat-circle-dots text-xl"></i>
+</button>
+</div>
+</header>
+<!-- END: Top Navigation Bar -->
+<!-- BEGIN: Cashback Promo Banner -->
+<section class="relative px-5 pt-3 pb-5 text-center overflow-hidden">
+<!-- Floating Decorative Gold Coins with Rupee symbol -->
+<div class="absolute -left-3 top-6 w-12 h-12 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500 opacity-60 flex items-center justify-center text-amber-800 font-bold text-xl transform -rotate-12 shadow-md">
+        ₹
+      </div>
+<div class="absolute -left-1 bottom-1 w-9 h-9 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500 opacity-50 flex items-center justify-center text-amber-800 font-bold text-sm transform rotate-45">
+        ₹
+      </div>
+<div class="absolute right-3 top-3 w-10 h-10 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500 opacity-60 flex items-center justify-center text-amber-800 font-bold text-lg transform rotate-12 shadow-sm">
+        ₹
+      </div>
+<div class="absolute -right-2 bottom-4 w-7 h-7 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500 opacity-40 flex items-center justify-center text-amber-800 font-bold text-xs">
+        ₹
+      </div>
+<h2 class="text-[28px] font-black tracking-tight text-neutral-800 leading-tight">
+        100% Cashback!
+      </h2>
+<!-- Subtitle with side rule marks -->
+<div class="flex items-center justify-center gap-2 mt-1 mb-3">
+<span class="w-12 h-[1px] bg-neutral-300"></span>
+<span class="text-xs tracking-wider font-semibold text-neutral-600 uppercase">On All Recharges</span>
+<span class="w-12 h-[1px] bg-neutral-300"></span>
+</div>
+<!-- Action Button -->
+<button class="bg-[#FEE033] hover:bg-[#F0D120] text-gray-900 font-bold text-xs px-6 py-2 rounded-full shadow-sm tracking-wide active:scale-95 transition-all">
+        RECHARGE NOW
+      </button>
+</section>
+<!-- END: Cashback Promo Banner -->
+<!-- BEGIN: Filter Category Pills -->
+<section class="px-4 py-1.5">
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+<!-- Filter Button -->
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-neutral-300 text-neutral-800 font-medium text-sm shadow-2xs whitespace-nowrap active:bg-neutral-100">
+<i class="ph ph-sliders-horizontal text-lg"></i>
+<span>Filter</span>
+</button>
+<!-- All (Active Tab) -->
+<button class="flex items-center gap-1.5 px-4 py-1.5 bg-white rounded-xl border-2 border-amber-400 text-neutral-900 font-semibold text-sm shadow-2xs whitespace-nowrap">
+<i class="ph ph-squares-four-bold text-amber-500 text-lg"></i>
+<span>All</span>
+</button>
+<!-- Tarot -->
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-neutral-300 text-neutral-700 font-medium text-sm shadow-2xs whitespace-nowrap active:bg-neutral-100">
+<i class="ph ph-cards text-purple-500 text-lg"></i>
+<span>Tarot</span>
+</button>
+<!-- Palmistry -->
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-neutral-300 text-neutral-700 font-medium text-sm shadow-2xs whitespace-nowrap active:bg-neutral-100">
+<i class="ph ph-hand-eye text-indigo-400 text-lg"></i>
+<span>Palmistry</span>
+</button>
+</div>
+</section>
+<!-- END: Filter Category Pills -->
+<!-- BEGIN: Astrologer Listings Stream -->
+<main class="px-4 pt-2.5 pb-28 space-y-3">
+<!-- Card 1: Kailash -->
+<div class="bg-white rounded-2xl border border-gray-200/90 shadow-xs relative overflow-hidden p-3.5 flex flex-col justify-between">
+<!-- Celebrity Badge -->
+<div class="ribbon-tag">
+          *Celebrity*
+        </div>
+<div class="flex gap-3.5 items-start mt-1">
+<!-- Astrologer Profile Pic -->
+<div class="flex flex-col items-center flex-shrink-0">
+<div class="w-[84px] h-[84px] rounded-full p-[2.5px] border-2 border-amber-400 overflow-hidden bg-amber-50">
+<svg class="w-full h-full object-cover" viewbox="0 0 80 80">
+<rect fill="#fef3c7" height="80" width="80"></rect>
+<circle cx="40" cy="35" fill="#fde68a" r="20"></circle>
+<!-- Beard and facial marks -->
+<path d="M26 38 C26 52 54 52 54 38 Z" fill="#451a03"></path>
+<circle cx="34" cy="33" fill="#1f2937" r="2"></circle>
+<circle cx="46" cy="33" fill="#1f2937" r="2"></circle>
+<circle cx="40" cy="27" fill="#dc2626" r="2.5"></circle>
+<!-- Traditional white clothing -->
+<path d="M20 75 C20 56 60 56 60 75 Z" fill="#f8fafc" stroke="#e2e8f0"></path>
+</svg>
+</div>
+<!-- Ratings and Orders under image -->
+<div class="mt-2 flex flex-col items-center">
+<div class="flex items-center text-gray-500 text-xs gap-0.5">
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+</div>
+<span class="text-[11px] text-gray-600 font-normal mt-0.5">10k+ orders</span>
+</div>
+</div>
+<!-- Astrologer Info -->
+<div class="flex-1 flex flex-col justify-between pt-0.5">
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="font-bold text-gray-900 text-lg leading-tight">Kailash</h3>
+<i class="ph-fill ph-seal-check text-emerald-600 text-base"></i>
+</div>
+<p class="text-neutral-500 text-xs font-normal mt-1 leading-snug">Vedic, Nadi, Numerology</p>
+<p class="text-neutral-500 text-xs font-normal leading-snug">Hindi, Bengali, Sanskrit</p>
+<p class="text-neutral-400 text-xs font-normal mt-1">Exp: 21 Years</p>
+</div>
+<!-- Pricing and Action Button Row -->
+<div class="flex items-end justify-between mt-2.5">
+<div>
+<span class="text-gray-900 font-bold text-sm tracking-tight">USD 0.49</span><span class="text-xs font-medium text-gray-500">/min</span>
+</div>
+<div class="flex flex-col items-center">
+<button class="border border-red-500 text-red-600 font-semibold px-6 py-1.5 rounded-full text-sm hover:bg-red-50 active:scale-95 transition-all min-w-[85px] leading-tight">
+                  Call
+                </button>
+<span class="text-[11px] text-red-600 mt-0.5">wait ~ 2m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Monishka -->
+<div class="bg-white rounded-2xl border border-gray-200/90 shadow-xs relative overflow-hidden p-3.5 flex flex-col justify-between">
+<!-- Celebrity Badge -->
+<div class="ribbon-tag">
+          *Celebrity*
+        </div>
+<div class="flex gap-3.5 items-start mt-1">
+<!-- Astrologer Profile Pic -->
+<div class="flex flex-col items-center flex-shrink-0">
+<div class="w-[84px] h-[84px] rounded-full p-[2.5px] border-2 border-amber-400 overflow-hidden bg-orange-50">
+<svg class="w-full h-full object-cover" viewbox="0 0 80 80">
+<rect fill="#fed7aa" height="80" width="80"></rect>
+<!-- Woman's face and hair representation -->
+<path d="M22 25 C20 50 60 50 58 25 C58 15 22 15 22 25 Z" fill="#262626"></path>
+<circle cx="40" cy="38" fill="#ffedd5" r="16"></circle>
+<circle cx="34" cy="37" fill="#1f2937" r="2"></circle>
+<circle cx="46" cy="37" fill="#1f2937" r="2"></circle>
+<path d="M37 46 Q40 49 43 46" fill="none" stroke="#b91c1c" stroke-width="2"></path>
+<!-- Traditional Earrings -->
+<circle cx="23" cy="45" fill="#f59e0b" r="3"></circle>
+<circle cx="57" cy="45" fill="#f59e0b" r="3"></circle>
+<!-- Attire -->
+<path d="M18 75 C18 56 62 56 62 75 Z" fill="#fef2f2" stroke="#fecaca"></path>
+</svg>
+</div>
+<!-- Ratings and Orders -->
+<div class="mt-2 flex flex-col items-center">
+<div class="flex items-center text-gray-500 text-xs gap-0.5">
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+<i class="ph-fill ph-star text-neutral-600 text-xs"></i>
+</div>
+<span class="text-[11px] text-gray-600 font-normal mt-0.5">10k+ orders</span>
+</div>
+</div>
+<!-- Astrologer Info -->
+<div class="flex-1 flex flex-col justify-between pt-0.5">
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="font-bold text-gray-900 text-lg leading-tight">Monishka</h3>
+<i class="ph-fill ph-seal-check text-emerald-600 text-base"></i>
+</div>
+<p class="text-neutral-500 text-xs font-normal mt-1 leading-snug">Tarot, Numerology, Vedic</p>
+<p class="text-neutral-500 text-xs font-normal leading-snug">Hindi</p>
+<p class="text-neutral-400 text-xs font-normal mt-1">Exp: 5 Years</p>
+</div>
+<!-- Pricing and Action Button Row -->
+<div class="flex items-end justify-between mt-2.5">
+<div>
+<span class="text-neutral-400 line-through text-xs font-medium mr-1">USD 0.49</span>
+<span class="text-red-600 font-bold text-sm">0.25</span><span class="text-xs font-medium text-red-600">/min</span>
+</div>
+<div class="flex flex-col items-center">
+<button class="border border-red-500 text-red-600 font-semibold px-6 py-1.5 rounded-full text-sm hover:bg-red-50 active:scale-95 transition-all min-w-[85px] leading-tight">
+                  Call
+                </button>
+<span class="text-[11px] text-red-600 mt-0.5">wait ~ 4m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: VinayyV (Partially shown in viewport) -->
+<div class="bg-white rounded-2xl border border-gray-200/90 shadow-xs relative overflow-hidden p-3.5 opacity-90">
+<div class="flex gap-3.5 items-start">
+<div class="flex flex-col items-center flex-shrink-0">
+<div class="w-[84px] h-[84px] rounded-full p-[2.5px] border-2 border-amber-400 overflow-hidden bg-amber-50">
+<svg class="w-full h-full object-cover" viewbox="0 0 80 80">
+<rect fill="#fef3c7" height="80" width="80"></rect>
+<circle cx="40" cy="36" fill="#fde68a" r="18"></circle>
+<path d="M28 26 C28 15 52 15 52 26 Z" fill="#1f2937"></path>
+<circle cx="40" cy="27" fill="#dc2626" r="2"></circle>
+<path d="M20 75 C20 58 60 58 60 75 Z" fill="#ffffff"></path>
+</svg>
+</div>
+</div>
+<div class="flex-1 flex flex-col justify-between pt-0.5">
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="font-bold text-gray-900 text-lg leading-tight">VinayyV</h3>
+<i class="ph-fill ph-seal-check text-emerald-600 text-base"></i>
+</div>
+<p class="text-neutral-500 text-xs font-normal mt-1 leading-snug">Vedic, Face Reading, Life Coach</p>
+<p class="text-neutral-500 text-xs font-normal leading-snug">Hindi</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- END: Astrologer Listings Stream -->
+<!-- BEGIN: Docked Active Chat Notification Pill -->
+<div class="fixed bottom-20 left-1/2 -translate-x-1/2 w-[92%] max-w-[390px] z-40">
+<div class="bg-[#FCF9DE] border border-amber-200/80 rounded-2xl p-2.5 flex items-center justify-between shadow-lg shadow-black/5">
+<!-- Profile with Active Online Dot -->
+<div class="flex items-center gap-2.5">
+<div class="relative flex-shrink-0">
+<div class="w-11 h-11 rounded-full border border-amber-300 overflow-hidden bg-amber-100">
+<svg class="w-full h-full" viewbox="0 0 40 40">
+<rect fill="#fef08a" height="40" width="40"></rect>
+<circle cx="20" cy="18" fill="#fbcfe8" r="10"></circle>
+<circle cx="17" cy="17" fill="#374151" r="1.5"></circle>
+<circle cx="23" cy="17" fill="#374151" r="1.5"></circle>
+<path d="M12 38 C12 28 28 28 28 38 Z" fill="#1e293b"></path>
+</svg>
+</div>
+<!-- Online status green badge -->
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+</div>
+<!-- Chat Status Text -->
+<div class="flex flex-col">
+<h4 class="font-semibold text-neutral-900 text-[13px] leading-tight">Kiran Ji</h4>
+<div class="text-[11px] text-neutral-600 leading-tight mt-0.5">
+<span>USD 0 /min </span><span class="text-red-500 font-medium">(CHAT)</span>
+</div>
+<span class="text-[11px] text-emerald-600 font-medium leading-tight mt-0.5">Chat is in progress</span>
+</div>
+</div>
+<!-- Chat CTA Action -->
+<button class="bg-white border-2 border-blue-600 hover:bg-blue-50 text-blue-600 font-bold px-6 py-1.5 rounded-full text-xs transition-colors shadow-2xs">
+          Chat
+        </button>
+</div>
+</div>
+<!-- END: Docked Active Chat Notification Pill -->
+<!-- BEGIN: Bottom Tab Navigation Bar -->
+<nav class="fixed bottom-2.5 left-1/2 -translate-x-1/2 w-[92%] max-w-[390px] bg-slate-200/90 backdrop-blur-md rounded-full px-2 py-1.5 flex items-center justify-around shadow-md z-40 border border-white/50 text-gray-700">
+<!-- Home Tab -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-gray-700 hover:text-black" href="#">
+<i class="ph ph-house text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">Home</span>
+</a>
+<!-- Chat Tab -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-gray-700 hover:text-black" href="#">
+<i class="ph ph-chat-circle-dots text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">Chat</span>
+</a>
+<!-- Call Tab (Active Tab with Pill Background) -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-black" href="#">
+<div class="bg-stone-400/50 px-6 py-1 rounded-full flex flex-col items-center">
+<i class="ph-fill ph-phone-call text-xl text-stone-900"></i>
+<span class="text-[10px] font-bold text-stone-900 mt-0.5">Call</span>
+</div>
+</a>
+<!-- Remedies Tab -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-gray-700 hover:text-black" href="#">
+<i class="ph ph-hands-praying text-2xl"></i>
+<span class="text-[10px] font-medium mt-0.5">Remedies</span>
+</a>
+</nav>
+<!-- END: Bottom Tab Navigation Bar -->
+</div>
+</body></html>

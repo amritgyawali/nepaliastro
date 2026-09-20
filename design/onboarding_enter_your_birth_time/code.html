@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Enter your details - Birth Time</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#FAF8F0',
+              yellow: '#F4D03F',
+              accent: '#EEDB3C',
+              dark: '#2A2C2A',
+              muted: '#767975',
+              faded: '#B8BAB6',
+              highlight: '#EDEBE2',
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+<!-- BEGIN: Custom CSS -->
+<style data-purpose="base-layout">
+    body {
+      background-color: #FAF8F0;
+      color: #2A2C2A;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+  </style>
+<style data-purpose="picker-wheel-styling">
+    /* Picker wheel styling */
+    .wheel-item-selected {
+      color: #2D312E;
+      font-size: 2rem;
+      line-height: 2.5rem;
+      font-weight: 500;
+    }
+    .wheel-item-near {
+      color: #A3A6A0;
+      font-size: 1.5rem;
+      line-height: 2rem;
+      font-weight: 400;
+    }
+    .wheel-item-far {
+      color: #C8CBC4;
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+      font-weight: 400;
+      opacity: 0.75;
+    }
+  </style>
+<!-- END: Custom CSS -->
+</head>
+<body class="min-h-screen bg-[#FAF8F0] flex justify-center items-start antialiased text-[#2D312E]">
+<!-- Mobile Screen Container matching iPhone aspect -->
+<div class="w-full max-w-[428px] min-h-screen flex flex-col justify-between px-6 pt-12 pb-10">
+<!-- Top Block: Navigation, Progress, Heading, and Picker -->
+<div class="flex flex-col">
+<!-- BEGIN: NavigationHeader -->
+<header class="relative flex items-center justify-center pt-2 pb-6" data-purpose="top-navigation">
+<!-- Back circular button -->
+<button aria-label="Go back" class="absolute left-0 w-11 h-11 rounded-full bg-[#EBE9E1] bg-opacity-70 flex items-center justify-center active:bg-neutral-300 transition-colors" type="button">
+<svg class="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M15 19l-7-7 7-7"></path>
+</svg>
+</button>
+<!-- Centered Screen Title -->
+<h1 class="text-[1.125rem] font-semibold tracking-tight text-[#1D1E1C]">
+          Enter your details
+        </h1>
+</header>
+<!-- END: NavigationHeader -->
+<!-- BEGIN: StepProgressBar -->
+<nav aria-label="Registration Progress" class="flex items-center space-x-6 pt-4 pb-8" data-purpose="step-indicator">
+<!-- Step 1: Completed -->
+<span class="w-[14px] h-[14px] rounded-full bg-[#F0CB35] block flex-shrink-0"></span>
+<!-- Step 2: Completed -->
+<span class="w-[14px] h-[14px] rounded-full bg-[#F0CB35] block flex-shrink-0"></span>
+<!-- Step 3: Completed -->
+<span class="w-[14px] h-[14px] rounded-full bg-[#F0CB35] block flex-shrink-0"></span>
+<!-- Step 4: Active (Time Step with Clock Icon) -->
+<div class="w-7 h-7 rounded-full bg-[#EFCA38] flex items-center justify-center flex-shrink-0 shadow-sm">
+<!-- Clock Icon inside circle -->
+<svg class="w-4 h-4 text-[#262824]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="9"></circle>
+<polyline points="12 7 12 12 15 14"></polyline>
+</svg>
+</div>
+<!-- Step 5: Inactive -->
+<span class="w-[14px] h-[14px] rounded-full bg-[#DCD9D0] block flex-shrink-0"></span>
+<!-- Step 6: Inactive -->
+<span class="w-[14px] h-[14px] rounded-full bg-[#DCD9D0] block flex-shrink-0"></span>
+</nav>
+<!-- END: StepProgressBar -->
+<!-- BEGIN: TitleSection -->
+<section class="pt-2 pb-6" data-purpose="section-heading">
+<h2 class="text-[2rem] leading-[2.4rem] font-medium tracking-tight text-[#4B5563] text-opacity-95">
+          Enter your birth time
+        </h2>
+</section>
+<!-- END: TitleSection -->
+<!-- BEGIN: TimePickerWheel -->
+<section aria-label="Time picker" class="relative py-2 my-2 select-none" data-purpose="time-picker-wheel">
+<!-- Selection Highlight Pill spanning across columns -->
+<div class="absolute inset-x-[-8px] top-1/2 -translate-y-1/2 h-[46px] bg-[#EFECE3] bg-opacity-80 rounded-[14px] pointer-events-none -z-0"></div>
+<div class="relative z-10 flex items-center justify-between text-center max-w-[310px] mx-auto px-4">
+<!-- Column 1: Hours -->
+<div class="flex flex-col items-center flex-1" data-purpose="hours-column">
+<span class="wheel-item-far py-1">7</span>
+<span class="wheel-item-near py-1">8</span>
+<span class="wheel-item-selected py-0.5">9</span>
+<span class="wheel-item-near py-1">10</span>
+<span class="wheel-item-far py-1">11</span>
+</div>
+<!-- Column 2: Minutes -->
+<div class="flex flex-col items-center flex-1" data-purpose="minutes-column">
+<span class="wheel-item-far py-1">54</span>
+<span class="wheel-item-near py-1">55</span>
+<span class="wheel-item-selected py-0.5">56</span>
+<span class="wheel-item-near py-1">57</span>
+<span class="wheel-item-far py-1">58</span>
+</div>
+<!-- Column 3: AM/PM Period -->
+<div class="flex flex-col items-center flex-1" data-purpose="period-column">
+<span class="wheel-item-far py-1 opacity-0"> </span>
+<span class="wheel-item-near py-1 tracking-wide">AM</span>
+<span class="wheel-item-selected py-0.5 tracking-wide">PM</span>
+<span class="wheel-item-near py-1 opacity-0"> </span>
+<span class="wheel-item-far py-1 opacity-0"> </span>
+</div>
+</div>
+</section>
+<!-- END: TimePickerWheel -->
+<!-- BEGIN: CheckboxAndHelpNote -->
+<section class="mt-8" data-purpose="unknown-time-option">
+<!-- Unknown birth time checkbox option -->
+<label class="flex items-center space-x-3 cursor-pointer group">
+<input class="w-[18px] h-[18px] rounded border-[#383B38] text-[#EFCA38] focus:ring-0 focus:ring-offset-0 bg-transparent cursor-pointer" id="unknown-birth-time" type="checkbox"/>
+<span class="text-[0.975rem] font-medium text-[#1E201E]">
+            Don’t know my exact time of birth
+          </span>
+</label>
+<!-- Accuracy Help Note -->
+<p class="mt-3 text-[0.875rem] leading-[1.35rem] text-[#585C57]">
+          Note: Without time of birth, we can still achieve upto 80% accurate predictions
+        </p>
+</section>
+<!-- END: CheckboxAndHelpNote -->
+</div>
+<!-- BEGIN: BottomCTA -->
+<footer class="w-full pt-8 pb-2" data-purpose="bottom-action">
+<button class="w-full h-[54px] rounded-xl bg-[#F4D03F] hover:bg-[#ebd034] active:bg-[#dfbd28] text-[#1E201E] font-semibold text-[1.05rem] transition-colors flex items-center justify-center shadow-sm" id="next-step-button" type="button">
+        Next
+      </button>
+</footer>
+<!-- END: BottomCTA -->
+</div>
+<!-- BEGIN: InteractiveScripts -->
+<script data-purpose="checkbox-state-handling">
+    document.addEventListener('DOMContentLoaded', () => {
+      const checkbox = document.getElementById('unknown-birth-time');
+      const timePicker = document.querySelector('[data-purpose="time-picker-wheel"]');
+
+      if (checkbox && timePicker) {
+        checkbox.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            timePicker.style.opacity = '0.35';
+            timePicker.style.pointerEvents = 'none';
+          } else {
+            timePicker.style.opacity = '1';
+            timePicker.style.pointerEvents = 'auto';
+          }
+        });
+      }
+    });
+  </script>
+<!-- END: InteractiveScripts -->
+</body></html>

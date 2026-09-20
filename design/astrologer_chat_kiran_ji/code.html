@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Chat with Kiran Ji - Astrology Consultation</title>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#F5A623',
+              amber: '#D97706',
+              surface: '#FAF9F6',
+              chatBg: '#F7F6F2',
+              userBubble: '#FEEFCE',
+              astroBubble: '#FFFFFF',
+              dark: '#1C1917',
+              muted: '#78716C'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom CSS for iOS Chat Feel -->
+<style data-purpose="chat-animations">
+    @keyframes pulseTyping {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    .typing-dot:nth-child(1) { animation: pulseTyping 1.2s infinite 0s; }
+    .typing-dot:nth-child(2) { animation: pulseTyping 1.2s infinite 0.2s; }
+    .typing-dot:nth-child(3) { animation: pulseTyping 1.2s infinite 0.4s; }
+
+    /* Custom scrollbar hiding for clean app feel */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* iOS smooth tap effect */
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-stone-900 flex justify-center items-center min-h-screen p-0 sm:p-4 selection:bg-amber-200">
+<!-- BEGIN: MobileDeviceFrame -->
+<div class="w-full max-w-[420px] h-[100dvh] sm:h-[880px] bg-[#FFFFFF] flex flex-col relative sm:rounded-[44px] sm:shadow-2xl overflow-hidden border-0 sm:border-[8px] sm:border-stone-800" data-purpose="mobile-viewport-frame">
+<!-- BEGIN: iOSStatusBar -->
+<!-- Top iOS status bar matching reference: 8:58, bell mute icon, wifi, battery 19% -->
+<header class="w-full pt-3 px-7 flex justify-between items-center bg-white z-30 select-none" data-purpose="ios-status-bar">
+<!-- Left: Clock & Bell Mute Indicator -->
+<div class="flex items-center space-x-1.5 font-semibold text-[15px] tracking-tight text-black">
+<span>8:58</span>
+<!-- Crossed bell mute icon -->
+<svg class="w-3.5 h-3.5 text-black inline-block ml-0.5" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6zM4.27 3L3 4.27l3.28 3.28C6.11 8.16 6 8.56 6 9v7l-2 2v1h13.73l2.73 2.73L21.73 20.46 4.27 3z"></path>
+</svg>
+</div>
+<!-- Right: Cellular signal, WiFi, Battery percentage indicator -->
+<div class="flex items-center space-x-1.5 text-black">
+<!-- Cellular Signal bars -->
+<svg class="w-4 h-3.5" fill="currentColor" viewbox="0 0 24 24">
+<rect height="6" rx="0.75" width="3" x="2" y="16"></rect>
+<rect height="10" rx="0.75" width="3" x="7.5" y="12"></rect>
+<rect height="15" rx="0.75" width="3" x="13" y="7"></rect>
+<rect height="19" rx="0.75" width="3" x="18.5" y="3"></rect>
+</svg>
+<!-- WiFi icon -->
+<svg class="w-4 h-3.5" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.2c3.48 0 6.64 1.34 9.02 3.53L12 19.8 2.98 10.73C5.36 8.54 8.52 7.2 12 7.2z"></path>
+</svg>
+<!-- Battery with '19' interior indicator -->
+<div class="flex items-center pl-0.5">
+<div class="relative w-[25px] h-[12.5px] border border-black rounded-[4px] p-[1.5px] flex items-center">
+<!-- Red/Orange low power battery fill (19%) -->
+<div class="h-full bg-[#FA3E3E] rounded-[2px]" style="width: 28%;"></div>
+<span class="absolute inset-0 flex items-center justify-center text-[9px] font-bold tracking-tighter text-black leading-none pt-[0.5px]">19</span>
+</div>
+<!-- Battery terminal nub -->
+<div class="w-[1.5px] h-[4.5px] bg-black rounded-r-sm"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: MainHeader -->
+<!-- Exact header replicated from reference IMG_3136.png -->
+<header class="w-full bg-white px-4 py-2.5 flex items-center justify-between border-b border-stone-100 relative z-20" data-purpose="app-navigation-header">
+<div class="flex items-center space-x-3">
+<!-- Back Chevron Icon -->
+<button aria-label="Go back" class="p-1 -ml-1 text-black active:opacity-60 transition" id="btn-back" type="button">
+<svg class="w-6 h-6 stroke-[2.2] stroke-current fill-none" viewbox="0 0 24 24">
+<path d="M15.75 19.5L8.25 12l7.5-7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Circular Avatar matching reference photo of Kiran Ji -->
+<div class="relative w-11 h-11 rounded-full overflow-hidden shrink-0 border border-stone-100 bg-stone-100">
+<img alt="Kiran Ji" class="w-full h-full object-cover object-top scale-[3.2] translate-y-[2px] -translate-x-[2px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN-C4Ab428ESy4aIzbMF4xNxnYi72TLsQBcZvJbZgUQaM3LgYT7IH2susOB-1sNGgDpsa2OrimiMwIvvbyutEo8LecrHTnH2FZfaMFS89v45ygo79Bc2nvHBUnTPY2HgdDp79P8wpNlrnbsYKhZlAhY0XHnDOmKJ2gCruWYPY01z1Lx3oStrPk6b_3wq5ae87wZxxbxXYS7HSp5zNS8xaI8IpLCzgopzIveklqcww2GDQkdWS1Z5U5Nw"/>
+</div>
+<!-- Name, Verified Badge & Timer Counter -->
+<div class="flex flex-col text-left leading-tight">
+<div class="flex items-center space-x-1.5">
+<span class="font-semibold text-[17px] text-stone-900 tracking-tight">Kiran Ji</span>
+<!-- Green Verified Seal Icon -->
+<span class="inline-flex text-[#10B981]" title="Verified Astrologer">
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.97-.81-4.08s-2.6-1.38-4.08-.81C14.5 2.46 13.25 1.75 12 1.75s-2.5.71-3.17 2.02C7.34 3.2 5.76 3.47 4.75 4.58s-1.27 2.69-.81 4.08C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.97.81 4.08s2.6 1.38 4.08.81c.67 1.31 1.92 2.02 3.17 2.02s2.5-.71 3.17-2.02c1.48.57 3.06.3 4.08-.81s1.27-2.69.81-4.08c1.31-.67 2.19-1.91 2.19-3.34zm-11.75 4.5l-4-4 1.41-1.41L10.5 13.67l6.59-6.59 1.41 1.41-8 8z"></path>
+</svg>
+</span>
+</div>
+<!-- Live session timer -->
+<span class="text-[13px] text-stone-500 font-normal tabular-nums" id="session-timer">01:56</span>
+</div>
+</div>
+<!-- End Consultation Action -->
+<div>
+<button class="text-[15px] font-medium text-stone-900 hover:text-red-600 transition px-2 py-1 rounded active:bg-stone-100" id="btn-end-session" type="button">
+          End
+        </button>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: InfoBanner -->
+<!-- Astro details notification badge -->
+<div class="bg-amber-50/70 border-b border-amber-100/80 px-4 py-2 flex items-center justify-between text-[12px] text-amber-900" data-purpose="session-info-strip">
+<div class="flex items-center space-x-1.5 truncate">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-medium truncate">Birth Chart Shared: Amrit Gyawali (Kathmandu)</span>
+</div>
+<span class="font-semibold text-amber-700 shrink-0 ml-2">₹25/min</span>
+</div>
+<!-- END: InfoBanner -->
+<!-- BEGIN: ChatScrollArea -->
+<!-- Scrollable Messages Container -->
+<main class="flex-1 overflow-y-auto px-4 py-4 space-y-3.5 bg-[#FAF9F6]" data-purpose="chat-scroll-container" id="chat-messages-box">
+<!-- Date Stamp Pill -->
+<div class="flex justify-center my-1">
+<span class="px-3 py-1 rounded-full bg-stone-200/60 text-stone-600 text-[11px] font-medium tracking-wide">
+          TODAY • 8:56 PM
+        </span>
+</div>
+<!-- Received: Astrologer Welcome Message -->
+<div class="flex items-end space-x-2 max-w-[88%]">
+<div class="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-1 border border-amber-200/60 bg-stone-100">
+<img alt="Kiran Ji" class="w-full h-full object-cover object-top scale-[3.2] translate-y-[1px] -translate-x-[1px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBteejrFTkwpkXq8qo_-8MFWnn-ZtDw7gjMOdVRbUAtmzYM9K1pP3ZUngiBn_ATvqWtAfTF6qujU2dPGZvWYp4J-cgB0ujb5HzBTjPFQAWLPqPy3Bo45zYdAoHvNhv2thi4uw7YiDZ7MbyoACadn3ducTS9hezmq8syTHLIH9EZxTX2pbLlrXpbrPxBSlZEHZUjsOp97Bcsj_ezljRgS9r5ehOQcoqi1SszIlZQAU8mrO6M7MNeYx7D6Q"/>
+</div>
+<div class="bg-white rounded-2xl rounded-bl-sm p-3.5 shadow-sm border border-stone-100 text-stone-800 text-[14px] leading-relaxed">
+<p class="font-medium text-amber-800 text-[12px] mb-1 flex items-center space-x-1">
+<span>✨ Vedic Astrologer</span>
+</p>
+<p>Namaste Amrit! 🙏 I have opened your Kundli. As requested, I am analyzing your birth chart from Kathmandu (19 Sept 2006, 9:56 PM).</p>
+<p class="mt-2">How can I guide you today regarding your career, higher studies, or relationships?</p>
+<span class="block text-right text-[10px] text-stone-400 mt-1">8:56 PM</span>
+</div>
+</div>
+<!-- Sent: User First Query -->
+<div class="flex flex-col items-end space-y-1 ml-auto max-w-[82%]">
+<div class="bg-[#FFEBB7] rounded-2xl rounded-br-sm p-3.5 shadow-sm text-stone-900 text-[14px] leading-relaxed">
+<p>Namaste Kiran Ji, I wanted to ask about my career prospects and higher education in the coming year 2025.</p>
+</div>
+<div class="flex items-center space-x-1 pr-1">
+<span class="text-[10px] text-stone-400">8:57 PM</span>
+<!-- Double blue/read ticks -->
+<svg class="w-3.5 h-3.5 text-blue-500 inline" fill="currentColor" viewbox="0 0 24 24">
+<path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17l-4.24-4.24-1.41 1.41 5.66 5.66 12-12-1.43-1.41zM.41 13.41L6.07 19.07l1.41-1.41L1.83 12 .41 13.41z"></path>
+</svg>
+</div>
+</div>
+<!-- Received: Kiran Ji Astrological Answer -->
+<div class="flex items-end space-x-2 max-w-[88%]">
+<div class="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-1 border border-amber-200/60 bg-stone-100">
+<img alt="Kiran Ji" class="w-full h-full object-cover object-top scale-[3.2] translate-y-[1px] -translate-x-[1px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBECukCEwwWRW1Y0KBAt5qsTOwjzLlmEDveHa0SRlE7YuW_WAUnnPdghOkaaX9MJPkHtP-YAU7QqYhFXyCwZIReYwlilfViyz4BcbHzRMe-yAcP0cQNP4_lC5whPGyKYfCFXrUYDB-DT5_kZyAM3DzWfSxe2ffTQ_YvIYVYOQW_DhsNd4kmYYRzTgqzbKVDCzbGI_koaUNzIevk1r0_9WasLxXTvhWwypwD1Dq1TZ06NNNyHPB_U2LRvQ"/>
+</div>
+<div class="bg-white rounded-2xl rounded-bl-sm p-3.5 shadow-sm border border-stone-100 text-stone-800 text-[14px] leading-relaxed">
+<p>Looking at your chart, Jupiter is strongly placed in your 9th house of higher learning. The Mahadasha period shows favorable transitions after April.</p>
+<div class="mt-2 p-2 bg-amber-50/60 rounded-lg border border-amber-100/60 text-[12.5px] text-amber-900">
+            ⭐ <strong>Key Insight:</strong> Foreign studies or exam preparation will yield fruitful results. Be mindful of Saturn's aspect on decision-making.
+          </div>
+<span class="block text-right text-[10px] text-stone-400 mt-1">8:58 PM</span>
+</div>
+</div>
+<!-- Typing Indicator Pill (Hidden by default, shown dynamically) -->
+<div class="hidden items-center space-x-2 text-stone-500 text-xs pl-9 py-1" id="typing-indicator">
+<div class="flex items-center space-x-1 bg-white px-3 py-2 rounded-full border border-stone-100 shadow-xs">
+<span class="w-1.5 h-1.5 bg-amber-500 rounded-full typing-dot"></span>
+<span class="w-1.5 h-1.5 bg-amber-500 rounded-full typing-dot"></span>
+<span class="w-1.5 h-1.5 bg-amber-500 rounded-full typing-dot"></span>
+<span class="text-[11px] text-stone-400 ml-1">Kiran Ji is typing...</span>
+</div>
+</div>
+</main>
+<!-- END: ChatScrollArea -->
+<!-- BEGIN: QuickSuggestionsChips -->
+<!-- Quick-tap astrological inquiry pills -->
+<section class="bg-[#FAF9F6] px-4 py-2 border-t border-stone-100" data-purpose="quick-prompt-chips">
+<div class="flex space-x-2 overflow-x-auto no-scrollbar py-0.5">
+<button class="quick-chip whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium bg-white text-stone-700 border border-stone-200 shadow-xs hover:border-amber-400 hover:bg-amber-50 transition active:scale-95" type="button">
+          🎓 Will I study abroad?
+        </button>
+<button class="quick-chip whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium bg-white text-stone-700 border border-stone-200 shadow-xs hover:border-amber-400 hover:bg-amber-50 transition active:scale-95" type="button">
+          💼 Best career field for me?
+        </button>
+<button class="quick-chip whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium bg-white text-stone-700 border border-stone-200 shadow-xs hover:border-amber-400 hover:bg-amber-50 transition active:scale-95" type="button">
+          🪐 Any remedies for peace?
+        </button>
+<button class="quick-chip whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium bg-white text-stone-700 border border-stone-200 shadow-xs hover:border-amber-400 hover:bg-amber-50 transition active:scale-95" type="button">
+          ❤️ Love &amp; Marriage timing
+        </button>
+</div>
+</section>
+<!-- END: QuickSuggestionsChips -->
+<!-- BEGIN: ChatInputBar -->
+<!-- Interactive message input bar -->
+<footer class="bg-white border-t border-stone-200/80 px-3 py-2.5 z-20 pb-5 sm:pb-3" data-purpose="chat-input-bar">
+<form class="flex items-center space-x-2" id="chat-form" onsubmit="event.preventDefault();">
+<!-- Kundli chart attachment button -->
+<button aria-label="Share Kundli Chart" class="w-9 h-9 rounded-full bg-stone-100 hover:bg-amber-50 hover:text-amber-600 text-stone-600 flex items-center justify-center transition active:scale-90 shrink-0" id="btn-kundli-chart" title="Send Kundli or Horoscope" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Message Input Field -->
+<div class="relative flex-1">
+<input autocomplete="off" class="w-full text-[14.5px] bg-stone-100/90 text-stone-900 placeholder:text-stone-400 border-none rounded-full py-2.5 pl-4 pr-10 focus:ring-2 focus:ring-amber-400 focus:bg-white transition" id="chat-input" placeholder="Type your message..." type="text"/>
+<!-- Kundli Star icon in input -->
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 pointer-events-none text-xs" title="Astrology session active">
+            ✦
+          </span>
+</div>
+<!-- Send Button -->
+<button aria-label="Send message" class="w-10 h-10 rounded-full bg-amber-400 hover:bg-amber-500 text-stone-900 flex items-center justify-center shadow-sm transition active:scale-95 shrink-0" id="btn-send-message" type="button">
+<svg class="w-4 h-4 translate-x-[1px]" fill="currentColor" viewbox="0 0 24 24">
+<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+</svg>
+</button>
+</form>
+</footer>
+<!-- END: ChatInputBar -->
+<!-- BEGIN: EndConsultationModal -->
+<!-- Confirmation dialog when clicking End in header -->
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4 hidden backdrop-blur-[2px]" id="end-modal">
+<div class="bg-white rounded-3xl w-full max-w-xs p-5 shadow-2xl text-center">
+<div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3 text-xl">
+          🙏
+        </div>
+<h3 class="text-base font-bold text-stone-900">End Consultation?</h3>
+<p class="text-xs text-stone-500 mt-1 mb-4 leading-relaxed">
+          Your live chat with Kiran Ji will be closed and your summary report will be generated.
+        </p>
+<div class="flex space-x-2">
+<button class="flex-1 py-2.5 rounded-full border border-stone-200 text-stone-700 text-xs font-semibold hover:bg-stone-50 transition" id="btn-cancel-modal" type="button">
+            Continue Chat
+          </button>
+<button class="flex-1 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-sm transition" id="btn-confirm-end" type="button">
+            End Now
+          </button>
+</div>
+</div>
+</div>
+<!-- END: EndConsultationModal -->
+</div>
+<!-- END: MobileDeviceFrame -->
+<!-- BEGIN: InteractiveChatScript -->
+<script data-purpose="chat-interactivity">
+    // Live timer in header counting up from 01:56 (116 seconds)
+    let totalSeconds = 116;
+    const timerElement = document.getElementById('session-timer');
+    
+    setInterval(() => {
+      totalSeconds++;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      timerElement.textContent = 
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }, 1000);
+
+    // Astro Replies Repository
+    const astroReplies = [
+      "I see a powerful alignment of Mercury and Venus in your horoscope. This indicates excellent communication skills and success in analytical or technical domains.",
+      "Your Rahu placement advises patience before taking sudden leaps this quarter. Chanting the Gayatri mantra on Wednesdays will bring mental clarity.",
+      "Yes, foreign travel and relocation are clearly indicated in your 12th house between September and November. Prepare your documents systematically.",
+      "A very positive transit is initiating next month! Wear more brass, copper, or warm tones to strengthen your ruling planet Sun.",
+      "Regarding your query: The alignment suggests stability. Don't worry about minor delays, as Saturn teaches long-term resilience."
+    ];
+
+    const chatBox = document.getElementById('chat-messages-box');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('btn-send-message');
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    // Helper to format current time string (e.g. 8:59 PM)
+    function getCurrentFormattedTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
+    // Scroll chat to latest message
+    function scrollToBottom() {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Append a user sent message bubble
+    function appendUserMessage(text) {
+      const timeStr = getCurrentFormattedTime();
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex flex-col items-end space-y-1 ml-auto max-w-[82%] animate-fade-in';
+      messageDiv.innerHTML = `
+        <div class="bg-[#FFEBB7] rounded-2xl rounded-br-sm p-3.5 shadow-sm text-stone-900 text-[14px] leading-relaxed">
+          <p>${escapeHtml(text)}</p>
+        </div>
+        <div class="flex items-center space-x-1 pr-1">
+          <span class="text-[10px] text-stone-400">${timeStr}</span>
+          <svg class="w-3.5 h-3.5 text-stone-400 inline" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+      `;
+      chatBox.appendChild(messageDiv);
+      scrollToBottom();
+    }
+
+    // Append received astrologer response bubble
+    function appendAstroResponse(text) {
+      const timeStr = getCurrentFormattedTime();
+      const astroDiv = document.createElement('div');
+      astroDiv.className = 'flex items-end space-x-2 max-w-[88%] animate-fade-in';
+      astroDiv.innerHTML = `
+        <div class="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-1 border border-amber-200/60 bg-stone-100">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-18j45jOH5eSaRZLpcYBMUS9FXdFPA1JdyeHUuMCUq-BDiLaSJ2gcLbfQ9-g8ahj2E_WZvg1q2f5BEFDB-9gWY-qd_tBVM2Pnmo_fpebAVH1-5UXAg7NM651iLdDpDSvDSmS3_ryulepY62XCdzhashtf4zWB8kTDpKkfJvBembTvjiDZShg0cMcj8lHwpZLDcPpCuyiDp02WVv7OyyazYipPLC1l0xehyPSMEHbsYvCmtHMB-sgPvw" alt="Kiran Ji" class="w-full h-full object-cover object-top scale-[3.2] translate-y-[1px] -translate-x-[1px]" />
+        </div>
+        <div class="bg-white rounded-2xl rounded-bl-sm p-3.5 shadow-sm border border-stone-100 text-stone-800 text-[14px] leading-relaxed">
+          <p class="font-medium text-amber-800 text-[12px] mb-1">✨ Kiran Ji</p>
+          <p>${text}</p>
+          <span class="block text-right text-[10px] text-stone-400 mt-1">${timeStr}</span>
+        </div>
+      `;
+      chatBox.appendChild(astroDiv);
+      scrollToBottom();
+    }
+
+    // Simple HTML escaper
+    function escapeHtml(string) {
+      return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Handle sending message
+    function handleSend() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      appendUserMessage(text);
+      chatInput.value = '';
+      chatInput.focus();
+
+      // Show typing indicator
+      setTimeout(() => {
+        typingIndicator.classList.remove('hidden');
+        typingIndicator.classList.add('flex');
+        scrollToBottom();
+      }, 500);
+
+      // Reply back after delay
+      setTimeout(() => {
+        typingIndicator.classList.add('hidden');
+        typingIndicator.classList.remove('flex');
+        const randomReply = astroReplies[Math.floor(Math.random() * astroReplies.length)];
+        appendAstroResponse(randomReply);
+      }, 1800);
+    }
+
+    // Send on button click or Enter key
+    sendBtn.addEventListener('click', handleSend);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    // Quick suggestion chips handler
+    document.querySelectorAll('.quick-chip').forEach(button => {
+      button.addEventListener('click', () => {
+        const queryText = button.textContent.trim().replace(/^[^\w\s]+/, '').trim();
+        chatInput.value = queryText;
+        handleSend();
+      });
+    });
+
+    // Modal logic for End button
+    const endModal = document.getElementById('end-modal');
+    const endBtn = document.getElementById('btn-end-session');
+    const cancelModalBtn = document.getElementById('btn-cancel-modal');
+    const confirmEndBtn = document.getElementById('btn-confirm-end');
+
+    endBtn.addEventListener('click', () => {
+      endModal.classList.remove('hidden');
+    });
+
+    cancelModalBtn.addEventListener('click', () => {
+      endModal.classList.add('hidden');
+    });
+
+    confirmEndBtn.addEventListener('click', () => {
+      endModal.classList.add('hidden');
+      appendAstroResponse("Consultation concluded. May the stars illuminate your path with health and prosperity! 🙏✨");
+    });
+
+    // Attachment button feedback
+    document.getElementById('btn-kundli-chart').addEventListener('click', () => {
+      chatInput.value = "Sharing updated transit degrees of Kathmandu Kundli...";
+      handleSend();
+    });
+  </script>
+<!-- END: InteractiveChatScript -->
+</body></html>

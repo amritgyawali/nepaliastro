@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Profile &amp; Settings</title>
+<!-- Tailwind CSS CDN with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            appBg: '#F8F8F7',
+            cardBg: '#FFFFFF',
+            borderGray: '#ECECEB',
+            textPrimary: '#121212',
+            textSecondary: '#7A7E85',
+            badgeGreenBg: '#DDF4E4',
+            badgeGreenText: '#2B8349',
+            iconBg: '#EDEFEF',
+            iconGray: '#565A61',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-styling">
+    /* Remove tap highlight and customize scrollbar */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #ECECEC;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    }
+    /* iOS simulated device frame */
+    .mobile-screen {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background-color: #F8F8F7;
+      overflow-x: hidden;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+<div class="mobile-screen flex flex-col pb-12 shadow-2xl">
+<!-- BEGIN: StatusBar -->
+<header class="w-full pt-3 px-7 pb-1 flex justify-between items-center text-black select-none" data-purpose="status-bar">
+<!-- Time and Mute status -->
+<div class="flex items-center space-x-1.5 pl-1">
+<span class="text-[17px] font-semibold tracking-tight text-[#111]">8:59</span>
+<!-- Bell off / mute icon -->
+<svg class="w-4 h-4 text-black inline-block ml-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+<path d="M18.63 13A17.89 17.89 0 0 1 18 8"></path>
+<path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"></path>
+<line x1="1" x2="23" y1="1" y2="23"></line>
+</svg>
+</div>
+<!-- Network, Wifi, Battery -->
+<div class="flex items-center space-x-2">
+<!-- Cellular Signal Bars -->
+<div class="flex items-end space-x-[2px] h-3.5 pb-[1px]">
+<span class="w-[3px] h-[4px] bg-black rounded-sm"></span>
+<span class="w-[3px] h-[6px] bg-black rounded-sm"></span>
+<span class="w-[3px] h-[9px] bg-black rounded-sm"></span>
+<span class="w-[3px] h-[12px] bg-black rounded-sm"></span>
+</div>
+<!-- Wi-Fi Icon -->
+<svg class="w-[18px] h-[18px] text-black" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 18c-.8 0-1.5.7-1.5 1.5S11.2 21 12 21s1.5-.7 1.5-1.5S12.8 18 12 18zm-4.9-3.2c2.7-2.7 7.1-2.7 9.8 0 .4.4 1 .4 1.4 0 .4-.4.4-1 0-1.4-3.5-3.5-9.1-3.5-12.6 0-.4.4-.4 1 0 1.4.4.4 1 .4 1.4 0zm-3.5-3.6C7.5 7.4 16.5 7.4 20.4 11.2c.4.4 1 .4 1.4 0 .4-.4.4-1 0-1.4C17-1 7-1 2.2 9.8c-.4.4-.4 1 0 1.4.4.4 1 .4 1.4 0z"></path>
+</svg>
+<!-- Battery Indicator (18%) -->
+<div class="flex items-center">
+<div class="border-[1.5px] border-black/80 rounded-full px-1.5 py-[0.5px] text-[11px] font-bold leading-none flex items-center justify-center bg-[#E5483D] text-white min-w-[28px] h-[15px]">
+          18
+        </div>
+<div class="w-[1.5px] h-[4px] bg-black/60 rounded-r-sm -ml-[0.5px]"></div>
+</div>
+</div>
+</header>
+<!-- END: StatusBar -->
+<!-- BEGIN: NavigationHeader -->
+<nav class="w-full px-5 py-3 flex items-center relative" data-purpose="nav-header">
+<!-- Back Button -->
+<button aria-label="Back" class="w-11 h-11 rounded-full bg-[#E8E8E6] flex items-center justify-center text-[#1E1E1E] transition active:scale-95" type="button">
+<svg class="w-6 h-6 stroke-[2.4]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<path d="M15 18l-6-6 6-6"></path>
+</svg>
+</button>
+<!-- Page Title -->
+<h1 class="absolute left-0 right-0 text-center font-bold text-[20px] tracking-tight text-[#161719] pointer-events-none">
+      Profile &amp; Settings
+    </h1>
+</nav>
+<!-- END: NavigationHeader -->
+<!-- BEGIN: MainContent -->
+<main class="px-5 pt-3 flex flex-col space-y-5" data-purpose="profile-content">
+<!-- BEGIN: UserProfileCard -->
+<section class="w-full bg-white rounded-2xl p-4 border border-[#F0F0EE] shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center justify-between" data-purpose="user-card">
+<div class="flex items-center space-x-4">
+<!-- Aries Horns / Ram Character Avatar -->
+<div class="w-16 h-16 rounded-full bg-[#FCE34D] flex items-center justify-center relative overflow-hidden shrink-0 border border-black/5">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<!-- Background circle -->
+<circle cx="50" cy="50" fill="#FDE047" r="50"></circle>
+<!-- Shoulders / Golden garment -->
+<path d="M22 100 C22 80, 78 80, 78 100 Z" fill="#D49A32"></path>
+<path d="M35 88 C45 95, 55 95, 65 88" fill="none" stroke="#FDE047" stroke-width="2.5"></path>
+<circle cx="50" cy="94" fill="#FFF" r="2.5"></circle>
+<!-- Neck -->
+<rect fill="#E8B58E" height="15" width="14" x="43" y="66"></rect>
+<!-- Face -->
+<ellipse cx="50" cy="54" fill="#E8B58E" rx="19" ry="21"></ellipse>
+<!-- Hair (short dark) -->
+<path d="M32 45 C32 32, 68 32, 68 45 C68 38, 32 38, 32 45 Z" fill="#4B3621"></path>
+<!-- Aries Horns Left -->
+<path d="M33 42 C18 35, 15 56, 26 62 C34 66, 38 52, 28 50 C23 48, 22 40, 31 43" fill="#9DA5AF" stroke="#7E8793" stroke-width="1.2"></path>
+<!-- Aries Horns Right -->
+<path d="M67 42 C82 35, 85 56, 74 62 C66 66, 62 52, 72 50 C77 48, 78 40, 69 43" fill="#9DA5AF" stroke="#7E8793" stroke-width="1.2"></path>
+<!-- Eyebrows -->
+<path d="M38 48 Q43 46 47 48" fill="none" stroke="#36220F" stroke-linecap="round" stroke-width="1.8"></path>
+<path d="M53 48 Q57 46 62 48" fill="none" stroke="#36220F" stroke-linecap="round" stroke-width="1.8"></path>
+<!-- Eyes -->
+<ellipse cx="43" cy="52" fill="#36220F" rx="2.5" ry="1.8"></ellipse>
+<ellipse cx="57" cy="52" fill="#36220F" rx="2.5" ry="1.8"></ellipse>
+<!-- Nose -->
+<path d="M50 52 L48 57 L52 57" fill="none" stroke="#C58D66" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"></path>
+<!-- Lips / Smile -->
+<path d="M46 63 Q50 66 54 63" fill="none" stroke="#B86659" stroke-linecap="round" stroke-width="1.6"></path>
+<!-- Horn details/ribs -->
+<line stroke="#717A85" stroke-width="1" x1="24" x2="28" y1="46" y2="49"></line>
+<line stroke="#717A85" stroke-width="1" x1="22" x2="26" y1="52" y2="54"></line>
+<line stroke="#717A85" stroke-width="1" x1="76" x2="72" y1="46" y2="49"></line>
+<line stroke="#717A85" stroke-width="1" x1="78" x2="74" y1="52" y2="54"></line>
+</svg>
+</div>
+<!-- User Name -->
+<span class="text-[20px] font-bold text-[#141517] tracking-tight">User</span>
+</div>
+<!-- Edit Icon Button -->
+<button aria-label="Edit Profile" class="p-2 text-[#9B9EA5] hover:text-[#565A61] transition" type="button">
+<div class="w-8 h-8 rounded-lg bg-[#F5F6F6] flex items-center justify-center">
+<svg class="w-4 h-4 text-[#7A7E85]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+</svg>
+</div>
+</button>
+</section>
+<!-- END: UserProfileCard -->
+<!-- BEGIN: QuickActionsGrid -->
+<section class="grid grid-cols-3 gap-3" data-purpose="quick-actions">
+<!-- 1. My Orders Card -->
+<div class="bg-white rounded-2xl p-3.5 pt-4 pb-4 border border-[#ECECEB] flex flex-col justify-between h-[118px] shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+<div>
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center">
+<svg class="w-5 h-5 text-[#5A5F67]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+<path d="M3 3v5h5"></path>
+<path d="M12 7v5l3 2"></path>
+</svg>
+</div>
+</div>
+<span class="text-[14px] font-medium text-[#1A1A1B] tracking-tight">My Orders</span>
+</div>
+<!-- 2. Wallet Card with USD 0 Badge -->
+<div class="bg-white rounded-2xl p-3.5 pt-4 pb-4 border border-[#ECECEB] flex flex-col justify-between h-[118px] shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+<div class="flex items-center justify-between w-full">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center">
+<svg class="w-5 h-5 text-[#5A5F67]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<rect height="14" rx="2" width="20" x="2" y="6"></rect>
+<path d="M16 13a2 2 0 0 0 0-4h6v4z"></path>
+<path d="M6 6V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"></path>
+</svg>
+</div>
+<!-- USD 0 Pill -->
+<span class="bg-[#DDF5E5] text-[#2B8349] font-medium text-[11px] px-2 py-1 rounded-md leading-tight">
+            USD 0
+          </span>
+</div>
+<span class="text-[14px] font-medium text-[#1A1A1B] tracking-tight">Wallet</span>
+</div>
+<!-- 3. Support Chat Card -->
+<div class="bg-white rounded-2xl p-3.5 pt-4 pb-4 border border-[#ECECEB] flex flex-col justify-between h-[118px] shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+<div>
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center">
+<svg class="w-5 h-5 text-[#5A5F67]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+<path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+</svg>
+</div>
+</div>
+<span class="text-[14px] font-medium text-[#1A1A1B] tracking-tight whitespace-nowrap">Support Chat</span>
+</div>
+</section>
+<!-- END: QuickActionsGrid -->
+<!-- BEGIN: ExploreSection -->
+<section class="flex flex-col space-y-2 pt-1" data-purpose="explore-menu-group">
+<h2 class="text-[13px] font-semibold tracking-wider text-[#797D84] uppercase px-1">
+        EXPLORE
+      </h2>
+<!-- Grouped List Card -->
+<div class="bg-white rounded-2xl border border-[#ECECEB] divide-y divide-[#F1F1F0] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+<!-- Item 1: Chat with Astrologer -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#chat-astrologer">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Chat with Astrologer</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 2: Home -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#home">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Home</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 3: Free Services -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#free-services">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<rect height="7" rx="1.5" width="7" x="3" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="14"></rect>
+<rect height="7" rx="1.5" width="7" x="3" y="14"></rect>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Free Services</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 4: Book a Pooja -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#book-pooja">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<!-- Floral/Lotus ritual pooja icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12 3c-1.5 3-4 6-4 9a4 4 0 0 0 8 0c0-3-2.5-6-4-9z"></path>
+<path d="M6 13a4.5 4.5 0 0 0 6 4.5"></path>
+<path d="M18 13a4.5 4.5 0 0 1-6 4.5"></path>
+<path d="M12 17.5V21"></path>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Book a Pooja</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 5: Gemstone -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#gemstone">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M6 3h12l4 6-10 12L2 9z"></path>
+<path d="M2 9h20"></path>
+<path d="M10 3l-2 6 4 12 4-12-2-6"></path>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Gemstone</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+</div>
+</section>
+<!-- END: ExploreSection -->
+<!-- BEGIN: AccountSection -->
+<section class="flex flex-col space-y-2 pt-1" data-purpose="account-menu-group">
+<h2 class="text-[13px] font-semibold tracking-wider text-[#797D84] uppercase px-1">
+        ACCOUNT
+      </h2>
+<!-- Grouped List Card -->
+<div class="bg-white rounded-2xl border border-[#ECECEB] divide-y divide-[#F1F1F0] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+<!-- Item 1: My following -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#my-following">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+<circle cx="9" cy="7" r="4"></circle>
+<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">My following</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 2: Assistant Chat -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#assistant-chat">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+<path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Assistant Chat</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+<!-- Item 3: Redeem Gift Card -->
+<a class="flex items-center justify-between px-4 py-3.5 active:bg-[#F9F9F8] transition" href="#redeem-gift-card">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-full bg-[#EAECEF] flex items-center justify-center text-[#5A5F67]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<polyline points="20 12 20 22 4 22 4 12"></polyline>
+<rect height="5" width="20" x="2" y="7"></rect>
+<line x1="12" x2="12" y1="22" y2="7"></line>
+<path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+<path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+</svg>
+</div>
+<span class="text-[16px] font-medium text-[#18191B]">Redeem Gift Card</span>
+</div>
+<svg class="w-4 h-4 text-[#C1C3C8] stroke-[2.2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</a>
+</div>
+</section>
+<!-- END: AccountSection -->
+<!-- BEGIN: ServicesSection -->
+<section class="flex flex-col space-y-2 pt-1 pb-6" data-purpose="services-preview-group">
+<h2 class="text-[13px] font-semibold tracking-wider text-[#797D84] uppercase px-1">
+        SERVICES
+      </h2>
+<div class="bg-white rounded-2xl border border-[#ECECEB] h-7 shadow-[0_1px_2px_rgba(0,0,0,0.01)]"></div>
+</section>
+<!-- END: ServicesSection -->
+</main>
+<!-- END: MainContent -->
+</div>
+</body></html>
