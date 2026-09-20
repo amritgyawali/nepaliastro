@@ -43,6 +43,13 @@ export default function RootLayout() {
             <Stack.Screen name="onboarding" />
             <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
             <Stack.Screen name="chat/[id]" />
+            <Stack.Screen name="call/[id]" />
+            <Stack.Screen name="astrologer/[id]" />
+            <Stack.Screen name="remedy/[id]" />
+            <Stack.Screen name="horoscope" />
+            <Stack.Screen name="kundli" />
+            <Stack.Screen name="matching" />
+            <Stack.Screen name="panchang" />
             <Stack.Screen name="profile" />
           </Stack>
         </OnboardingProvider>

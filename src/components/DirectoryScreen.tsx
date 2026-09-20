@@ -36,7 +36,11 @@ export function DirectoryScreen({ mode, data }: DirectoryScreenProps) {
   );
 
   const openAstrologer = (astrologer: Astrologer) => {
-    router.push(`/chat/${astrologer.id}`);
+    router.push(`/astrologer/${astrologer.id}`);
+  };
+
+  const startSession = (astrologer: Astrologer) => {
+    router.push(mode === 'call' ? `/call/${astrologer.id}` : `/chat/${astrologer.id}`);
   };
 
   return (
@@ -64,7 +68,7 @@ export function DirectoryScreen({ mode, data }: DirectoryScreenProps) {
                 astrologer={astrologer}
                 mode={mode}
                 onPress={() => openAstrologer(astrologer)}
-                onAction={() => openAstrologer(astrologer)}
+                onAction={() => startSession(astrologer)}
               />
             ))
           )}

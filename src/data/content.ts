@@ -33,33 +33,72 @@ export const languageOptions = [
   'Nepali',
 ];
 
-/** The 2-up picture grid on the AstroRemedy tab. */
+/** The remedies the app can arrange, one card each. */
 export const remedyServices = [
   {
     id: 'pooja',
     title: 'Book a Pooja',
     description: 'A priest performs it in your name and sends the recording.',
     image: photos.pooja,
+    price: 45,
+    lead: 'Performed within 3 days of booking',
+    includes: [
+      'A priest matched to the pooja and to your chart',
+      'Your name, gotra and birth details read out in the sankalpa',
+      'Video of the full ritual, sent to you afterwards',
+      'The prasad posted to your address',
+    ],
   },
   {
     id: 'ganesh',
     title: 'Festival specials',
     description: 'Ganesh Chaturthi and Dashain rituals, arranged end to end.',
     image: photos.ganesh,
+    price: 60,
+    lead: 'Booked up to six weeks before the festival',
+    includes: [
+      'A slot on the festival day itself, which books out early',
+      'All samagri arranged at the temple',
+      'Video of the ritual and the priest’s sankalpa',
+      'A short written note on what the ritual is for',
+    ],
   },
   {
     id: 'spells',
     title: 'Gemstones & malas',
     description: 'Rudraksha and stones chosen for your chart, not for a trend.',
     image: photos.spells,
+    price: 30,
+    lead: 'Recommendation in 24 hours, delivery in 5–7 days',
+    includes: [
+      'A written recommendation against your chart, with reasons',
+      'The stone or mala sourced and energised before it is sent',
+      'Which finger or which way to wear it, and from which day',
+      'A follow-up chat a month later',
+    ],
   },
   {
     id: 'healings',
     title: 'Healing sessions',
     description: 'One-to-one sessions for grounding, calm and protection.',
     image: photos.healings,
+    price: 25,
+    lead: 'Sessions run 40 minutes, booked at a time you choose',
+    includes: [
+      'A 40-minute one-to-one session',
+      'A short practice to keep up between sessions',
+      'Notes afterwards, so nothing rests on memory',
+      'A discounted rate if you book three',
+    ],
   },
 ];
+
+export type RemedyService = (typeof remedyServices)[number];
+
+/** Find one remedy by the id a route carries. */
+export function findRemedy(id: string): RemedyService | undefined {
+  return remedyServices.find((service) => service.id === id);
+}
 
 /** Grouped rows on Profile & Settings. Every row goes somewhere. */
 export const profileGroups = [
@@ -69,6 +108,15 @@ export const profileGroups = [
       { id: 'chat-astrologer', label: 'Chat with an astrologer', icon: 'message', href: '/(tabs)/chat' },
       { id: 'call-astrologer', label: 'Call an astrologer', icon: 'headphones', href: '/(tabs)/call' },
       { id: 'remedies', label: 'Remedies & poojas', icon: 'lotus', href: '/(tabs)/remedies' },
+    ],
+  },
+  {
+    title: 'Your chart',
+    items: [
+      { id: 'kundli', label: 'Your kundli', icon: 'kundli', href: '/kundli' },
+      { id: 'horoscope', label: 'Daily horoscope', icon: 'star', href: '/horoscope' },
+      { id: 'matching', label: 'Kundli matching', icon: 'rings', href: '/matching' },
+      { id: 'panchang', label: 'Today’s panchang', icon: 'sunrise', href: '/panchang' },
     ],
   },
   {

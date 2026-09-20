@@ -31,7 +31,6 @@ export default function HomeScreen() {
   const { profile } = useOnboarding();
 
   const scrollRef = useRef<ScrollView>(null);
-  const readingOffset = useRef(0);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [query, setQuery] = useState('');
@@ -116,19 +115,23 @@ export default function HomeScreen() {
    * Navigation
    * ---------------------------------------------------------------- */
 
-  const openAstrologer = (astrologer: Astrologer) => router.push(`/chat/${astrologer.id}`);
+  /** Tapping a card opens the astrologer; the button on it starts the session. */
+  const openAstrologer = (astrologer: Astrologer) =>
+    router.push(`/astrologer/${astrologer.id}`);
 
   const openCategory = (id: string) => {
     switch (id) {
       case 'daily-horoscope':
-        // The reading is already on this screen; take them to it.
-        scrollRef.current?.scrollTo({ y: Math.max(readingOffset.current - 12, 0) });
+        router.push('/horoscope');
         break;
-      case 'remedies':
-        router.push('/(tabs)/remedies');
+      case 'free-kundli':
+        router.push('/kundli');
+        break;
+      case 'kundli-matching':
+        router.push('/matching');
         break;
       default:
-        router.push('/(tabs)/chat');
+        router.push('/(tabs)/remedies');
     }
   };
 
@@ -164,20 +167,19 @@ export default function HomeScreen() {
             query={query.trim()}
             results={results}
             onSelect={openAstrologer}
-            onAction={openAstrologer}
+            onAction={(astrologer) => router.push(`/chat/${astrologer.id}`)}
             onClear={() => setQuery('')}
           />
         ) : (
           <View>
             <QuickCategories onSelect={openCategory} />
 
-            <View
-              style={styles.reading}
-              onLayout={(event) => {
-                readingOffset.current = event.nativeEvent.layout.y;
-              }}
-            >
-              <DailyInsightCard reading={reading} dateLabel={dateLabel} />
+            <View style={styles.reading}>
+              <DailyInsightCard
+                reading={reading}
+                dateLabel={dateLabel}
+                onOpen={() => router.push('/horoscope')}
+              />
             </View>
 
             <AstrologerRail
@@ -185,10 +187,14 @@ export default function HomeScreen() {
               data={availableNow}
               onViewAll={() => router.push('/(tabs)/chat')}
               onSelect={openAstrologer}
-              onAction={openAstrologer}
+              onAction={(astrologer) => router.push(`/chat/${astrologer.id}`)}
             />
 
-            <TodayPanchang panchang={panchang} dateLabel={dateLabel} />
+            <TodayPanchang
+              panchang={panchang}
+              dateLabel={dateLabel}
+              onSeeAll={() => router.push('/panchang')}
+            />
 
             <AstrologerRail
               title="Book a call"
@@ -196,7 +202,7 @@ export default function HomeScreen() {
               mode="call"
               onViewAll={() => router.push('/(tabs)/call')}
               onSelect={openAstrologer}
-              onAction={() => router.push('/(tabs)/call')}
+              onAction={(astrologer) => router.push(`/call/${astrologer.id}`)}
             />
           </View>
         )}

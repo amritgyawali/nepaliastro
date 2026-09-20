@@ -10,10 +10,12 @@ type TodayPanchangProps = {
   panchang: Panchang;
   /** "Sun 20 Sep" — the day these figures belong to. */
   dateLabel: string;
+  /** Opens the full panchang, with what each figure is for. */
+  onSeeAll?: () => void;
 };
 
 /** The four figures a reader checks before planning the day. */
-export function TodayPanchang({ panchang, dateLabel }: TodayPanchangProps) {
+export function TodayPanchang({ panchang, dateLabel, onSeeAll }: TodayPanchangProps) {
   const cells = [
     { id: 'sunrise', label: 'Sunrise', value: panchang.sun.sunrise },
     { id: 'sunset', label: 'Sunset', value: panchang.sun.sunset },
@@ -27,7 +29,7 @@ export function TodayPanchang({ panchang, dateLabel }: TodayPanchangProps) {
 
   return (
     <View style={styles.section}>
-      <SectionHeader title="Today’s Panchang" />
+      <SectionHeader title="Today’s Panchang" actionLabel="Full panchang" onAction={onSeeAll} />
 
       <View style={styles.card}>
         <Text style={styles.place}>

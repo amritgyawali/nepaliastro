@@ -25,6 +25,8 @@ export type Astrologer = {
   waitTime?: string;
   /** Free to take a consultation right now; drives the green dot on the rail. */
   online?: boolean;
+  /** Two or three sentences for the astrologer's own screen. */
+  about?: string;
   specialities: Speciality[];
 };
 
@@ -43,6 +45,8 @@ export const featuredAstrologers: Astrologer[] = [
     verified: true,
     celebrity: true,
     online: true,
+    about:
+      'Reads charts in the Parashari tradition and uses numerology alongside them for timing. Most of his consultations are about careers and long-running family matters, and he prefers to see a full chart before answering.',
     specialities: ['all'],
   },
   {
@@ -57,6 +61,8 @@ export const featuredAstrologers: Astrologer[] = [
     rating: 5,
     verified: true,
     online: true,
+    about:
+      'A Prashna astrologer: give her the question and the moment you asked it, and she reads from there. Straightforward about what a chart can and cannot settle.',
     specialities: ['all'],
   },
   {
@@ -71,6 +77,8 @@ export const featuredAstrologers: Astrologer[] = [
     rating: 4,
     verified: true,
     waitTime: 'wait ~ 5m',
+    about:
+      'Tarot first, with a life-coaching background behind it. Good for a decision you have already half made and want to talk through properly.',
     specialities: ['all', 'tarot'],
   },
 ];
@@ -89,6 +97,8 @@ export const chatAstrologers: Astrologer[] = [
     rating: 5,
     verified: true,
     online: true,
+    about:
+      'Tarot and Vastu together — she reads the cards for the question, then asks what your house or your desk looks like. Practical, remedy-led advice.',
     specialities: ['all', 'tarot'],
   },
   {
@@ -103,6 +113,8 @@ export const chatAstrologers: Astrologer[] = [
     rating: 5,
     verified: true,
     online: true,
+    about:
+      'Vedic chart reading with face reading alongside it. Twenty years of consultations, mostly on marriage timing and family disputes.',
     specialities: ['all', 'palmistry'],
   },
   {
@@ -113,6 +125,8 @@ export const chatAstrologers: Astrologer[] = [
     languages: 'English, Hindi, Marathi',
     rate: 0.49,
     verified: true,
+    about:
+      'Tarot and psychic reading, in English, Hindi and Marathi. Keeps sessions short and specific.',
     specialities: ['all', 'tarot'],
   },
 ];
@@ -133,6 +147,8 @@ export const callAstrologers: Astrologer[] = [
     celebrity: true,
     online: true,
     waitTime: 'wait ~ 2m',
+    about:
+      'Nadi and Vedic astrology, with the Sanskrit sources to hand. The person to bring a difficult chart to.',
     specialities: ['all'],
   },
   {
@@ -149,6 +165,8 @@ export const callAstrologers: Astrologer[] = [
     verified: true,
     celebrity: true,
     waitTime: 'wait ~ 4m',
+    about:
+      'Numerology and Vedic astrology, focused on naming, dates, and the timing of anything new.',
     specialities: ['all', 'tarot'],
   },
   {
@@ -159,6 +177,8 @@ export const callAstrologers: Astrologer[] = [
     languages: 'Hindi',
     rate: 0.49,
     verified: true,
+    about:
+      'Vedic chart reading with face reading alongside it. Twenty years of consultations, mostly on marriage timing and family disputes.',
     specialities: ['all', 'palmistry'],
   },
 ];

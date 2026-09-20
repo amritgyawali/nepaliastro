@@ -4,7 +4,17 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar, NavHeader, Screen } from '@/components';
 import { profileGroups } from '@/data/content';
-import { Calendar, ChevronRight, Headphones, Lotus, MessageSquare } from '@/icons';
+import {
+  Calendar,
+  ChevronRight,
+  Headphones,
+  KundliChart,
+  Lotus,
+  MatchRings,
+  MessageSquare,
+  Star,
+  Sunrise,
+} from '@/icons';
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
@@ -13,6 +23,10 @@ const ROW_ICONS = {
   headphones: Headphones,
   lotus: Lotus,
   calendar: Calendar,
+  kundli: KundliChart,
+  star: Star,
+  rings: MatchRings,
+  sunrise: Sunrise,
 } as const;
 
 /** Profile & settings: who the app thinks you are, and where to change it. */
