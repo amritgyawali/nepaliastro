@@ -188,22 +188,29 @@ export default function ChatScreen() {
             <ChevronLeft size={24} color={colors.ink} strokeWidth={2} />
           </Pressable>
 
-          <Avatar uri={astrologer.photo} name={astrologer.name} size={44} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`About ${astrologer.name}`}
+            onPress={() => router.push(`/astrologer/${astrologer.id}`)}
+            style={({ pressed }) => [styles.who, pressed && styles.pressed]}
+          >
+            <Avatar uri={astrologer.photo} name={astrologer.name} size={44} />
 
-          <View>
-            <View style={styles.nameRow}>
-              <Text style={styles.name}>{astrologer.name}</Text>
-              {astrologer.verified ? <VerifiedBadge size={16} /> : null}
-            </View>
-            {paid ? (
-              <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
-            ) : (
-              <View style={styles.freeTimerRow}>
-                <Text style={styles.freeTimerChip}>Free</Text>
-                <Text style={styles.freeTimer}>{formatElapsed(freeLeft)} left</Text>
+            <View>
+              <View style={styles.nameRow}>
+                <Text style={styles.name}>{astrologer.name}</Text>
+                {astrologer.verified ? <VerifiedBadge size={16} /> : null}
               </View>
-            )}
-          </View>
+              {paid ? (
+                <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
+              ) : (
+                <View style={styles.freeTimerRow}>
+                  <Text style={styles.freeTimerChip}>Free</Text>
+                  <Text style={styles.freeTimer}>{formatElapsed(freeLeft)} left</Text>
+                </View>
+              )}
+            </View>
+          </Pressable>
         </View>
 
         <Pressable
@@ -421,6 +428,12 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.divider,
   },
   headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    flexShrink: 1,
+  },
+  who: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.md,

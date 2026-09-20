@@ -1,9 +1,12 @@
-// Imported by file rather than from the package root: the root re-exports all
-// seven weights, and every one it names would be bundled into the app.
-import Mukta400 from '@expo-google-fonts/mukta/400Regular/Mukta_400Regular.ttf';
-import Mukta500 from '@expo-google-fonts/mukta/500Medium/Mukta_500Medium.ttf';
-import Mukta600 from '@expo-google-fonts/mukta/600SemiBold/Mukta_600SemiBold.ttf';
-import Mukta700 from '@expo-google-fonts/mukta/700Bold/Mukta_700Bold.ttf';
+// The four weights live in `assets/fonts/` rather than coming from an
+// @expo-google-fonts package: a file in the project always resolves, on every
+// platform and whatever a bundler decides about package subpaths, and it is
+// one less dependency to install before the app will start. Mukta is under
+// the SIL Open Font License; the licence travels with the files.
+import Mukta400 from '../../assets/fonts/Mukta-Regular.ttf';
+import Mukta500 from '../../assets/fonts/Mukta-Medium.ttf';
+import Mukta600 from '../../assets/fonts/Mukta-SemiBold.ttf';
+import Mukta700 from '../../assets/fonts/Mukta-Bold.ttf';
 import type { TextStyle } from 'react-native';
 
 /**

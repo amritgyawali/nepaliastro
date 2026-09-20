@@ -138,25 +138,61 @@ function ayanamsaFor(julian: number): number {
   return 23.85 + ((julian - J2000) / 365.25) * 0.013969;
 }
 
+/** The moon's mean tropical longitude, to about a degree. */
+function moonTropicalLongitude(julian: number): number {
+  const days = julian - J2000;
+  const meanLongitude = 218.316 + 13.176396 * days;
+  const meanAnomaly = 134.963 + 13.064993 * days;
+  // The leading term of the evection-free series; ~1° of the true position.
+  return meanLongitude + 6.289 * Math.sin(meanAnomaly * RAD);
+}
+
+/** The sun's tropical longitude, from its mean anomaly and equation of centre. */
+function sunTropicalLongitude(julian: number): number {
+  const days = julian - J2000;
+  const meanAnomaly = (357.5291 + 0.98560028 * days) % 360;
+  const centre =
+    1.9148 * Math.sin(meanAnomaly * RAD) +
+    0.02 * Math.sin(2 * meanAnomaly * RAD) +
+    0.0003 * Math.sin(3 * meanAnomaly * RAD);
+  return meanAnomaly + centre + 180 + 102.9372;
+}
+
+function normalise(degrees: number): number {
+  return ((degrees % 360) + 360) % 360;
+}
+
+/**
+ * Sidereal (Lahiri) longitudes of the sun and moon, in degrees.
+ *
+ * These are the two bodies this app computes for real; everything a chart
+ * shows is derived from them, and nothing is invented to fill the gaps.
+ */
+export function siderealLongitudes(date = new Date()): { sun: number; moon: number } {
+  const julian = toJulian(date);
+  const ayanamsa = ayanamsaFor(julian);
+  return {
+    sun: normalise(sunTropicalLongitude(julian) - ayanamsa),
+    moon: normalise(moonTropicalLongitude(julian) - ayanamsa),
+  };
+}
+
 export type Nakshatra = { index: number; name: string; pada: number };
 
 /** The nakshatra the moon sits in, from its mean longitude. */
 export function nakshatraFor(date = new Date()): Nakshatra {
-  const julian = toJulian(date);
-  const days = julian - J2000;
+  return nakshatraAt(siderealLongitudes(date).moon);
+}
 
-  const meanLongitude = 218.316 + 13.176396 * days;
-  const meanAnomaly = 134.963 + 13.064993 * days;
-  // The leading term of the evection-free series; ~1° of the true position.
-  const tropical = meanLongitude + 6.289 * Math.sin(meanAnomaly * RAD);
-
-  const sidereal = ((((tropical - ayanamsaFor(julian)) % 360) + 360) % 360);
+/** The nakshatra a sidereal longitude falls in. */
+export function nakshatraAt(siderealLongitude: number): Nakshatra {
   const span = 360 / 27;
-  const index = Math.floor(sidereal / span);
-  const pada = Math.floor((sidereal % span) / (span / 4)) + 1;
-
+  const index = Math.floor(normalise(siderealLongitude) / span);
+  const pada = Math.floor((normalise(siderealLongitude) % span) / (span / 4)) + 1;
   return { index, name: NAKSHATRA_NAMES[index], pada };
 }
+
+export { NAKSHATRA_NAMES };
 
 export type Panchang = {
   place: string;

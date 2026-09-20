@@ -24,7 +24,7 @@ export default function RemediesScreen() {
               key={service.id}
               accessibilityRole="button"
               accessibilityLabel={`${service.title}. ${service.description}`}
-              onPress={() => router.push('/(tabs)/chat')}
+              onPress={() => router.push(`/remedy/${service.id}`)}
               style={({ pressed }) => [styles.card, pressed && styles.pressed]}
             >
               <Image
@@ -36,7 +36,7 @@ export default function RemediesScreen() {
               <View style={styles.cardText}>
                 <Text style={styles.cardTitle}>{service.title}</Text>
                 <Text style={styles.cardBody}>{service.description}</Text>
-                <Text style={styles.cardAction}>Ask an astrologer</Text>
+                <Text style={styles.cardAction}>See what it includes</Text>
               </View>
             </Pressable>
           ))}

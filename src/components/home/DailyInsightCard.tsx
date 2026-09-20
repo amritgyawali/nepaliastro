@@ -8,6 +8,8 @@ type DailyInsightCardProps = {
   reading: DailyReading;
   /** "Sun 20 Sep", shown next to the sign name. */
   dateLabel: string;
+  /** Opens the full horoscope screen, where every sign is readable. */
+  onOpen?: () => void;
 };
 
 /**
@@ -18,7 +20,7 @@ type DailyInsightCardProps = {
  * so they are gone: what is left is the sign, the day's line, and the two
  * details people actually repeat — the lucky number and colour.
  */
-export function DailyInsightCard({ reading, dateLabel }: DailyInsightCardProps) {
+export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCardProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -51,16 +53,30 @@ export function DailyInsightCard({ reading, dateLabel }: DailyInsightCardProps) 
         {reading.body}
       </Text>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ expanded }}
-        accessibilityLabel={expanded ? 'Show less of today’s reading' : 'Read all of today’s reading'}
-        onPress={() => setExpanded((current) => !current)}
-        hitSlop={8}
-        style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-      >
-        <Text style={styles.moreLabel}>{expanded ? 'Show less' : 'Read more'}</Text>
-      </Pressable>
+      <View style={styles.links}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded }}
+          accessibilityLabel={expanded ? 'Show less of today’s reading' : 'Read all of today’s reading'}
+          onPress={() => setExpanded((current) => !current)}
+          hitSlop={8}
+          style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+        >
+          <Text style={styles.moreLabel}>{expanded ? 'Show less' : 'Read more'}</Text>
+        </Pressable>
+
+        {onOpen ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open the daily horoscope"
+            onPress={onOpen}
+            hitSlop={8}
+            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+          >
+            <Text style={styles.moreLabel}>All signs</Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       <View style={styles.lucky}>
         <View style={styles.luckyItem}>
@@ -130,8 +146,12 @@ const styles = StyleSheet.create({
     color: colors.body,
     marginTop: space.sm,
   },
+  links: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.lg,
+  },
   more: {
-    alignSelf: 'flex-start',
     paddingVertical: space.sm,
   },
   pressed: {
