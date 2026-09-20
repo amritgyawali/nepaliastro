@@ -38,6 +38,9 @@ function clockLabel(date = new Date()): string {
   return `${hour12}:${minutes} ${period}`;
 }
 
+/** Length of the claimed free consultation, in seconds. */
+const FREE_SECONDS = 60;
+
 function formatElapsed(totalSeconds: number): string {
   const minutes = `${Math.floor(totalSeconds / 60)}`.padStart(2, '0');
   const seconds = `${totalSeconds % 60}`.padStart(2, '0');
@@ -47,8 +50,10 @@ function formatElapsed(totalSeconds: number): string {
 /** Live consultation screen — design/astrologer_chat_kiran_ji. */
 export default function ChatScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const { profile } = useOnboarding();
+  const { id, free } = useLocalSearchParams<{ id: string; free?: string }>();
+  /** Set by the onboarding "1 minute free chat" offer. */
+  const freeSession = free === '1';
+  const { profile, update } = useOnboarding();
 
   const astrologer = useMemo(() => {
     if (id === ongoingSession.id) {
@@ -69,29 +74,57 @@ export default function ChatScreen() {
   }, [id]);
 
   const firstName = profile.name.trim().split(/\s+/)[0] || 'friend';
+  const knownPlace = profile.birthPlace.trim().length > 0;
   const place = profile.birthPlace.trim() || 'your birth place';
+
+  /** Frozen at mount so the header pill and first bubble agree. */
+  const startedAt = useMemo(() => clockLabel(), []);
 
   const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: 'intro',
       from: 'them',
       eyebrow: '✨ Vedic Astrologer',
-      text: `Namaste ${firstName}! 🙏 I have opened your Kundli and I am analyzing your birth chart from ${place}.\n\nHow can I guide you today regarding your career, higher studies, or relationships?`,
-      time: '8:56 PM',
+      text: freeSession
+        ? `Namaste ${firstName}! 🙏 Your free minute has started — I have opened your Kundli${knownPlace ? ` from ${place}` : ''} and I am reading it right now.\n\nAsk me anything about your career, studies or relationships.`
+        : `Namaste ${firstName}! 🙏 I have opened your Kundli and I am analyzing your birth chart from ${place}.\n\nHow can I guide you today regarding your career, higher studies, or relationships?`,
+      insight: freeSession
+        ? '🎁 Free minute active — you will not be charged until it runs out.'
+        : undefined,
+      time: freeSession ? startedAt : '8:56 PM',
     },
   ]);
   const [draft, setDraft] = useState('');
   const [typing, setTyping] = useState(false);
   const [confirmEnd, setConfirmEnd] = useState(false);
-  const [elapsed, setElapsed] = useState(116);
+  const [elapsed, setElapsed] = useState(freeSession ? 0 : 116);
+  /** Seconds left of the free minute; only meaningful while `paid` is false. */
+  const [freeLeft, setFreeLeft] = useState(FREE_SECONDS);
+  const [freeOver, setFreeOver] = useState(false);
+  /** The free minute is over and the user chose to keep talking. */
+  const [paid, setPaid] = useState(!freeSession);
 
   const scrollRef = useRef<ScrollView>(null);
   const replyTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
+  // Paid time only ticks up once the free minute is spent (or was never on).
   useEffect(() => {
+    if (!paid) return;
     const interval = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [paid]);
+
+  // The claimed free minute counts down, then pauses the session.
+  useEffect(() => {
+    if (paid || freeOver) return;
+    if (freeLeft <= 0) {
+      setFreeOver(true);
+      update({ freeMinuteUsed: true });
+      return;
+    }
+    const timer = setTimeout(() => setFreeLeft((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [paid, freeOver, freeLeft, update]);
 
   // Cancel any in-flight reply timers when the screen goes away.
   useEffect(
@@ -125,10 +158,22 @@ export default function ChatScreen() {
     );
   }, []);
 
+  const leaveChat = useCallback(() => {
+    if (freeSession) router.replace('/(tabs)');
+    else if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)/chat');
+  }, [freeSession, router]);
+
   const endSession = () => {
     setConfirmEnd(false);
-    if (router.canGoBack()) router.back();
-    else router.replace('/(tabs)/chat');
+    setFreeOver(false);
+    leaveChat();
+  };
+
+  /** Free minute spent, user wants to carry on at the normal rate. */
+  const continuePaid = () => {
+    setFreeOver(false);
+    setPaid(true);
   };
 
   return (
@@ -140,7 +185,7 @@ export default function ChatScreen() {
             accessibilityRole="button"
             accessibilityLabel="Go back"
             hitSlop={8}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/chat'))}
+            onPress={leaveChat}
             style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
           >
             <ChevronLeft size={24} color="#000" strokeWidth={2.2} />
@@ -153,7 +198,14 @@ export default function ChatScreen() {
               <Text style={styles.name}>{astrologer.name}</Text>
               {astrologer.verified ? <VerifiedBadge size={16} /> : null}
             </View>
-            <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
+            {paid ? (
+              <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
+            ) : (
+              <View style={styles.freeTimerRow}>
+                <Text style={styles.freeTimerChip}>FREE</Text>
+                <Text style={styles.freeTimer}>{formatElapsed(freeLeft)} left</Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -177,7 +229,9 @@ export default function ChatScreen() {
             {profile.birthPlace.trim() ? ` (${profile.birthPlace.trim()})` : ''}
           </Text>
         </View>
-        <Text style={styles.infoRate}>USD 0.49/min</Text>
+        <Text style={[styles.infoRate, !paid && styles.infoRateFree]}>
+          {paid ? 'USD 0.49/min' : '1 min free'}
+        </Text>
       </View>
 
       <KeyboardAvoidingView
@@ -194,7 +248,9 @@ export default function ChatScreen() {
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
           <View style={styles.datePillRow}>
-            <Text style={styles.datePill}>TODAY • 8:56 PM</Text>
+            <Text style={styles.datePill}>
+              TODAY • {freeSession ? startedAt : '8:56 PM'}
+            </Text>
           </View>
 
           {messages.map((message) =>
@@ -294,6 +350,43 @@ export default function ChatScreen() {
         </View>
       </KeyboardAvoidingView>
 
+      {/* Free minute finished */}
+      <Modal
+        visible={freeOver}
+        transparent
+        animationType="fade"
+        onRequestClose={endSession}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <View style={styles.modalIcon}>
+              <Text style={styles.modalEmoji}>⏳</Text>
+            </View>
+            <Text style={styles.modalTitle}>Your free minute is over</Text>
+            <Text style={styles.modalBody}>
+              Keep talking to {astrologer.name} at USD 0.49/min, or end the consultation
+              here — your summary report is already saved.
+            </Text>
+            <View style={styles.modalActions}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={endSession}
+                style={({ pressed }) => [styles.modalCancel, pressed && styles.pressed]}
+              >
+                <Text style={styles.modalCancelLabel}>End Chat</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={continuePaid}
+                style={({ pressed }) => [styles.modalContinue, pressed && styles.pressed]}
+              >
+                <Text style={styles.modalContinueLabel}>Continue Chat</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {/* End-consultation confirmation */}
       <Modal
         visible={confirmEnd}
@@ -378,6 +471,31 @@ const styles = StyleSheet.create({
     marginTop: 1,
     fontVariant: ['tabular-nums'],
   },
+  freeTimerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+  },
+  freeTimerChip: {
+    fontFamily,
+    fontSize: 9,
+    fontWeight: weight.bold,
+    letterSpacing: 0.5,
+    color: '#1B873F',
+    backgroundColor: colors.greenSoft,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.pill,
+    overflow: 'hidden',
+  },
+  freeTimer: {
+    fontFamily,
+    fontSize: 13,
+    fontWeight: weight.semibold,
+    color: colors.greenText,
+    fontVariant: ['tabular-nums'],
+  },
   endLabel: {
     fontFamily,
     fontSize: 15,
@@ -420,6 +538,9 @@ const styles = StyleSheet.create({
     fontWeight: weight.semibold,
     color: '#B45309',
     marginLeft: 8,
+  },
+  infoRateFree: {
+    color: colors.greenText,
   },
 
   messages: {
@@ -697,6 +818,19 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     fontWeight: weight.semibold,
     color: '#44403C',
+  },
+  modalContinue: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: radius.pill,
+    backgroundColor: colors.yellow,
+    alignItems: 'center',
+  },
+  modalContinueLabel: {
+    fontFamily,
+    fontSize: 12.5,
+    fontWeight: weight.semibold,
+    color: '#1E2124',
   },
   modalConfirm: {
     flex: 1,
