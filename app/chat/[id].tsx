@@ -15,18 +15,16 @@ import {
 import { Avatar, Screen, VerifiedBadge } from '@/components';
 import { findAstrologer, ongoingSession } from '@/data/astrologers';
 import { astroReplies, quickPrompts } from '@/data/content';
-import { ChevronLeft, DoubleCheck, Plus, Send } from '@/icons';
-import { colors, fontFamily, radius, shadow, weight } from '@/theme';
+import { ChevronLeft, DoubleCheck, Send } from '@/icons';
 import { useOnboarding } from '@/store/onboarding';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 type Message = {
   id: string;
   from: 'them' | 'me';
   text: string;
-  /** Extra highlighted callout beneath the body, as in the design. */
+  /** Extra highlighted callout beneath the body. */
   insight?: string;
-  /** Small label above the first astrologer message. */
-  eyebrow?: string;
   time: string;
 };
 
@@ -47,7 +45,7 @@ function formatElapsed(totalSeconds: number): string {
   return `${minutes}:${seconds}`;
 }
 
-/** Live consultation screen — design/astrologer_chat_kiran_ji. */
+/** The live consultation: the astrologer, the clock, and the messages. */
 export default function ChatScreen() {
   const router = useRouter();
   const { id, free } = useLocalSearchParams<{ id: string; free?: string }>();
@@ -84,12 +82,11 @@ export default function ChatScreen() {
     {
       id: 'intro',
       from: 'them',
-      eyebrow: '✨ Vedic Astrologer',
       text: freeSession
         ? `Namaste ${firstName}! 🙏 Your free minute has started — I have opened your Kundli${knownPlace ? ` from ${place}` : ''} and I am reading it right now.\n\nAsk me anything about your career, studies or relationships.`
         : `Namaste ${firstName}! 🙏 I have opened your Kundli and I am analyzing your birth chart from ${place}.\n\nHow can I guide you today regarding your career, higher studies, or relationships?`,
       insight: freeSession
-        ? '🎁 Free minute active — you will not be charged until it runs out.'
+        ? 'Your free minute is running. You are not charged until it ends.'
         : undefined,
       time: freeSession ? startedAt : '8:56 PM',
     },
@@ -188,7 +185,7 @@ export default function ChatScreen() {
             onPress={leaveChat}
             style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
           >
-            <ChevronLeft size={24} color="#000" strokeWidth={2.2} />
+            <ChevronLeft size={24} color={colors.ink} strokeWidth={2} />
           </Pressable>
 
           <Avatar uri={astrologer.photo} name={astrologer.name} size={44} />
@@ -202,7 +199,7 @@ export default function ChatScreen() {
               <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
             ) : (
               <View style={styles.freeTimerRow}>
-                <Text style={styles.freeTimerChip}>FREE</Text>
+                <Text style={styles.freeTimerChip}>Free</Text>
                 <Text style={styles.freeTimer}>{formatElapsed(freeLeft)} left</Text>
               </View>
             )}
@@ -225,12 +222,12 @@ export default function ChatScreen() {
         <View style={styles.infoLeft}>
           <View style={styles.liveDot} />
           <Text style={styles.infoText} numberOfLines={1}>
-            Birth Chart Shared: {profile.name.trim() || 'Your profile'}
+            Chart shared: {profile.name.trim() || 'your profile'}
             {profile.birthPlace.trim() ? ` (${profile.birthPlace.trim()})` : ''}
           </Text>
         </View>
         <Text style={[styles.infoRate, !paid && styles.infoRateFree]}>
-          {paid ? 'USD 0.49/min' : '1 min free'}
+          {paid ? 'USD 0.49/min' : 'First minute free'}
         </Text>
       </View>
 
@@ -249,7 +246,7 @@ export default function ChatScreen() {
         >
           <View style={styles.datePillRow}>
             <Text style={styles.datePill}>
-              TODAY • {freeSession ? startedAt : '8:56 PM'}
+              Today · {freeSession ? startedAt : '8:56 PM'}
             </Text>
           </View>
 
@@ -258,9 +255,6 @@ export default function ChatScreen() {
               <View key={message.id} style={styles.inRow}>
                 <Avatar uri={astrologer.photo} name={astrologer.name} size={28} />
                 <View style={styles.inBubble}>
-                  {message.eyebrow ? (
-                    <Text style={styles.eyebrow}>{message.eyebrow}</Text>
-                  ) : null}
                   <Text style={styles.inText}>{message.text}</Text>
                   {message.insight ? (
                     <View style={styles.insight}>
@@ -306,7 +300,7 @@ export default function ChatScreen() {
               <Pressable
                 key={prompt}
                 accessibilityRole="button"
-                onPress={() => send(prompt.replace(/^[^\w]+/, '').trim())}
+                onPress={() => send(prompt)}
                 style={({ pressed }) => [styles.prompt, pressed && styles.promptPressed]}
               >
                 <Text style={styles.promptLabel}>{prompt}</Text>
@@ -317,26 +311,17 @@ export default function ChatScreen() {
 
         {/* Composer */}
         <View style={styles.composer}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Share Kundli chart"
-            style={({ pressed }) => [styles.attachButton, pressed && styles.pressed]}
-          >
-            <Plus size={19} color="#57534E" strokeWidth={2} />
-          </Pressable>
-
           <View style={styles.inputWrap}>
             <TextInput
               value={draft}
               onChangeText={setDraft}
               placeholder="Type your message..."
-              placeholderTextColor="#A8A29E"
+              placeholderTextColor={colors.subtle}
               style={styles.input}
               returnKeyType="send"
               onSubmitEditing={() => send(draft)}
               accessibilityLabel="Message"
             />
-            <Text style={styles.inputSpark}>✦</Text>
           </View>
 
           <Pressable
@@ -345,7 +330,7 @@ export default function ChatScreen() {
             onPress={() => send(draft)}
             style={({ pressed }) => [styles.sendButton, pressed && styles.pressed]}
           >
-            <Send size={16} color="#292524" />
+            <Send size={18} color={colors.onSaffron} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -359,13 +344,10 @@ export default function ChatScreen() {
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <View style={styles.modalIcon}>
-              <Text style={styles.modalEmoji}>⏳</Text>
-            </View>
             <Text style={styles.modalTitle}>Your free minute is over</Text>
             <Text style={styles.modalBody}>
-              Keep talking to {astrologer.name} at USD 0.49/min, or end the consultation
-              here — your summary report is already saved.
+              Keep talking to {astrologer.name} at USD 0.49 a minute, or end here —
+              what you have discussed is already saved.
             </Text>
             <View style={styles.modalActions}>
               <Pressable
@@ -373,14 +355,14 @@ export default function ChatScreen() {
                 onPress={endSession}
                 style={({ pressed }) => [styles.modalCancel, pressed && styles.pressed]}
               >
-                <Text style={styles.modalCancelLabel}>End Chat</Text>
+                <Text style={styles.modalCancelLabel}>End chat</Text>
               </Pressable>
               <Pressable
                 accessibilityRole="button"
                 onPress={continuePaid}
                 style={({ pressed }) => [styles.modalContinue, pressed && styles.pressed]}
               >
-                <Text style={styles.modalContinueLabel}>Continue Chat</Text>
+                <Text style={styles.modalContinueLabel}>Keep talking</Text>
               </Pressable>
             </View>
           </View>
@@ -396,13 +378,10 @@ export default function ChatScreen() {
       >
         <Pressable style={styles.modalBackdrop} onPress={() => setConfirmEnd(false)}>
           <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
-            <View style={styles.modalIcon}>
-              <Text style={styles.modalEmoji}>🙏</Text>
-            </View>
-            <Text style={styles.modalTitle}>End Consultation?</Text>
+            <Text style={styles.modalTitle}>End this consultation?</Text>
             <Text style={styles.modalBody}>
-              Your live chat with {astrologer.name} will be closed and your summary report
-              will be generated.
+              Your chat with {astrologer.name} will be closed and saved to your
+              history.
             </Text>
             <View style={styles.modalActions}>
               <Pressable
@@ -410,14 +389,14 @@ export default function ChatScreen() {
                 onPress={() => setConfirmEnd(false)}
                 style={({ pressed }) => [styles.modalCancel, pressed && styles.pressed]}
               >
-                <Text style={styles.modalCancelLabel}>Continue Chat</Text>
+                <Text style={styles.modalCancelLabel}>Keep talking</Text>
               </Pressable>
               <Pressable
                 accessibilityRole="button"
                 onPress={endSession}
                 style={({ pressed }) => [styles.modalConfirm, pressed && styles.pressed]}
               >
-                <Text style={styles.modalConfirmLabel}>End Now</Text>
+                <Text style={styles.modalConfirmLabel}>End now</Text>
               </Pressable>
             </View>
           </Pressable>
@@ -434,327 +413,268 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    gap: space.md,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
     backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F1EF',
+    borderBottomColor: colors.divider,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 11,
+    gap: space.md,
     flexShrink: 1,
   },
   backButton: {
-    paddingRight: 2,
+    width: 32,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pressed: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: space.xs + 2,
   },
   name: {
-    fontFamily,
-    fontSize: 17,
-    fontWeight: weight.semibold,
-    letterSpacing: -0.3,
-    color: '#1C1917',
+    ...type.section,
+    color: colors.ink,
   },
   timer: {
-    fontFamily,
-    fontSize: 13,
-    color: '#78716C',
-    marginTop: 1,
+    ...type.caption,
+    color: colors.muted,
     fontVariant: ['tabular-nums'],
   },
   freeTimerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 2,
+    gap: space.sm,
   },
   freeTimerChip: {
-    fontFamily,
-    fontSize: 9,
-    fontWeight: weight.bold,
-    letterSpacing: 0.5,
-    color: '#1B873F',
+    ...type.caption,
+    color: colors.green,
     backgroundColor: colors.greenSoft,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: space.sm,
     borderRadius: radius.pill,
     overflow: 'hidden',
   },
   freeTimer: {
-    fontFamily,
-    fontSize: 13,
-    fontWeight: weight.semibold,
-    color: colors.greenText,
+    ...type.caption,
+    color: colors.green,
     fontVariant: ['tabular-nums'],
   },
   endLabel: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: weight.medium,
-    color: '#1C1917',
+    ...type.label,
+    color: colors.red,
   },
 
   infoStrip: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(254,252,232,0.8)',
+    gap: space.sm,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.sm,
+    backgroundColor: colors.saffronSoft,
     borderBottomWidth: 1,
-    borderBottomColor: '#FAF0C8',
+    borderBottomColor: colors.saffronBorder,
   },
   infoLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 7,
+    gap: space.sm,
     flexShrink: 1,
   },
   liveDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#10B981',
+    backgroundColor: colors.green,
   },
   infoText: {
-    fontFamily,
-    fontSize: 12,
-    fontWeight: weight.medium,
-    color: '#78350F',
+    ...type.caption,
+    color: colors.saffronDeep,
     flexShrink: 1,
   },
   infoRate: {
-    fontFamily,
-    fontSize: 12,
-    fontWeight: weight.semibold,
-    color: '#B45309',
-    marginLeft: 8,
+    ...type.caption,
+    color: colors.saffronDeep,
   },
   infoRateFree: {
-    color: colors.greenText,
+    color: colors.green,
   },
 
   messages: {
     flex: 1,
-    backgroundColor: colors.creamWarm,
+    backgroundColor: colors.canvas,
   },
   messagesContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    gap: 14,
+    paddingHorizontal: GUTTER - 4,
+    paddingVertical: space.lg,
+    gap: space.md,
   },
   datePillRow: {
     alignItems: 'center',
   },
   datePill: {
-    fontFamily,
-    fontSize: 11,
-    fontWeight: weight.medium,
-    letterSpacing: 0.4,
-    color: '#78716C',
-    backgroundColor: 'rgba(214,211,209,0.6)',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: radius.pill,
-    overflow: 'hidden',
+    ...type.caption,
+    color: colors.muted,
   },
 
   inRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 8,
+    gap: space.sm,
     maxWidth: '90%',
   },
   inBubble: {
     flexShrink: 1,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#F0EFEC',
-    borderRadius: 18,
-    borderBottomLeftRadius: 4,
-    padding: 14,
-    ...shadow(1, 0.04),
-  },
-  eyebrow: {
-    fontFamily,
-    fontSize: 12,
-    fontWeight: weight.medium,
-    color: '#92400E',
-    marginBottom: 5,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    borderBottomLeftRadius: radius.sm / 2,
+    padding: space.md,
   },
   inText: {
-    fontFamily,
-    fontSize: 14.5,
-    lineHeight: 21,
-    color: '#292524',
+    ...type.body,
+    color: colors.ink,
   },
   insight: {
-    marginTop: 9,
-    padding: 9,
-    borderRadius: 10,
-    backgroundColor: 'rgba(254,252,232,0.7)',
-    borderWidth: 1,
-    borderColor: '#FBEFC4',
+    marginTop: space.sm,
+    padding: space.sm,
+    borderRadius: radius.sm,
+    backgroundColor: colors.saffronSoft,
   },
   insightText: {
-    fontFamily,
-    fontSize: 12.5,
-    lineHeight: 18,
-    color: '#78350F',
+    ...type.small,
+    color: colors.saffronDeep,
   },
   inTime: {
-    fontFamily,
-    fontSize: 10,
-    color: '#A8A29E',
+    ...type.caption,
+    color: colors.subtle,
     textAlign: 'right',
-    marginTop: 5,
+    marginTop: space.xs,
   },
 
   outRow: {
     alignSelf: 'flex-end',
     alignItems: 'flex-end',
-    maxWidth: '84%',
-    gap: 4,
+    maxWidth: '85%',
+    gap: space.xs,
   },
   outBubble: {
-    backgroundColor: colors.chatBubbleOut,
-    borderRadius: 18,
-    borderBottomRightRadius: 4,
-    padding: 14,
-    ...shadow(1, 0.04),
+    backgroundColor: colors.saffronSoft,
+    borderWidth: 1,
+    borderColor: colors.saffronBorder,
+    borderRadius: radius.lg,
+    borderBottomRightRadius: radius.sm / 2,
+    padding: space.md,
   },
   outText: {
-    fontFamily,
-    fontSize: 14.5,
-    lineHeight: 21,
-    color: '#1C1917',
+    ...type.body,
+    color: colors.ink,
   },
   outMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingRight: 4,
+    gap: space.xs,
   },
   outTime: {
-    fontFamily,
-    fontSize: 10,
-    color: '#A8A29E',
+    ...type.caption,
+    color: colors.subtle,
   },
 
   typingRow: {
-    paddingLeft: 36,
+    paddingLeft: space.xl + space.sm,
   },
   typingBubble: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
+    gap: space.xs + 1,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
     borderRadius: radius.pill,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#F0EFEC',
+    borderColor: colors.border,
   },
   typingDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#F59E0B',
+    backgroundColor: colors.saffron,
   },
   typingLabel: {
-    fontFamily,
-    fontSize: 11,
-    color: '#A8A29E',
-    marginLeft: 4,
+    ...type.caption,
+    color: colors.muted,
+    marginLeft: space.xs,
   },
 
   promptsWrap: {
-    backgroundColor: colors.creamWarm,
+    backgroundColor: colors.canvas,
     borderTopWidth: 1,
-    borderTopColor: '#F2F1EF',
+    borderTopColor: colors.divider,
   },
   prompts: {
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    gap: 8,
+    paddingHorizontal: GUTTER - 4,
+    paddingVertical: space.sm,
+    gap: space.sm,
   },
   prompt: {
-    paddingHorizontal: 13,
-    paddingVertical: 8,
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
     borderRadius: radius.pill,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#E7E5E4',
+    borderColor: colors.border,
   },
   promptPressed: {
-    backgroundColor: '#FEF9E7',
-    borderColor: '#F0D63F',
-    transform: [{ scale: 0.97 }],
+    backgroundColor: colors.saffronSoft,
+    borderColor: colors.saffron,
   },
   promptLabel: {
-    fontFamily,
-    fontSize: 12.5,
-    fontWeight: weight.medium,
-    color: '#44403C',
+    ...type.caption,
+    color: colors.body,
   },
 
   composer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 12,
+    gap: space.sm,
+    paddingHorizontal: space.md,
+    paddingTop: space.md,
+    paddingBottom: Platform.OS === 'ios' ? space.xl : space.md,
     backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: '#EDECEA',
-  },
-  attachButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#F5F5F4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderTopColor: colors.divider,
   },
   inputWrap: {
     flex: 1,
     justifyContent: 'center',
   },
   input: {
-    height: 42,
+    height: 44,
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(245,245,244,0.9)',
-    paddingLeft: 16,
-    paddingRight: 34,
-    fontFamily,
-    fontSize: 14.5,
-    color: '#1C1917',
-  },
-  inputSpark: {
-    position: 'absolute',
-    right: 13,
-    fontSize: 12,
-    color: '#F59E0B',
+    backgroundColor: colors.fill,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: space.lg,
+    ...type.body,
+    color: colors.ink,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F2C94C',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.saffron,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadow(1, 0.08),
   },
 
   modalBackdrop: {
@@ -762,87 +682,62 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: space.xl,
   },
   modalCard: {
     width: '100%',
-    maxWidth: 320,
+    maxWidth: 360,
     backgroundColor: colors.white,
-    borderRadius: 26,
-    padding: 22,
-    alignItems: 'center',
-    ...shadow(10, 0.25, 30),
-  },
-  modalIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FEF3C7',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  modalEmoji: {
-    fontSize: 22,
+    borderRadius: radius.lg,
+    padding: space.xl,
   },
   modalTitle: {
-    fontFamily,
-    fontSize: 16,
-    fontWeight: weight.bold,
-    color: '#1C1917',
+    ...type.title,
+    color: colors.ink,
   },
   modalBody: {
-    fontFamily,
-    fontSize: 12.5,
-    lineHeight: 19,
-    textAlign: 'center',
-    color: '#78716C',
-    marginTop: 6,
-    marginBottom: 18,
+    ...type.body,
+    color: colors.muted,
+    marginTop: space.sm,
+    marginBottom: space.xl,
   },
   modalActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: space.sm,
     alignSelf: 'stretch',
   },
   modalCancel: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: radius.pill,
+    paddingVertical: space.md + 2,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E7E5E4',
+    borderColor: colors.border,
     alignItems: 'center',
   },
   modalCancelLabel: {
-    fontFamily,
-    fontSize: 12.5,
-    fontWeight: weight.semibold,
-    color: '#44403C',
+    ...type.label,
+    color: colors.body,
   },
   modalContinue: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: radius.pill,
-    backgroundColor: colors.yellow,
+    paddingVertical: space.md + 2,
+    borderRadius: radius.md,
+    backgroundColor: colors.saffron,
     alignItems: 'center',
   },
   modalContinueLabel: {
-    fontFamily,
-    fontSize: 12.5,
-    fontWeight: weight.semibold,
-    color: '#1E2124',
+    ...type.label,
+    color: colors.onSaffron,
   },
   modalConfirm: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: radius.pill,
+    paddingVertical: space.md + 2,
+    borderRadius: radius.md,
     backgroundColor: colors.red,
     alignItems: 'center',
   },
   modalConfirmLabel: {
-    fontFamily,
-    fontSize: 12.5,
-    fontWeight: weight.semibold,
+    ...type.label,
     color: colors.white,
   },
 });

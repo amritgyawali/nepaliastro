@@ -1,12 +1,11 @@
 import { photos } from './images';
 
-/** The five yellow circles under the home search field. */
+/** The four shortcuts under the home search field. */
 export const quickCategories = [
-  { id: 'daily-horoscope', label: 'Daily\nHoroscope', icon: 'sunrise' },
-  { id: 'free-kundli', label: 'Free\nKundli', icon: 'kundli' },
-  { id: 'gemstones', label: 'Gemstones', icon: 'gem' },
-  { id: 'kundli-matching', label: 'Kundli\nMatching', icon: 'rings' },
-  { id: 'astrology-blog', label: 'Astrology\nBlog', icon: 'blog' },
+  { id: 'daily-horoscope', label: 'Horoscope', icon: 'sunrise' },
+  { id: 'free-kundli', label: 'Kundli', icon: 'kundli' },
+  { id: 'kundli-matching', label: 'Matching', icon: 'rings' },
+  { id: 'remedies', label: 'Remedies', icon: 'gem' },
 ] as const;
 
 export type QuickCategory = (typeof quickCategories)[number];
@@ -34,57 +33,59 @@ export const languageOptions = [
   'Nepali',
 ];
 
-/** Counters in the ribbon under the AstroRemedy hero. */
-export const remedyStats = [
-  { value: '4,52,279', label: 'ORDERS' },
-  { value: '4.72', label: 'RATING', star: true },
-  { value: '7,881', label: 'EXPERTS' },
-  { value: '1,854', label: 'IN SESSION' },
-];
-
 /** The 2-up picture grid on the AstroRemedy tab. */
 export const remedyServices = [
-  { id: 'ganesh', title: 'Ganesh Chaturthi\nSpecial 2026', image: photos.ganesh, tint: '#B87D39' },
-  { id: 'pooja', title: 'Pooja', image: photos.pooja, tint: '#A16226', trending: true },
-  { id: 'spells', title: 'Special Spells', image: photos.spells, tint: '#433852' },
-  { id: 'healings', title: 'Special\nHealings', image: photos.healings, tint: '#59395E' },
+  {
+    id: 'pooja',
+    title: 'Book a Pooja',
+    description: 'A priest performs it in your name and sends the recording.',
+    image: photos.pooja,
+  },
+  {
+    id: 'ganesh',
+    title: 'Festival specials',
+    description: 'Ganesh Chaturthi and Dashain rituals, arranged end to end.',
+    image: photos.ganesh,
+  },
+  {
+    id: 'spells',
+    title: 'Gemstones & malas',
+    description: 'Rudraksha and stones chosen for your chart, not for a trend.',
+    image: photos.spells,
+  },
+  {
+    id: 'healings',
+    title: 'Healing sessions',
+    description: 'One-to-one sessions for grounding, calm and protection.',
+    image: photos.healings,
+  },
 ];
 
-/** Feature marks inside the Rudraksha hero banner. */
-export const remedyHeroFeatures = [
-  { id: 'protection', label: 'Energy Protection', icon: 'shield' },
-  { id: 'calm', label: 'Calm & Stability', icon: 'meditate' },
-  { id: 'grounding', label: 'Grounding & Strength', icon: 'grounding' },
-] as const;
-
-/** Grouped rows on Profile & Settings. */
+/** Grouped rows on Profile & Settings. Every row goes somewhere. */
 export const profileGroups = [
   {
-    title: 'EXPLORE',
+    title: 'Consult',
     items: [
-      { id: 'chat-astrologer', label: 'Chat with Astrologer', icon: 'message', href: '/(tabs)/chat' },
-      { id: 'home', label: 'Home', icon: 'home', href: '/(tabs)' },
-      { id: 'free-services', label: 'Free Services', icon: 'grid' },
-      { id: 'book-pooja', label: 'Book a Pooja', icon: 'lotus', href: '/(tabs)/remedies' },
-      { id: 'gemstone', label: 'Gemstone', icon: 'gem' },
+      { id: 'chat-astrologer', label: 'Chat with an astrologer', icon: 'message', href: '/(tabs)/chat' },
+      { id: 'call-astrologer', label: 'Call an astrologer', icon: 'headphones', href: '/(tabs)/call' },
+      { id: 'remedies', label: 'Remedies & poojas', icon: 'lotus', href: '/(tabs)/remedies' },
     ],
   },
   {
-    title: 'ACCOUNT',
+    title: 'Your details',
     items: [
-      { id: 'my-following', label: 'My following', icon: 'users' },
-      { id: 'assistant-chat', label: 'Assistant Chat', icon: 'headphones' },
-      { id: 'redeem-gift-card', label: 'Redeem Gift Card', icon: 'gift' },
+      { id: 'birth-details', label: 'Name, gender & birth details', icon: 'calendar', href: '/onboarding/name' },
+      { id: 'languages', label: 'Languages you read in', icon: 'message', href: '/onboarding/languages' },
     ],
   },
 ] as const;
 
 /** Tap-to-send prompts above the chat composer. */
 export const quickPrompts = [
-  '🎓 Will I study abroad?',
-  '💼 Best career field for me?',
-  '🪐 Any remedies for peace?',
-  '❤️ Love & Marriage timing',
+  'Will I study abroad?',
+  'Which career suits my chart?',
+  'Any remedy for peace of mind?',
+  'When is a good time to marry?',
 ];
 
 /** Canned astrologer replies for the demo chat. */
@@ -95,49 +96,3 @@ export const astroReplies = [
   'A very positive transit is initiating next month! Wear more brass, copper, or warm tones to strengthen your ruling planet Sun.',
   'Regarding your query: The alignment suggests stability. Do not worry about minor delays, as Saturn teaches long-term resilience.',
 ];
-
-/**
- * Slides in the home promo carousel.
- *
- * Each one asks a question a first-time visitor actually arrives with, and
- * routes to the surface that answers it, so the carousel is navigation
- * rather than decoration.
- */
-export const promoSlides = [
-  {
-    id: 'future',
-    question: 'What will my future be in the',
-    emphasis: 'next 5 years?',
-    kicker: 'Ask Astrologer',
-    cta: 'Chat Now',
-    image: photos.vinayyv,
-    target: 'chat-kiran',
-  },
-  {
-    id: 'career',
-    question: 'Is this the right time to',
-    emphasis: 'change my job?',
-    kicker: 'Career & Money reading',
-    cta: 'Call Now',
-    image: photos.vihana,
-    target: 'call',
-  },
-  {
-    id: 'match',
-    question: 'Do our charts actually',
-    emphasis: 'match?',
-    kicker: 'Kundli matching in 10 minutes',
-    cta: 'Check Now',
-    image: photos.vera,
-    target: 'chat',
-  },
-] as const;
-
-export type PromoSlide = (typeof promoSlides)[number];
-
-/** The reassurance row at the foot of the home screen. */
-export const trustStats = [
-  { id: 'experts', value: '7,881', label: 'Verified experts' },
-  { id: 'rating', value: '4.72', label: 'Average rating', star: true },
-  { id: 'live', value: '1,854', label: 'In session now' },
-] as const;

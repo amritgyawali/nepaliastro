@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChatDots, Home, Phone, PrayingHands } from '@/icons';
-import { SCREEN_MAX_WIDTH, colors, fontFamily, radius, shadow, weight } from '@/theme';
+import { SCREEN_MAX_WIDTH, TAB_BAR_HEIGHT, colors, font, space, type } from '@/theme';
 
 const TAB_ICONS = {
   index: Home,
@@ -16,29 +16,23 @@ const TAB_ICONS = {
 } as const;
 
 /**
- * The floating grey pill at the bottom of every main tab.
+ * A plain bottom bar: four tabs, icon over label, saffron for the current one.
  *
- * The active tab sits inside a darker rounded capsule with a filled glyph;
- * inactive tabs use outline glyphs. The Chat tab keeps its blue accent when
- * inactive, matching the reference screenshots.
+ * It sits in the layout rather than floating over it, so nothing is ever
+ * hidden behind it and no screen has to reserve space for it.
  */
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View
-      style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, 10) }]}
-      pointerEvents="box-none"
-    >
-      <View style={styles.pill}>
+    <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, space.sm) }]}>
+      <View style={styles.row}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const label = options.title ?? route.name;
           const focused = state.index === index;
           const Icon = TAB_ICONS[route.name as keyof typeof TAB_ICONS] ?? Home;
-
-          const inactiveColor = route.name === 'chat' ? '#3E7BD6' : colors.navIcon;
-          const iconColor = focused ? colors.navIconActive : inactiveColor;
+          const tint = focused ? colors.saffronDeep : colors.muted;
 
           const onPress = () => {
             const event = navigation.emit({
@@ -61,25 +55,12 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               onLongPress={() =>
                 navigation.emit({ type: 'tabLongPress', target: route.key })
               }
-              style={styles.tab}
+              style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
             >
-              <View style={[styles.tabInner, focused && styles.tabInnerActive]}>
-                <Icon
-                  size={24}
-                  color={iconColor}
-                  // Remedies keeps the outline namaste mark even when active.
-                  filled={focused && route.name !== 'remedies'}
-                />
-                <Text
-                  style={[
-                    styles.label,
-                    { color: focused ? colors.navIconActive : colors.navIcon },
-                    focused && styles.labelActive,
-                  ]}
-                >
-                  {label}
-                </Text>
-              </View>
+              <Icon size={24} color={tint} filled={focused} />
+              <Text style={[styles.label, { color: tint }, focused && styles.labelActive]}>
+                {label}
+              </Text>
             </Pressable>
           );
         })}
@@ -89,43 +70,33 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+  bar: {
     alignItems: 'center',
-    paddingHorizontal: 14,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: colors.divider,
   },
-  pill: {
+  row: {
     width: '100%',
-    maxWidth: SCREEN_MAX_WIDTH - 28,
+    maxWidth: SCREEN_MAX_WIDTH,
+    height: TAB_BAR_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.navBg,
-    borderRadius: radius.pill,
-    padding: 6,
-    ...shadow(6, 0.12, 20),
   },
   tab: {
     flex: 1,
-  },
-  tabInner: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 7,
-    borderRadius: radius.pill,
+    gap: 3,
+    paddingTop: space.xs,
   },
-  tabInnerActive: {
-    backgroundColor: colors.navActive,
+  pressed: {
+    opacity: 0.6,
   },
   label: {
-    fontFamily,
-    fontSize: 11,
-    fontWeight: weight.medium,
-    marginTop: 3,
+    ...type.caption,
   },
   labelActive: {
-    fontWeight: weight.bold,
+    fontFamily: font.semibold,
   },
 });

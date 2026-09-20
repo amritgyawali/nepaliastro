@@ -1,30 +1,23 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ChevronRight } from '@/icons';
-import { colors, fontFamily, weight } from '@/theme';
+import { GUTTER, colors, space, type } from '@/theme';
 
 type SectionHeaderProps = {
   title: string;
-  /** One line of context under the title — why this section is here. */
-  subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
 };
 
-/** Title, optional supporting line and a trailing link, used by every home section. */
+/** Section title with an optional link, used above every list on the home tab. */
 export function SectionHeader({
   title,
-  subtitle,
-  actionLabel = 'View All',
+  actionLabel = 'See all',
   onAction,
 }: SectionHeaderProps) {
   return (
     <View style={styles.row}>
-      <View style={styles.titleBlock}>
-        <Text style={styles.title}>{title}</Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-      </View>
+      <Text style={styles.title}>{title}</Text>
 
       {onAction ? (
         <Pressable
@@ -32,10 +25,9 @@ export function SectionHeader({
           accessibilityLabel={`${actionLabel}, ${title}`}
           onPress={onAction}
           hitSlop={10}
-          style={({ pressed }) => [styles.action, pressed && styles.actionPressed]}
+          style={({ pressed }) => pressed && styles.pressed}
         >
-          <Text style={styles.actionLabel}>{actionLabel}</Text>
-          <ChevronRight size={15} color={colors.muted} strokeWidth={2.4} />
+          <Text style={styles.action}>{actionLabel}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -45,43 +37,22 @@ export function SectionHeader({
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'baseline',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    marginBottom: 12,
-    gap: 12,
-  },
-  titleBlock: {
-    flexShrink: 1,
+    paddingHorizontal: GUTTER,
+    marginBottom: space.md,
+    gap: space.md,
   },
   title: {
-    fontFamily,
-    fontSize: 19,
-    lineHeight: 24,
-    fontWeight: weight.bold,
-    letterSpacing: -0.4,
-    color: colors.inkStrong,
+    ...type.section,
+    color: colors.ink,
+    flexShrink: 1,
   },
-  subtitle: {
-    fontFamily,
-    fontSize: 12.5,
-    lineHeight: 16,
-    color: colors.muted,
-    marginTop: 2,
+  pressed: {
+    opacity: 0.5,
   },
   action: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    paddingVertical: 4,
-  },
-  actionPressed: {
-    opacity: 0.55,
-  },
-  actionLabel: {
-    fontFamily,
-    fontSize: 13.5,
-    fontWeight: weight.medium,
-    color: colors.muted,
+    ...type.label,
+    color: colors.saffronDeep,
   },
 });

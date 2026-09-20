@@ -13,10 +13,10 @@ import {
 } from '@/components';
 import { topNearbyAstrologer } from '@/data/astrologers';
 import { Check } from '@/icons';
-import { colors, fontFamily, weight } from '@/theme';
 import { useOnboarding } from '@/store/onboarding';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
-/** Step 4 — "Enter your birth time" */
+/** Step 4 — birth time. */
 export default function BirthTimeStep() {
   const router = useRouter();
   const { profile, update } = useOnboarding();
@@ -34,7 +34,7 @@ export default function BirthTimeStep() {
     router.replace(`/chat/${topNearbyAstrologer.id}?free=1`);
   };
 
-  /** Cancel — no offer claimed, the user lands on the home screen. */
+  /** Decline — no offer claimed, the user lands on the home screen. */
   const declineOffer = () => {
     setOfferVisible(false);
     update({ freeMinuteClaimed: false, completed: true });
@@ -67,54 +67,52 @@ export default function BirthTimeStep() {
 
   return (
     <Screen background={colors.white}>
-      <NavHeader title="Enter your details" bordered />
+      <NavHeader title="Your details" bordered />
 
-      <View style={styles.body}>
-        <View style={styles.content}>
-          <Stepper current="birth-time" />
+      <View style={styles.content}>
+        <Stepper current="birth-time" />
 
-          <Text style={styles.heading}>Enter your birth time</Text>
+        <Text style={styles.heading}>At what time?</Text>
 
-          <WheelPicker disabled={unknown}>
-            <WheelColumn
-              options={hourOptions}
-              value={time.hour}
-              onChange={(hour) => setPart({ hour: hour as number })}
-            />
-            <WheelColumn
-              options={minuteOptions}
-              value={time.minute}
-              onChange={(minute) => setPart({ minute: minute as number })}
-            />
-            <WheelColumn
-              options={periodOptions}
-              value={time.period}
-              onChange={(period) => setPart({ period: period as 'AM' | 'PM' })}
-            />
-          </WheelPicker>
-
-          <Pressable
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: unknown }}
-            onPress={() => update({ birthTimeUnknown: !unknown })}
-            style={styles.checkboxRow}
-          >
-            <View style={[styles.checkbox, unknown && styles.checkboxOn]}>
-              {unknown ? <Check size={13} color="#1E201E" strokeWidth={3.4} /> : null}
-            </View>
-            <Text style={styles.checkboxLabel}>Don&rsquo;t know my exact time of birth</Text>
-          </Pressable>
-
-          <Text style={styles.note}>
-            Note: Without time of birth, we can still achieve upto 80% accurate predictions
-          </Text>
-
-          <PrimaryButton
-            label="Next"
-            onPress={() => setOfferVisible(true)}
-            style={styles.cta}
+        <WheelPicker disabled={unknown}>
+          <WheelColumn
+            options={hourOptions}
+            value={time.hour}
+            onChange={(hour) => setPart({ hour: hour as number })}
           />
-        </View>
+          <WheelColumn
+            options={minuteOptions}
+            value={time.minute}
+            onChange={(minute) => setPart({ minute: minute as number })}
+          />
+          <WheelColumn
+            options={periodOptions}
+            value={time.period}
+            onChange={(period) => setPart({ period: period as 'AM' | 'PM' })}
+          />
+        </WheelPicker>
+
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: unknown }}
+          accessibilityLabel="I do not know my exact time of birth"
+          onPress={() => update({ birthTimeUnknown: !unknown })}
+          style={({ pressed }) => [styles.checkRow, pressed && styles.pressed]}
+        >
+          <View style={[styles.checkbox, unknown && styles.checkboxOn]}>
+            {unknown ? <Check size={13} color={colors.onSaffron} strokeWidth={3} /> : null}
+          </View>
+          <Text style={styles.checkLabel}>I don’t know my exact birth time</Text>
+        </Pressable>
+
+        <Text style={styles.note}>
+          Without a time, a reading is still possible — it is just less precise about
+          hours and minutes.
+        </Text>
+
+        <View style={styles.spacer} />
+
+        <PrimaryButton label="Continue" onPress={() => setOfferVisible(true)} />
       </View>
 
       <FreeMinuteOffer
@@ -127,58 +125,52 @@ export default function BirthTimeStep() {
 }
 
 const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    backgroundColor: colors.cream,
-  },
   content: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 20,
+    paddingHorizontal: GUTTER,
+    paddingTop: space.xl,
+    paddingBottom: space.xl,
   },
   heading: {
-    fontFamily,
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: weight.medium,
-    letterSpacing: -0.6,
-    color: '#4B5563',
-    marginTop: 36,
-    marginBottom: 12,
+    ...type.display,
+    color: colors.ink,
+    marginTop: space.xl,
+    marginBottom: space.lg,
   },
-  checkboxRow: {
+  checkRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 26,
+    gap: space.md,
+    marginTop: space.xl,
+  },
+  pressed: {
+    opacity: 0.6,
   },
   checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 1.6,
-    borderColor: '#383B38',
+    width: 22,
+    height: 22,
+    borderRadius: radius.sm - 2,
+    borderWidth: 1.5,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxOn: {
-    backgroundColor: '#EFCA38',
-    borderColor: '#D9B62E',
+    backgroundColor: colors.saffron,
+    borderColor: colors.saffron,
   },
-  checkboxLabel: {
-    fontFamily,
-    fontSize: 15.5,
-    fontWeight: weight.medium,
-    color: '#1E201E',
+  checkLabel: {
+    ...type.label,
+    color: colors.ink,
+    flexShrink: 1,
   },
   note: {
-    fontFamily,
-    fontSize: 14,
-    lineHeight: 21,
-    color: '#585C57',
-    marginTop: 12,
+    ...type.small,
+    color: colors.muted,
+    marginTop: space.sm,
   },
-  cta: {
-    marginTop: 24,
+  spacer: {
+    flex: 1,
+    minHeight: space.xl,
   },
 });

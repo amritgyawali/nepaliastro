@@ -2,38 +2,25 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ongoingSession } from '@/data/astrologers';
-import { colors, fontFamily, radius, shadow, weight } from '@/theme';
+import { colors, radius, space, type } from '@/theme';
 
 import { Avatar } from './Avatar';
 
 /**
- * The live-consultation banner docked just above the tab bar on both
- * directories: portrait with an online dot, rate, status, and a Chat CTA that
- * resumes the conversation.
+ * The consultation already in progress, offered at the top of the directory
+ * rather than floating over the list — nothing is covered, and resuming is
+ * the first thing you see.
  */
 export function SessionPill({ onResume }: { onResume?: () => void }) {
   return (
     <View style={styles.root}>
-      <View style={styles.left}>
-        <View>
-          <Avatar
-            uri={ongoingSession.photo}
-            name={ongoingSession.name}
-            size={48}
-            ring
-            ringWidth={1}
-          />
-          <View style={styles.onlineDot} />
-        </View>
+      <Avatar uri={ongoingSession.photo} name={ongoingSession.name} size={44} />
 
-        <View style={styles.text}>
-          <Text style={styles.name}>{ongoingSession.name}</Text>
-          <Text style={styles.rate}>
-            USD {ongoingSession.rate} /min{' '}
-            <Text style={styles.mode}>({ongoingSession.mode})</Text>
-          </Text>
-          <Text style={styles.status}>{ongoingSession.status}</Text>
-        </View>
+      <View style={styles.text}>
+        <Text style={styles.label}>{ongoingSession.status}</Text>
+        <Text style={styles.name} numberOfLines={1}>
+          {ongoingSession.name}
+        </Text>
       </View>
 
       <Pressable
@@ -42,7 +29,7 @@ export function SessionPill({ onResume }: { onResume?: () => void }) {
         onPress={onResume}
         style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
       >
-        <Text style={styles.ctaLabel}>Chat</Text>
+        <Text style={styles.ctaLabel}>Resume</Text>
       </Pressable>
     </View>
   );
@@ -52,74 +39,35 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.sessionBg,
+    gap: space.md,
+    backgroundColor: colors.saffronSoft,
     borderWidth: 1,
-    borderColor: colors.sessionBorder,
-    borderRadius: radius.xl,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    ...shadow(4, 0.08, 14),
-  },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flexShrink: 1,
-  },
-  onlineDot: {
-    position: 'absolute',
-    bottom: 1,
-    left: 1,
-    width: 13,
-    height: 13,
-    borderRadius: 7,
-    backgroundColor: colors.green,
-    borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors.saffronBorder,
+    borderRadius: radius.lg,
+    padding: space.md,
   },
   text: {
-    flexShrink: 1,
+    flex: 1,
+  },
+  label: {
+    ...type.caption,
+    color: colors.saffronDeep,
   },
   name: {
-    fontFamily,
-    fontSize: 16,
-    fontWeight: weight.semibold,
-    color: colors.inkStrong,
-    letterSpacing: -0.2,
-  },
-  rate: {
-    fontFamily,
-    fontSize: 12.5,
-    color: '#5C5C5C',
-    marginTop: 2,
-  },
-  mode: {
-    color: colors.red,
-    fontWeight: weight.medium,
-  },
-  status: {
-    fontFamily,
-    fontSize: 12.5,
-    color: '#249544',
-    marginTop: 2,
+    ...type.label,
+    color: colors.ink,
   },
   cta: {
-    paddingHorizontal: 22,
-    paddingVertical: 9,
-    borderRadius: radius.pill,
-    borderWidth: 2,
-    borderColor: colors.blue,
-    backgroundColor: colors.white,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.sm + 2,
+    borderRadius: radius.sm,
+    backgroundColor: colors.saffron,
   },
   ctaPressed: {
-    opacity: 0.7,
-    transform: [{ scale: 0.97 }],
+    backgroundColor: colors.saffronPressed,
   },
   ctaLabel: {
-    fontFamily,
-    fontSize: 14,
-    fontWeight: weight.bold,
-    color: colors.blue,
+    ...type.label,
+    color: colors.onSaffron,
   },
 });

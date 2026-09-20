@@ -2,10 +2,11 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Astrologer } from '@/data/astrologers';
-import { colors, fontFamily, radius, shadow, weight } from '@/theme';
+import { Star } from '@/icons';
+import { colors, radius, space, type } from '@/theme';
 
 import { Avatar } from './Avatar';
-import { CelebrityRibbon, Stars, VerifiedBadge } from './Badges';
+import { VerifiedBadge } from './Badges';
 
 type Mode = 'chat' | 'call';
 
@@ -17,104 +18,80 @@ type AstrologerCardProps = {
 };
 
 /**
- * Full-width directory card: portrait and rating on the left, details in the
- * middle, and a Chat (green) or Call (red) action on the right.
+ * One row of a directory: portrait, who they are, what they cost, and the
+ * single action that starts a consultation.
  */
 export function AstrologerCard({ astrologer, mode, onPress, onAction }: AstrologerCardProps) {
-  const isCall = mode === 'call';
-  const accent = isCall ? colors.red : colors.green;
-  const actionLabel = isCall ? 'Call' : 'Chat';
+  const actionLabel = mode === 'call' ? 'Call' : 'Chat';
+  const rate = astrologer.discountedRate ?? astrologer.rate;
   const hasDiscount = typeof astrologer.discountedRate === 'number';
-  const full = !astrologer.preview;
+
+  const facts = [
+    astrologer.experience ? `${astrologer.experience} yrs experience` : null,
+    astrologer.languages,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
-    // The card is a plain View so the action button is a sibling of the
-    // tappable body rather than a child — nesting two pressables would emit
-    // nested <button> elements on web.
+    // A plain View, so the action is a sibling of the tappable body rather
+    // than a child — nesting pressables emits nested <button>s on web.
     <View style={styles.card}>
-      {astrologer.celebrity ? <CelebrityRibbon /> : null}
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={`${astrologer.name}, ${astrologer.skills}`}
+        style={({ pressed }) => [styles.body, pressed && styles.pressed]}
+      >
+        <Avatar uri={astrologer.photo} name={astrologer.name} size={60} />
 
-      <View style={styles.row}>
-        <Pressable
-          onPress={onPress}
-          accessibilityRole="button"
-          accessibilityLabel={`${astrologer.name}, ${astrologer.skills}`}
-          style={({ pressed }) => [styles.body, pressed && styles.cardPressed]}
-        >
-          <View style={styles.left}>
-            <Avatar uri={astrologer.photo} name={astrologer.name} size={84} ring />
-            {astrologer.rating ? (
-              <View style={styles.ratingBlock}>
-                <Stars count={astrologer.rating} />
-                {astrologer.orders ? (
-                  <Text style={styles.orders}>{astrologer.orders}</Text>
-                ) : null}
-              </View>
-            ) : null}
+        <View style={styles.details}>
+          <View style={styles.nameRow}>
+            <Text style={styles.name} numberOfLines={1}>
+              {astrologer.name}
+            </Text>
+            {astrologer.verified ? <VerifiedBadge size={15} /> : null}
           </View>
 
-          <View style={styles.middle}>
-            <View style={styles.nameRow}>
-              <Text style={styles.name} numberOfLines={1}>
-                {astrologer.name}
-              </Text>
-              {astrologer.verified ? <VerifiedBadge /> : null}
+          <Text style={styles.skills} numberOfLines={1}>
+            {astrologer.skills}
+          </Text>
+          <Text style={styles.facts} numberOfLines={1}>
+            {facts}
+          </Text>
+
+          {astrologer.rating ? (
+            <View style={styles.ratingRow}>
+              <Star size={13} color={colors.saffron} filled />
+              <Text style={styles.rating}>{astrologer.rating.toFixed(1)}</Text>
+              {astrologer.orders ? (
+                <Text style={styles.orders} numberOfLines={1}>
+                  · {astrologer.orders}
+                </Text>
+              ) : null}
             </View>
+          ) : null}
+        </View>
+      </Pressable>
 
-            <Text style={styles.meta} numberOfLines={1}>
-              {astrologer.skills}
-            </Text>
-            <Text style={styles.meta} numberOfLines={1}>
-              {astrologer.languages}
-            </Text>
-            {astrologer.experience ? (
-              <Text style={styles.experience}>Exp: {astrologer.experience} Years</Text>
-            ) : null}
+      <View style={styles.side}>
+        <Text style={styles.price}>USD {rate.toFixed(2)}/min</Text>
+        {hasDiscount ? (
+          <Text style={styles.struck}>USD {astrologer.rate.toFixed(2)}</Text>
+        ) : null}
 
-            {full ? (
-              <View style={styles.priceRow}>
-                {hasDiscount ? (
-                  <>
-                    <Text style={styles.priceStruck}>USD {astrologer.rate.toFixed(2)}</Text>
-                    <Text style={[styles.price, { color: colors.red }]}>
-                      {astrologer.discountedRate?.toFixed(2)}
-                      <Text style={[styles.priceUnit, { color: colors.red }]}>/min</Text>
-                    </Text>
-                  </>
-                ) : (
-                  <Text style={styles.price}>
-                    USD {astrologer.rate.toFixed(2)}
-                    <Text style={styles.priceUnit}>/min</Text>
-                  </Text>
-                )}
-              </View>
-            ) : null}
-          </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${actionLabel} with ${astrologer.name}`}
+          onPress={onAction}
+          style={({ pressed }) => [styles.action, pressed && styles.actionPressed]}
+        >
+          <Text style={styles.actionLabel}>{actionLabel}</Text>
         </Pressable>
 
-        {full ? (
-          <View style={styles.actionColumn}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`${actionLabel} with ${astrologer.name}`}
-              onPress={onAction}
-              style={({ pressed }) => [
-                styles.actionButton,
-                { borderColor: accent },
-                pressed && styles.actionPressed,
-              ]}
-            >
-              <Text
-                style={[styles.actionLabel, { color: isCall ? colors.red : colors.greenText }]}
-              >
-                {actionLabel}
-              </Text>
-            </Pressable>
-            {astrologer.waitTime ? (
-              <Text style={styles.waitTime}>{astrologer.waitTime}</Text>
-            ) : null}
-          </View>
-        ) : null}
+        <Text style={[styles.status, astrologer.online && styles.statusOnline]}>
+          {astrologer.online ? 'Online' : astrologer.waitTime ?? 'Busy'}
+        </Text>
       </View>
     </View>
   );
@@ -122,125 +99,94 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.white,
-    borderRadius: radius.xl,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    overflow: 'hidden',
-    ...shadow(2, 0.04, 8),
-  },
-  cardPressed: {
-    opacity: 0.95,
-  },
-  row: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    gap: space.md,
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: space.md,
   },
-  /** Tappable region: portrait, rating and details, but not the CTA. */
   body: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  left: {
     alignItems: 'center',
-    marginRight: 12,
+    gap: space.md,
   },
-  ratingBlock: {
-    alignItems: 'center',
-    marginTop: 8,
+  pressed: {
+    opacity: 0.6,
   },
-  orders: {
-    fontFamily,
-    fontSize: 11,
-    color: colors.muted,
-    marginTop: 3,
-  },
-  middle: {
+  details: {
     flex: 1,
-    paddingRight: 4,
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: space.xs + 2,
   },
   name: {
-    fontFamily,
-    fontSize: 19,
-    fontWeight: weight.bold,
-    letterSpacing: -0.4,
-    color: '#1E1E24',
+    ...type.section,
+    color: colors.ink,
     flexShrink: 1,
   },
-  meta: {
-    fontFamily,
-    fontSize: 13,
-    lineHeight: 18,
-    color: colors.muted,
-    marginTop: 3,
+  skills: {
+    ...type.small,
+    color: colors.body,
   },
-  experience: {
-    fontFamily,
-    fontSize: 13,
-    lineHeight: 18,
+  facts: {
+    ...type.caption,
     color: colors.muted,
-    marginTop: 6,
   },
-  priceRow: {
+  ratingRow: {
     flexDirection: 'row',
-    alignItems: 'baseline',
-    marginTop: 8,
-    gap: 5,
+    alignItems: 'center',
+    gap: space.xs,
+    marginTop: space.xs,
+  },
+  rating: {
+    ...type.caption,
+    color: colors.ink,
+  },
+  orders: {
+    ...type.caption,
+    color: colors.muted,
+    flexShrink: 1,
+  },
+  side: {
+    alignItems: 'flex-end',
+    gap: 2,
   },
   price: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: weight.bold,
-    color: colors.inkStrong,
+    ...type.caption,
+    color: colors.ink,
   },
-  priceStruck: {
-    fontFamily,
-    fontSize: 13,
-    fontWeight: weight.medium,
+  struck: {
+    ...type.caption,
     color: colors.subtle,
     textDecorationLine: 'line-through',
   },
-  priceUnit: {
-    fontFamily,
-    fontSize: 13,
-    fontWeight: weight.regular,
-    color: colors.muted,
-  },
-  actionColumn: {
-    alignSelf: 'center',
+  action: {
+    minWidth: 88,
+    marginTop: space.xs,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.sm + 2,
+    borderRadius: radius.sm,
+    backgroundColor: colors.saffron,
     alignItems: 'center',
-  },
-  actionButton: {
-    minWidth: 82,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.white,
   },
   actionPressed: {
-    opacity: 0.6,
-    transform: [{ scale: 0.97 }],
+    backgroundColor: colors.saffronPressed,
   },
   actionLabel: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: weight.medium,
+    ...type.label,
+    color: colors.onSaffron,
   },
-  waitTime: {
-    fontFamily,
-    fontSize: 11.5,
-    color: colors.red,
-    marginTop: 4,
+  status: {
+    ...type.caption,
+    color: colors.muted,
+  },
+  statusOnline: {
+    color: colors.green,
   },
 });

@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 
 import { NavHeader, PrimaryButton, Screen, Stepper } from '@/components';
-import { Search } from '@/icons';
-import { colors, fontFamily, radius, weight } from '@/theme';
 import { useOnboarding } from '@/store/onboarding';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 /** Step 5 — "Where were you born?" */
 export default function BirthPlaceStep() {
@@ -23,7 +22,7 @@ export default function BirthPlaceStep() {
 
   return (
     <Screen background={colors.white}>
-      <NavHeader title="Enter your details" bordered />
+      <NavHeader title="Your details" bordered />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -33,27 +32,27 @@ export default function BirthPlaceStep() {
           <Stepper current="birth-place" />
 
           <Text style={styles.heading}>Where were you born?</Text>
+          <Text style={styles.hint}>
+            The place fixes your chart's timings, so the nearest city is enough.
+          </Text>
 
-          <View style={styles.inputWrap}>
-            <TextInput
-              value={profile.birthPlace}
-              onChangeText={(birthPlace) => update({ birthPlace })}
-              placeholder="City, region, country"
-              placeholderTextColor="#A8ACB1"
-              style={styles.input}
-              autoCapitalize="words"
-              autoCorrect={false}
-              returnKeyType="next"
-              accessibilityLabel="City or region of birth"
-              onSubmitEditing={() => canContinue && router.push('/onboarding/languages')}
-            />
-            <View style={styles.inputIcon} pointerEvents="none">
-              <Search size={20} color="#9AA0A6" strokeWidth={2} />
-            </View>
-          </View>
+          <TextInput
+            value={profile.birthPlace}
+            onChangeText={(birthPlace) => update({ birthPlace })}
+            placeholder="City, region, country"
+            placeholderTextColor={colors.subtle}
+            style={styles.input}
+            autoCapitalize="words"
+            autoCorrect={false}
+            returnKeyType="next"
+            accessibilityLabel="City or region of birth"
+            onSubmitEditing={() => canContinue && router.push('/onboarding/languages')}
+          />
+
+          <View style={styles.spacer} />
 
           <PrimaryButton
-            label="Next"
+            label="Continue"
             disabled={!canContinue}
             onPress={() => router.push('/onboarding/languages')}
           />
@@ -66,41 +65,36 @@ export default function BirthPlaceStep() {
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    backgroundColor: colors.cream,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 20,
+    paddingHorizontal: GUTTER,
+    paddingTop: space.xl,
+    paddingBottom: space.xl,
   },
   heading: {
-    fontFamily,
-    fontSize: 27,
-    lineHeight: 34,
-    fontWeight: weight.semibold,
-    letterSpacing: -0.5,
-    color: '#434A54',
-    marginTop: 38,
-    marginBottom: 32,
+    ...type.display,
+    color: colors.ink,
+    marginTop: space.xl,
   },
-  inputWrap: {
-    marginBottom: 26,
-    justifyContent: 'center',
+  hint: {
+    ...type.body,
+    color: colors.muted,
+    marginTop: space.xs,
+    marginBottom: space.xl,
   },
   input: {
-    height: 56,
-    borderRadius: radius.lg,
+    height: 52,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.inputBorder,
+    borderColor: colors.border,
     backgroundColor: colors.white,
-    paddingLeft: 16,
-    paddingRight: 48,
-    fontFamily,
-    fontSize: 17,
+    paddingHorizontal: space.lg,
+    ...type.body,
     color: colors.ink,
   },
-  inputIcon: {
-    position: 'absolute',
-    right: 16,
+  spacer: {
+    flex: 1,
+    minHeight: space.xl,
   },
 });

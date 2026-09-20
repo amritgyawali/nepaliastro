@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import { fontFamily, weight } from '@/theme';
+import { colors, font, radius } from '@/theme';
 
 export const ITEM_HEIGHT = 38;
 /** Rows shown at once. Odd so there is a true centre row. */
@@ -33,8 +33,7 @@ type WheelColumnProps = {
  * One scrollable column of an iOS-style picker.
  *
  * Rows snap to `ITEM_HEIGHT`, and each row's size and opacity are driven by
- * its distance from the centre so the column reads as a curved wheel — the
- * same falloff the mockups paint statically.
+ * its distance from the centre, so the column reads as a curved wheel.
  */
 export function WheelColumn({ options, value, onChange, flex = 1, style }: WheelColumnProps) {
   const scrollRef = useRef<ScrollView>(null);
@@ -117,10 +116,7 @@ export function WheelColumn({ options, value, onChange, flex = 1, style }: Wheel
   );
 }
 
-/**
- * Lays out several `WheelColumn`s behind the shared selection pill, matching
- * the grouped picker in the birth-date and birth-time steps.
- */
+/** Lays out several `WheelColumn`s behind one shared selection bar. */
 export function WheelPicker({
   children,
   disabled,
@@ -154,8 +150,8 @@ const styles = StyleSheet.create({
     top: HALF * ITEM_HEIGHT,
     height: ITEM_HEIGHT + 8,
     marginTop: -4,
-    borderRadius: 16,
-    backgroundColor: '#EDE9DA',
+    borderRadius: radius.md,
+    backgroundColor: colors.saffronSoft,
   },
   columns: {
     flexDirection: 'row',
@@ -167,12 +163,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   itemText: {
-    fontFamily,
-    fontSize: 25,
-    lineHeight: 30,
-    fontWeight: weight.medium,
-    letterSpacing: -0.4,
-    color: '#22252A',
+    fontFamily: font.medium,
+    fontSize: 24,
+    lineHeight: 32,
+    color: colors.ink,
     // Web needs an explicit width for the ellipsis to resolve inside a flex row.
     ...Platform.select({ web: { whiteSpace: 'nowrap' as const }, default: {} }),
   },

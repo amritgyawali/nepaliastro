@@ -58,17 +58,6 @@ export function ChevronRight(props: IconProps) {
   );
 }
 
-export function Hamburger(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.3, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Line x1="4" y1="7" x2="20" y2="7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-      <Line x1="4" y1="12" x2="20" y2="12" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-      <Line x1="4" y1="17" x2="20" y2="17" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
 export function Search(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
   return (
@@ -86,32 +75,6 @@ export function Search(props: IconProps) {
     </Svg>
   );
 }
-
-export function Edit(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke(props);
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Path
-        d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-/* ------------------------------------------------------------------ *
- * Bottom tab bar
- * ------------------------------------------------------------------ */
 
 export function Home({ filled, ...props }: IconProps & { filled?: boolean }) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
@@ -220,32 +183,6 @@ export function PrayingHands({ filled, ...props }: IconProps & { filled?: boolea
  * Onboarding stepper
  * ------------------------------------------------------------------ */
 
-export function UserOutline(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke(props);
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Circle cx="12" cy="7" r="4" stroke={color} strokeWidth={strokeWidth} />
-    </Svg>
-  );
-}
-
-export function GenderPin(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.5, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="9" r="5" stroke={color} strokeWidth={strokeWidth} />
-      <Path d="M12 14v7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
 export function Calendar(props: IconProps) {
   const { size, color, strokeWidth } = useStroke(props);
   return (
@@ -260,38 +197,6 @@ export function Calendar(props: IconProps) {
       {[8, 12, 16].map((cx) => (
         <Circle key={`r2-${cx}`} cx={cx} cy="18" r="0.8" fill={color} />
       ))}
-    </Svg>
-  );
-}
-
-export function Clock(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={strokeWidth} />
-      <Polyline
-        points="12 7 12 12 15 14"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-export function MapPin(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Circle cx="12" cy="10" r="3" stroke={color} strokeWidth={strokeWidth} />
     </Svg>
   );
 }
@@ -312,7 +217,7 @@ export function MessageSquare(props: IconProps) {
 }
 
 /** Outlined standing male figure used on the gender step. */
-export function MaleFigure({ size = 48, color = '#2D2D2D' }: IconProps) {
+export function MaleFigure({ size = 48, color = colors.ink }: IconProps) {
   return (
     <Svg width={size * (32 / 48)} height={size} viewBox="0 0 32 48" fill="none">
       <Circle cx="16" cy="8" r="5" stroke={color} strokeWidth={1.8} />
@@ -328,7 +233,7 @@ export function MaleFigure({ size = 48, color = '#2D2D2D' }: IconProps) {
 }
 
 /** Outlined standing female figure used on the gender step. */
-export function FemaleFigure({ size = 48, color = '#2D2D2D' }: IconProps) {
+export function FemaleFigure({ size = 48, color = colors.ink }: IconProps) {
   return (
     <Svg width={size * (32 / 48)} height={size} viewBox="0 0 32 48" fill="none">
       <Circle cx="16" cy="8" r="5" stroke={color} strokeWidth={1.8} />
@@ -361,38 +266,6 @@ export function Sunrise(props: IconProps) {
 }
 
 /** Sunset: the sunrise mark with the arrow pointing back down. */
-export function Sunset(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M12 2v5M9.5 4.5L12 7l2.5-2.5M4 14h16M7 14a5 5 0 0 1 10 0M2 18h20"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-/** Waxing crescent, used for the tithi cell of the panchang strip. */
-export function Moon(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-/** Small cross used to clear the home search field. */
 export function Close(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
   return (
@@ -450,114 +323,6 @@ export function MatchRings(props: IconProps) {
 }
 
 /** Reader with an open book — astrology blog. */
-export function BlogReader(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="7" r="3" stroke={color} strokeWidth={strokeWidth} />
-      <Path
-        d="M6 21v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Rect x="9" y="14" width="6" height="5" rx="1" stroke={color} strokeWidth={strokeWidth} />
-      <Path
-        d="M10 16l2 1 2-1"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-/* ------------------------------------------------------------------ *
- * Directory filter chips
- * ------------------------------------------------------------------ */
-
-export function Sliders(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round">
-        <Line x1="4" y1="21" x2="4" y2="14" />
-        <Line x1="4" y1="10" x2="4" y2="3" />
-        <Line x1="12" y1="21" x2="12" y2="12" />
-        <Line x1="12" y1="8" x2="12" y2="3" />
-        <Line x1="20" y1="21" x2="20" y2="16" />
-        <Line x1="20" y1="12" x2="20" y2="3" />
-        <Line x1="1" y1="14" x2="7" y2="14" />
-        <Line x1="9" y1="8" x2="15" y2="8" />
-        <Line x1="17" y1="16" x2="23" y2="16" />
-      </G>
-    </Svg>
-  );
-}
-
-export function GridSquares({ size = 24, color = colors.ink }: IconProps) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24">
-      <Rect x="3" y="3" width="7" height="7" rx="1.5" fill={color} />
-      <Rect x="14" y="3" width="7" height="7" rx="1.5" fill={color} />
-      <Rect x="3" y="14" width="7" height="7" rx="1.5" fill={color} />
-      <Rect x="14" y="14" width="7" height="7" rx="1.5" fill={color} />
-    </Svg>
-  );
-}
-
-export function GridOutline(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Rect x="3" y="3" width="7" height="7" rx="1.5" stroke={color} strokeWidth={strokeWidth} />
-      <Rect x="14" y="3" width="7" height="7" rx="1.5" stroke={color} strokeWidth={strokeWidth} />
-      <Rect x="14" y="14" width="7" height="7" rx="1.5" stroke={color} strokeWidth={strokeWidth} />
-      <Rect x="3" y="14" width="7" height="7" rx="1.5" stroke={color} strokeWidth={strokeWidth} />
-    </Svg>
-  );
-}
-
-export function TarotCards(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Rect
-        x="5"
-        y="3"
-        width="14"
-        height="18"
-        rx="2"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinejoin="round"
-      />
-      <Circle cx="12" cy="12" r="3" stroke={color} strokeWidth={strokeWidth} />
-      <Path d="M12 6h.01" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-export function PalmHand(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-        <Path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v3" />
-        <Path d="M14 9V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v7" />
-        <Path d="M10 10V5a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" />
-        <Path d="M18 11a4 4 0 0 1 4 4v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-      </G>
-    </Svg>
-  );
-}
-
-/* ------------------------------------------------------------------ *
- * Badges & status
- * ------------------------------------------------------------------ */
-
 export function Check(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 3, color: colors.white, ...props });
   return (
@@ -595,7 +360,7 @@ export function SealCheck({ size = 16, color = colors.green }: IconProps) {
 
 export function Star({
   size = 13,
-  color = '#57534E',
+  color = colors.saffron,
   filled = true,
 }: IconProps & { filled?: boolean }) {
   return (
@@ -615,59 +380,6 @@ export function Star({
  * Wallet / header actions
  * ------------------------------------------------------------------ */
 
-export function Wallet(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Rect x="2" y="6" width="20" height="14" rx="2" stroke={color} strokeWidth={strokeWidth} />
-      <Path d="M16 13a2 2 0 0 1 0-4h6v4z" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" />
-      <Path
-        d="M6 6V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-      />
-    </Svg>
-  );
-}
-
-export function Plus(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.4, color: colors.white, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 5v14M5 12h14" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-/** Messenger-style lightning bubble in the directory header. */
-export function MessengerBubble({ size = 22, color = colors.ink }: IconProps) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M12 2C6.3 2 2 6.2 2 11.7c0 3.1 1.4 5.9 3.7 7.7v3.1l3.4-1.9c.9.25 1.9.4 2.9.4 5.7 0 10-4.2 10-9.3S17.7 2 12 2z"
-        stroke={color}
-        strokeWidth={1.9}
-        strokeLinejoin="round"
-      />
-      <Path d="M6.6 14.6l4.2-4.4 2.2 2.2 3.5-2.2-4.2 4.4-2.2-2.2-3.5 2.2z" fill={color} />
-    </Svg>
-  );
-}
-
-export function History(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-        <Path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-        <Path d="M3 3v5h5" />
-        <Path d="M12 7v5l3 2" />
-      </G>
-    </Svg>
-  );
-}
-
 export function Headphones(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
   return (
@@ -680,36 +392,6 @@ export function Headphones(props: IconProps) {
   );
 }
 
-export function Users(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-        <Path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <Circle cx="9" cy="7" r="4" />
-        <Path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <Path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </G>
-    </Svg>
-  );
-}
-
-export function Gift(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-        <Polyline points="20 12 20 22 4 22 4 12" />
-        <Rect x="2" y="7" width="20" height="5" />
-        <Line x1="12" y1="22" x2="12" y2="7" />
-        <Path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
-        <Path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
-      </G>
-    </Svg>
-  );
-}
-
-/** Lotus / diya — "Book a Pooja". */
 export function Lotus(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
   return (
@@ -736,7 +418,7 @@ export function Send({ size = 18, color = colors.ink }: IconProps) {
   );
 }
 
-export function DoubleCheck({ size = 14, color = '#3B82F6' }: IconProps) {
+export function DoubleCheck({ size = 14, color = colors.green }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path
@@ -751,113 +433,3 @@ export function DoubleCheck({ size = 14, color = '#3B82F6' }: IconProps) {
  * Remedies hero feature marks
  * ------------------------------------------------------------------ */
 
-export function Shield(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-export function Meditate(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="7" r="3" stroke={color} strokeWidth={strokeWidth} />
-      <Path d="M6 19c0-3 3-5 6-5s6 2 6 5" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-export function Grounding(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-/** Ram silhouette used as the default Aries profile avatar. */
-export function AriesAvatar({ size = 48 }: { size?: number }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 100 100">
-      <Circle cx="50" cy="50" r="50" fill="#F2DE4E" />
-      <Path d="M22 100 C22 80, 78 80, 78 100 Z" fill="#D49A32" />
-      <Rect x="43" y="66" width="14" height="15" fill="#E8B58E" />
-      <Ellipse cx="50" cy="54" rx="19" ry="21" fill="#E8B58E" />
-      <Path d="M32 45 C32 32, 68 32, 68 45 C68 38, 32 38, 32 45 Z" fill="#4B3621" />
-      <Path
-        d="M33 42 C18 35, 15 56, 26 62 C34 66, 38 52, 28 50 C23 48, 22 40, 31 43"
-        fill="#9DA5AF"
-        stroke="#7E8793"
-        strokeWidth={1.2}
-      />
-      <Path
-        d="M67 42 C82 35, 85 56, 74 62 C66 66, 62 52, 72 50 C77 48, 78 40, 69 43"
-        fill="#9DA5AF"
-        stroke="#7E8793"
-        strokeWidth={1.2}
-      />
-      <Ellipse cx="43" cy="52" rx="2.5" ry="1.8" fill="#36220F" />
-      <Ellipse cx="57" cy="52" rx="2.5" ry="1.8" fill="#36220F" />
-      <Path d="M50 52 L48 57 L52 57" fill="none" stroke="#C58D66" strokeWidth={1.2} strokeLinecap="round" />
-      <Path d="M46 63 Q50 66 54 63" fill="none" stroke="#B86659" strokeWidth={1.6} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-/**
- * Rudraksha & Karungali mala on its wooden stand — the artwork in the
- * AstroRemedy hero banner. Beads are placed along two strands so the shape
- * reads as a mala rather than loose dots.
- */
-export function MalaArt({ width = 190, height = 170 }: { width?: number; height?: number }) {
-  // Dark Karungali strand, looping from the stand down to the right.
-  const karungali: [number, number, number][] = [
-    [96, 40, 7], [108, 34, 7.5], [121, 33, 8], [134, 37, 8.5], [144, 46, 9],
-    [150, 58, 9.5], [151, 71, 9.5], [147, 84, 9], [138, 93, 8.5], [126, 98, 8],
-    [113, 98, 7.5], [101, 93, 7],
-  ];
-  // Warmer Rudraksha beads gathered at the base.
-  const rudraksha: [number, number, number][] = [
-    [96, 120, 11], [118, 124, 12.5], [140, 119, 10],
-  ];
-
-  return (
-    <Svg width={width} height={height} viewBox="0 0 190 170">
-      {/* Wooden stand */}
-      <Rect x="70" y="16" width="9" height="116" rx="4.5" fill="#B89B72" />
-      <Ellipse cx="74.5" cy="136" rx="30" ry="8" fill="#C4A87F" />
-      <Ellipse cx="74.5" cy="132" rx="30" ry="8" fill="#D8BF99" />
-
-      {/* Hanging strand hint */}
-      <Path
-        d="M79 34 C62 52, 60 100, 92 118"
-        stroke="#7A6544"
-        strokeWidth={2}
-        strokeDasharray="5 6"
-        strokeLinecap="round"
-        fill="none"
-      />
-
-      {karungali.map(([cx, cy, r], i) => (
-        <Circle key={`k${i}`} cx={cx} cy={cy} r={r} fill="#272523" stroke="#0F0E0D" strokeWidth={0.8} />
-      ))}
-      {rudraksha.map(([cx, cy, r], i) => (
-        <Circle key={`r${i}`} cx={cx} cy={cy} r={r} fill="#8B4A1C" stroke="#5C2F10" strokeWidth={1} />
-      ))}
-    </Svg>
-  );
-}

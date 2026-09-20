@@ -3,7 +3,7 @@ import React from 'react';
 import { DirectoryScreen } from '@/components';
 import { callAstrologers } from '@/data/astrologers';
 
-/** Call directory tab — design/astrologer_directory_call. */
+/** Call tab: the astrologers you can speak to. */
 export default function CallDirectory() {
   return <DirectoryScreen mode="call" data={callAstrologers} />;
 }

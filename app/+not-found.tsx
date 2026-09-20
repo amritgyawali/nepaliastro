@@ -2,7 +2,7 @@ import { Link, Stack } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, fontFamily, weight } from '@/theme';
+import { colors, space, type } from '@/theme';
 
 export default function NotFound() {
   return (
@@ -23,20 +23,16 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
-    backgroundColor: colors.cream,
-    gap: 12,
+    padding: space.xl,
+    backgroundColor: colors.white,
+    gap: space.md,
   },
   title: {
-    fontFamily,
-    fontSize: 17,
-    fontWeight: weight.semibold,
+    ...type.section,
     color: colors.ink,
   },
   link: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: weight.medium,
-    color: colors.blueCta,
+    ...type.label,
+    color: colors.saffronDeep,
   },
 });

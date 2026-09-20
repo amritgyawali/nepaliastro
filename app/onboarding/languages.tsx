@@ -4,11 +4,10 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NavHeader, PrimaryButton, Screen, Stepper } from '@/components';
 import { languageOptions } from '@/data/content';
-import { Check } from '@/icons';
-import { colors, fontFamily, radius, shadow, weight } from '@/theme';
 import { useOnboarding } from '@/store/onboarding';
+import { GUTTER, colors, font, radius, space, type } from '@/theme';
 
-/** Step 6 — "Select all your languages?" */
+/** Step 6 — the languages you want to be read in. */
 export default function LanguagesStep() {
   const router = useRouter();
   const { profile, toggleLanguage, complete } = useOnboarding();
@@ -22,20 +21,19 @@ export default function LanguagesStep() {
 
   return (
     <Screen background={colors.white}>
-      <NavHeader title="Enter your details" bordered />
+      <NavHeader title="Your details" bordered />
 
-      <View style={styles.body}>
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
+      <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <Stepper current="languages" />
 
-          <Text style={styles.heading}>Select all your languages?</Text>
+          <Text style={styles.heading}>Which languages do you read in?</Text>
+          <Text style={styles.hint}>Pick as many as you like.</Text>
 
           <View style={styles.grid}>
             {languageOptions.map((language) => {
               const selected = profile.languages.includes(language);
+
               return (
                 <Pressable
                   key={language}
@@ -46,7 +44,7 @@ export default function LanguagesStep() {
                   style={({ pressed }) => [
                     styles.chip,
                     selected && styles.chipSelected,
-                    pressed && styles.chipPressed,
+                    pressed && styles.pressed,
                   ]}
                 >
                   <Text
@@ -55,93 +53,65 @@ export default function LanguagesStep() {
                   >
                     {language}
                   </Text>
-                  {selected ? (
-                    <Check size={14} color="#1E2125" strokeWidth={3.2} />
-                  ) : (
-                    <Text style={styles.chipPlus}>+</Text>
-                  )}
                 </Pressable>
               );
             })}
           </View>
-
-          <PrimaryButton
-            label="Start Chat with Astrologer"
-            disabled={!canContinue}
-            onPress={finish}
-            style={styles.cta}
-          />
         </ScrollView>
+
+        <PrimaryButton label="Finish" disabled={!canContinue} onPress={finish} />
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    backgroundColor: colors.cream,
-  },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 40,
+    flex: 1,
+    paddingHorizontal: GUTTER,
+    paddingTop: space.xl,
+    paddingBottom: space.xl,
+  },
+  scroll: {
+    paddingBottom: space.xl,
   },
   heading: {
-    fontFamily,
-    fontSize: 25,
-    lineHeight: 32,
-    fontWeight: weight.medium,
-    letterSpacing: -0.5,
-    color: '#40444C',
-    marginTop: 30,
-    marginBottom: 24,
+    ...type.display,
+    color: colors.ink,
+    marginTop: space.xl,
+  },
+  hint: {
+    ...type.body,
+    color: colors.muted,
+    marginTop: space.xs,
+    marginBottom: space.lg,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: space.sm,
   },
   chip: {
-    // Three per row, accounting for the 10pt gaps.
-    width: '31.5%',
-    height: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingHorizontal: 8,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
     borderRadius: radius.pill,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.white,
-    ...shadow(1, 0.03),
+    borderColor: colors.border,
   },
   chipSelected: {
-    backgroundColor: '#F3D429',
-    borderColor: '#E7C823',
+    backgroundColor: colors.saffronSoft,
+    borderColor: colors.saffron,
   },
-  chipPressed: {
-    transform: [{ scale: 0.96 }],
+  pressed: {
+    opacity: 0.6,
   },
   chipLabel: {
-    fontFamily,
-    fontSize: 14.5,
-    color: '#666B72',
-    flexShrink: 1,
+    ...type.label,
+    color: colors.body,
   },
   chipLabelSelected: {
-    color: '#1E2125',
-    fontWeight: weight.medium,
-  },
-  chipPlus: {
-    fontFamily,
-    fontSize: 17,
-    lineHeight: 18,
-    color: '#7C8086',
-  },
-  cta: {
-    marginTop: 32,
-    height: 50,
+    fontFamily: font.semibold,
+    color: colors.saffronDeep,
   },
 });

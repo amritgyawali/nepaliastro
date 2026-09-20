@@ -4,118 +4,113 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { NavHeader, PrimaryButton, Screen, Stepper } from '@/components';
 import { FemaleFigure, MaleFigure } from '@/icons';
-import { colors, fontFamily, weight } from '@/theme';
 import { useOnboarding, type Gender } from '@/store/onboarding';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 const OPTIONS: { value: Gender; label: string; Figure: typeof MaleFigure }[] = [
   { value: 'male', label: 'Male', Figure: MaleFigure },
   { value: 'female', label: 'Female', Figure: FemaleFigure },
 ];
 
-/** Step 2 — "What is your gender?" */
+/** Step 2 — gender. */
 export default function GenderStep() {
   const router = useRouter();
   const { profile, update } = useOnboarding();
 
   return (
     <Screen background={colors.white}>
-      <NavHeader title="Enter your details" bordered />
+      <NavHeader title="Your details" bordered />
 
-      <View style={styles.body}>
-        <View style={styles.content}>
-          <Stepper current="gender" />
+      <View style={styles.content}>
+        <Stepper current="gender" />
 
-          <Text style={styles.heading}>What is your gender?</Text>
+        <Text style={styles.heading}>What is your gender?</Text>
 
-          <View
-            style={styles.options}
-            accessibilityRole="radiogroup"
-            accessibilityLabel="Select your gender"
-          >
-            {OPTIONS.map(({ value, label, Figure }) => {
-              const selected = profile.gender === value;
-              return (
-                <Pressable
-                  key={value}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected }}
-                  accessibilityLabel={label}
-                  onPress={() => update({ gender: value })}
-                  style={({ pressed }) => [styles.option, pressed && styles.optionPressed]}
-                >
-                  <View style={[styles.circle, selected ? styles.circleOn : styles.circleOff]}>
-                    <Figure size={50} color="#2D2D2D" />
-                  </View>
-                  <Text style={styles.label}>{label}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
+        <View
+          style={styles.options}
+          accessibilityRole="radiogroup"
+          accessibilityLabel="Select your gender"
+        >
+          {OPTIONS.map(({ value, label, Figure }) => {
+            const selected = profile.gender === value;
 
-          <PrimaryButton
-            label="Next"
-            disabled={!profile.gender}
-            onPress={() => router.push('/onboarding/birth-date')}
-          />
+            return (
+              <Pressable
+                key={value}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                accessibilityLabel={label}
+                onPress={() => update({ gender: value })}
+                style={({ pressed }) => [
+                  styles.option,
+                  selected && styles.optionSelected,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Figure size={44} color={selected ? colors.saffronDeep : colors.muted} />
+                <Text style={[styles.label, selected && styles.labelSelected]}>
+                  {label}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
+
+        <View style={styles.spacer} />
+
+        <PrimaryButton
+          label="Continue"
+          disabled={!profile.gender}
+          onPress={() => router.push('/onboarding/birth-date')}
+        />
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    backgroundColor: colors.cream,
-  },
   content: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 20,
+    paddingHorizontal: GUTTER,
+    paddingTop: space.xl,
+    paddingBottom: space.xl,
   },
   heading: {
-    fontFamily,
-    fontSize: 28,
-    lineHeight: 34,
-    fontWeight: weight.bold,
-    letterSpacing: -0.5,
-    color: '#4B5047',
-    marginTop: 40,
-    marginBottom: 36,
+    ...type.display,
+    color: colors.ink,
+    marginTop: space.xl,
+    marginBottom: space.xl,
   },
   options: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginBottom: 40,
+    gap: space.md,
   },
   option: {
+    flex: 1,
     alignItems: 'center',
-  },
-  optionPressed: {
-    transform: [{ scale: 0.96 }],
-  },
-  circle: {
-    width: 92,
-    height: 92,
-    borderRadius: 46,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  circleOn: {
-    backgroundColor: colors.yellow,
-  },
-  circleOff: {
+    gap: space.sm,
+    paddingVertical: space.xl,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: '#E4E1AC',
-    backgroundColor: colors.transparent,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+  },
+  optionSelected: {
+    borderColor: colors.saffron,
+    backgroundColor: colors.saffronSoft,
+  },
+  pressed: {
+    opacity: 0.7,
   },
   label: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: weight.medium,
-    color: '#2E312E',
-    marginTop: 12,
-    letterSpacing: -0.2,
+    ...type.label,
+    color: colors.body,
+  },
+  labelSelected: {
+    color: colors.saffronDeep,
+  },
+  spacer: {
+    flex: 1,
+    minHeight: space.xl,
   },
 });
