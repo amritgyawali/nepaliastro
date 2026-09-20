@@ -5,6 +5,7 @@ export { CashbackBanner } from './CashbackBanner';
 export { DirectoryHeader } from './DirectoryHeader';
 export { DirectoryScreen } from './DirectoryScreen';
 export { FilterChips } from './FilterChips';
+export { FreeMinuteOffer } from './FreeMinuteOffer';
 export { NavHeader } from './NavHeader';
 export { PressableScale } from './PressableScale';
 export { PrimaryButton } from './PrimaryButton';

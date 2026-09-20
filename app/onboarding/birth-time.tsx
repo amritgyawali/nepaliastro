@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
+  FreeMinuteOffer,
   NavHeader,
   PrimaryButton,
   Screen,
@@ -10,6 +11,7 @@ import {
   WheelColumn,
   WheelPicker,
 } from '@/components';
+import { topNearbyAstrologer } from '@/data/astrologers';
 import { Check } from '@/icons';
 import { colors, fontFamily, weight } from '@/theme';
 import { useOnboarding } from '@/store/onboarding';
@@ -20,6 +22,24 @@ export default function BirthTimeStep() {
   const { profile, update } = useOnboarding();
   const time = profile.birthTime ?? { hour: 12, minute: 0, period: 'AM' as const };
   const unknown = profile.birthTimeUnknown;
+
+  // Birth date and time are all the chart needs, so the free-minute offer is
+  // raised here rather than at the end of the questionnaire.
+  const [offerVisible, setOfferVisible] = useState(false);
+
+  /** Claim — straight into the live chat, where the free minute starts. */
+  const claimOffer = () => {
+    setOfferVisible(false);
+    update({ freeMinuteClaimed: true, completed: true });
+    router.replace(`/chat/${topNearbyAstrologer.id}?free=1`);
+  };
+
+  /** Cancel — no offer claimed, the user lands on the home screen. */
+  const declineOffer = () => {
+    setOfferVisible(false);
+    update({ freeMinuteClaimed: false, completed: true });
+    router.replace('/(tabs)');
+  };
 
   const hourOptions = useMemo(
     () => Array.from({ length: 12 }, (_, i) => ({ label: `${i + 1}`, value: i + 1 })),
@@ -91,11 +111,17 @@ export default function BirthTimeStep() {
 
           <PrimaryButton
             label="Next"
-            onPress={() => router.push('/onboarding/birth-place')}
+            onPress={() => setOfferVisible(true)}
             style={styles.cta}
           />
         </View>
       </View>
+
+      <FreeMinuteOffer
+        visible={offerVisible}
+        onClaim={claimOffer}
+        onCancel={declineOffer}
+      />
     </Screen>
   );
 }

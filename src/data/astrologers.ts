@@ -171,6 +171,24 @@ export const callAstrologers: Astrologer[] = [
   },
 ];
 
+/**
+ * The single best-rated astrologer available near the user.
+ *
+ * Powers the "1 minute free chat" offer shown as soon as onboarding has the
+ * birth date and time, so the pick is deterministic rather than random.
+ */
+export const topNearbyAstrologer = {
+  ...chatAstrologers
+    .filter((a) => !a.preview)
+    .sort(
+      (a, b) =>
+        (b.rating ?? 0) - (a.rating ?? 0) || (b.experience ?? 0) - (a.experience ?? 0),
+    )[0],
+  /** Shown on the offer card as the "near you" proof line. */
+  city: 'Kathmandu',
+  distance: '2.4 km away',
+};
+
 /** The live consultation docked above the tab bar on both directories. */
 export const ongoingSession = {
   id: 'kiran',

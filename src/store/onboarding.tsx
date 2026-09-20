@@ -20,6 +20,10 @@ export type OnboardingProfile = {
   birthPlace: string;
   languages: string[];
   completed: boolean;
+  /** True once the "1 minute free chat" offer has been claimed. */
+  freeMinuteClaimed: boolean;
+  /** True once that free minute has actually run out in a chat. */
+  freeMinuteUsed: boolean;
 };
 
 /** Pre-filled with the values shown in the reference screenshots. */
@@ -32,6 +36,8 @@ const initialProfile: OnboardingProfile = {
   birthPlace: '',
   languages: ['English'],
   completed: false,
+  freeMinuteClaimed: false,
+  freeMinuteUsed: false,
 };
 
 const STORAGE_KEY = 'astronepali.onboarding.v1';
