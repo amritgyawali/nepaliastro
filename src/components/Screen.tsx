@@ -6,7 +6,7 @@ import { SCREEN_MAX_WIDTH, colors } from '@/theme';
 
 type ScreenProps = {
   children: React.ReactNode;
-  /** Page background. Defaults to the cream used across the designs. */
+  /** Page background. White unless a screen says otherwise. */
   background?: string;
   /** Which sides get safe-area padding. Defaults to the top only. */
   edges?: readonly Edge[];
@@ -16,14 +16,12 @@ type ScreenProps = {
 /**
  * Page shell for every route.
  *
- * The reference designs are drawn on a 430pt iPhone canvas, so on wide
- * viewports (desktop web, tablets) the content is capped at that width and
- * centred, exactly the way the Stitch mockups present themselves. On phones
- * it simply fills the screen.
+ * On a wide viewport (desktop web, tablet) the content is capped at a
+ * phone-sized column and centred; on a phone it simply fills the screen.
  */
 export function Screen({
   children,
-  background = colors.cream,
+  background = colors.white,
   edges = ['top'],
   style,
 }: ScreenProps) {
@@ -52,7 +50,7 @@ const styles = StyleSheet.create({
       web: {
         borderLeftWidth: 1,
         borderRightWidth: 1,
-        borderColor: 'rgba(0,0,0,0.05)',
+        borderColor: colors.hairline,
       },
       default: {},
     }),

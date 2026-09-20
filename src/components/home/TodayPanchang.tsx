@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Moon, Star, Sunrise, Sunset } from '@/icons';
 import type { Panchang } from '@/lib/panchang';
-import { colors, fontFamily, radius, weight } from '@/theme';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 import { SectionHeader } from '../SectionHeader';
 
@@ -16,41 +15,35 @@ type TodayPanchangProps = {
 /** The four figures a reader checks before planning the day. */
 export function TodayPanchang({ panchang, dateLabel }: TodayPanchangProps) {
   const cells = [
-    { id: 'sunrise', Icon: Sunrise, label: 'Sunrise', value: panchang.sun.sunrise },
-    { id: 'sunset', Icon: Sunset, label: 'Sunset', value: panchang.sun.sunset },
+    { id: 'sunrise', label: 'Sunrise', value: panchang.sun.sunrise },
+    { id: 'sunset', label: 'Sunset', value: panchang.sun.sunset },
     {
       id: 'tithi',
-      Icon: Moon,
       label: 'Tithi',
       value: `${panchang.tithi.paksha} ${panchang.tithi.name}`,
     },
-    {
-      id: 'nakshatra',
-      Icon: Star,
-      label: 'Nakshatra',
-      value: panchang.nakshatra.name,
-    },
+    { id: 'nakshatra', label: 'Nakshatra', value: panchang.nakshatra.name },
   ];
 
   return (
     <View style={styles.section}>
-      <SectionHeader
-        title="Today’s Panchang"
-        subtitle={`${panchang.place} · ${dateLabel}`}
-      />
+      <SectionHeader title="Today’s Panchang" />
 
       <View style={styles.card}>
-        {cells.map((cell) => (
-          <View key={cell.id} style={styles.cell}>
-            <View style={styles.cellHead}>
-              <cell.Icon size={14} color="#8A7233" strokeWidth={1.8} />
+        <Text style={styles.place}>
+          {panchang.place} · {dateLabel}
+        </Text>
+
+        <View style={styles.grid}>
+          {cells.map((cell) => (
+            <View key={cell.id} style={styles.cell}>
               <Text style={styles.label}>{cell.label}</Text>
+              <Text style={styles.value} numberOfLines={1}>
+                {cell.value}
+              </Text>
             </View>
-            <Text style={styles.value} numberOfLines={1}>
-              {cell.value}
-            </Text>
-          </View>
-        ))}
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -58,42 +51,36 @@ export function TodayPanchang({ panchang, dateLabel }: TodayPanchangProps) {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 20,
+    marginTop: space.xl,
   },
   card: {
-    marginHorizontal: 14,
-    padding: 14,
+    marginHorizontal: GUTTER,
+    padding: space.lg,
+    backgroundColor: colors.saffronSoft,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.saffronBorder,
+  },
+  place: {
+    ...type.caption,
+    color: colors.saffronDeep,
+  },
+  grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: colors.cream,
-    borderRadius: radius.xl,
-    borderWidth: 1,
-    borderColor: colors.bannerBorder,
+    marginTop: space.md,
+    rowGap: space.md,
   },
   cell: {
     width: '50%',
-    paddingVertical: 7,
-    paddingRight: 8,
-  },
-  cellHead: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+    paddingRight: space.md,
   },
   label: {
-    fontFamily,
-    fontSize: 11.5,
-    fontWeight: weight.medium,
-    letterSpacing: 0.2,
-    color: '#8A7969',
+    ...type.caption,
+    color: colors.muted,
   },
   value: {
-    fontFamily,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: weight.semibold,
-    letterSpacing: -0.2,
-    color: colors.remedyStatValue,
-    marginTop: 3,
+    ...type.label,
+    color: colors.ink,
   },
 });

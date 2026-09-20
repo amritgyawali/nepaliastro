@@ -1,87 +1,52 @@
 /**
- * Colour tokens transcribed from the Stitch design files in `design/`.
- * Values were cross-checked against the original iPhone screenshots
- * (design/img_31xx.png) so the app matches the reference pixel for pixel.
+ * Colour tokens.
+ *
+ * One brand colour — deep saffron, #FF9933 — plus a warm neutral scale. Every
+ * other hue is reserved for status (online, busy, error), so a saffron
+ * element always means "this is the thing to press".
  */
 export const colors = {
-  // Surfaces
-  cream: '#FBF9EE', // onboarding + directory background
-  creamAlt: '#FAF8EE',
-  creamWarm: '#FAF9F6', // chat scroll area / remedies background
+  /* Brand ------------------------------------------------------------- */
+  /** Deep / Indian saffron — rgb(255, 153, 51). Fills and selected states. */
+  saffron: '#FF9933',
+  /** Held state for a saffron fill. */
+  saffronPressed: '#EC851F',
+  /** Saffron dark enough to read as text or an icon on a light surface. */
+  saffronDeep: '#A85A11',
+  /** Tinted surface: selected chips, soft badges, icon tiles. */
+  saffronSoft: '#FFF2E4',
+  /** Border that belongs to a saffron-tinted surface. */
+  saffronBorder: '#FFD3A6',
+  /** Ink used on top of a saffron fill. */
+  onSaffron: '#2B1A06',
+
+  /* Surfaces ---------------------------------------------------------- */
   white: '#FFFFFF',
-  appGrey: '#F4F4F3', // profile & settings background
-  sheet: '#F8F8F7',
+  /** Page background behind cards. */
+  canvas: '#F7F5F1',
+  /** Quiet fill for inputs and inert chips. */
+  fill: '#F2F0EC',
 
-  // Brand yellows
-  yellow: '#EFDA43', // primary CTA fill
-  yellowPressed: '#E4CE33',
-  yellowDot: '#F0DC4A', // stepper dots
-  yellowCategory: '#EBDC45', // home quick-category circles
-  yellowSoft: '#FDF6C9',
-  yellowAvatarRing: '#EBD25B',
+  /* Ink --------------------------------------------------------------- */
+  ink: '#1B1A17',
+  body: '#3B3934',
+  muted: '#6D6963',
+  subtle: '#9B968E',
 
-  // Banner
-  bannerTop: '#FFFBEA',
-  bannerBottom: '#FBF6DC',
-  bannerBorder: '#EFDF9B',
-  coin: '#E3C25F',
-  coinDeep: '#C79A32',
-
-  // Ink / text
-  ink: '#1C1F22',
-  inkStrong: '#111315',
-  heading: '#4B5563', // large onboarding questions
-  body: '#2E312E',
-  muted: '#7B7F86',
-  subtle: '#A5A6A8',
-  faint: '#C4C2BA',
-
-  // Controls
-  backBtn: '#E7E7E4',
-  backBtnIcon: '#2C2C2E',
-  circleBtn: '#E5E5EA',
-  inputBorder: '#C7C9CC',
-  chipBorder: '#D6D8DC',
-  chipIdle: '#FFFFFF',
-  cardBorder: '#EFEFEC',
-  divider: '#F0F0EE',
+  /* Lines ------------------------------------------------------------- */
+  border: '#E5E1DA',
+  divider: '#EFEBE4',
   hairline: 'rgba(0,0,0,0.07)',
 
-  // Bottom navigation (floating pill)
-  navBg: '#D9D8D4',
-  navActive: '#C7C6C2',
-  navIcon: '#3D3A35',
-  navIconActive: '#111111',
+  /* Status ------------------------------------------------------------ */
+  green: '#1F7A46',
+  greenSoft: '#E3F2E8',
+  red: '#C03F2C',
+  redSoft: '#FBECE8',
 
-  // Status / semantic
-  green: '#34C759',
-  greenText: '#1B873F',
-  greenSoft: '#DDF4E4',
-  greenSoftText: '#2B8349',
-  red: '#DC2626',
-  redBattery: '#E5483D',
-  blue: '#1E40AF',
-  blueCta: '#0026FE',
-  chatBubbleOut: '#FFEBB7',
-
-  // Session pill
-  sessionBg: '#FAF7DA',
-  sessionBorder: '#F1E7B0',
-
-  // Remedies
-  remedyHero: '#ECE3D2',
-  remedyHeroBorder: '#E2D5BE',
-  remedyStat: '#FDF8E8',
-  remedyStatBorder: '#EFE5CD',
-  remedyStatValue: '#524438',
-  remedyStatLabel: '#8A7969',
-  remedyHeroTitle: '#4B3B2B',
-  remedyHeroBody: '#715F4C',
-  trendingFrom: '#BA3C3C',
-  trendingTo: '#C9533B',
-
+  /* Utility ----------------------------------------------------------- */
   shadow: '#000000',
-  overlay: 'rgba(0,0,0,0.5)',
+  overlay: 'rgba(24,20,15,0.45)',
   transparent: 'transparent',
 } as const;
 

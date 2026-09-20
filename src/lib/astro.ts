@@ -110,13 +110,6 @@ export function seededPick<T>(seed: string, items: readonly T[]): T {
  * The day's reading
  * ------------------------------------------------------------------ */
 
-export type Aspect = {
-  id: 'love' | 'career' | 'health';
-  label: string;
-  /** 0-100. */
-  score: number;
-};
-
 export type LuckyColour = { name: string; hex: string };
 
 export type DailyReading = {
@@ -125,11 +118,8 @@ export type DailyReading = {
   headline: string;
   /** Two sentences of detail, revealed when the card is expanded. */
   body: string;
-  aspects: Aspect[];
   luckyNumber: number;
   luckyColour: LuckyColour;
-  /** Single word shown as the mood chip. */
-  mood: string;
 };
 
 const HEADLINES = [
@@ -154,19 +144,17 @@ const BODIES = [
   'Health responds to routine more than effort today. Water, an early night, and a walk you actually take beat any ambitious plan.',
 ] as const;
 
-const MOODS = ['Steady', 'Bright', 'Focused', 'Reflective', 'Open', 'Grounded'] as const;
-
 /**
  * Lucky colours, drawn from the palette the rest of the app already uses so
  * the swatch never introduces a colour that appears nowhere else.
  */
 const LUCKY_COLOURS: LuckyColour[] = [
-  { name: 'Saffron', hex: '#EFDA43' },
-  { name: 'Emerald', hex: '#1B873F' },
-  { name: 'Vermilion', hex: '#DC2626' },
-  { name: 'Indigo', hex: '#1E40AF' },
-  { name: 'Brass', hex: '#C79A32' },
-  { name: 'Sandal', hex: '#524438' },
+  { name: 'Saffron', hex: '#FF9933' },
+  { name: 'Emerald', hex: '#1F7A46' },
+  { name: 'Vermilion', hex: '#C03F2C' },
+  { name: 'Indigo', hex: '#2F3E8F' },
+  { name: 'Brass', hex: '#B08034' },
+  { name: 'Sandal', hex: '#6B5A46' },
 ];
 
 /**
@@ -183,13 +171,7 @@ export function readingFor(sign: ZodiacSign, date = new Date()): DailyReading {
     sign,
     headline: seededPick(`${seed}:headline`, HEADLINES),
     body: seededPick(`${seed}:body`, BODIES),
-    aspects: [
-      { id: 'love', label: 'Love', score: seededRange(`${seed}:love`, 42, 97) },
-      { id: 'career', label: 'Career', score: seededRange(`${seed}:career`, 42, 97) },
-      { id: 'health', label: 'Health', score: seededRange(`${seed}:health`, 42, 97) },
-    ],
     luckyNumber: seededRange(`${seed}:number`, 1, 9),
     luckyColour: seededPick(`${seed}:colour`, LUCKY_COLOURS),
-    mood: seededPick(`${seed}:mood`, MOODS),
   };
 }

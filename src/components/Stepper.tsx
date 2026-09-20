@@ -1,91 +1,65 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import {
-  Calendar,
-  Clock,
-  GenderPin,
-  MapPin,
-  MessageSquare,
-  UserOutline,
-} from '@/icons';
-import { colors } from '@/theme';
+import { colors, radius, space, type } from '@/theme';
 
-/** The six onboarding steps, in order, with the glyph each one carries. */
+/** The six onboarding steps, in the order they are asked. */
 export const ONBOARDING_STEPS = [
-  { key: 'name', Icon: UserOutline },
-  { key: 'gender', Icon: GenderPin },
-  { key: 'birth-date', Icon: Calendar },
-  { key: 'birth-time', Icon: Clock },
-  { key: 'birth-place', Icon: MapPin },
-  { key: 'languages', Icon: MessageSquare },
+  'name',
+  'gender',
+  'birth-date',
+  'birth-time',
+  'birth-place',
+  'languages',
 ] as const;
 
-export type OnboardingStepKey = (typeof ONBOARDING_STEPS)[number]['key'];
-
-const DOT = 18;
-const ACTIVE_DOT = 28;
+export type OnboardingStepKey = (typeof ONBOARDING_STEPS)[number];
 
 /**
- * Progress dots shown under the nav bar during onboarding.
+ * Onboarding progress: how far along, in words and in one bar.
  *
- * Completed and upcoming steps are plain dots — yellow once passed, grey
- * otherwise — while the current step grows into a larger yellow circle that
- * carries its own icon.
+ * Six icon dots told the reader there were six steps but never which one
+ * they were on; "Step 3 of 6" says both, and reads out loud correctly.
  */
 export function Stepper({ current }: { current: OnboardingStepKey }) {
-  const currentIndex = ONBOARDING_STEPS.findIndex((step) => step.key === current);
+  const index = ONBOARDING_STEPS.indexOf(current);
+  const step = index + 1;
+  const total = ONBOARDING_STEPS.length;
 
   return (
-    <View style={styles.root}>
-      {ONBOARDING_STEPS.map((step, index) => {
-        const isCurrent = index === currentIndex;
-        const isComplete = index < currentIndex;
-        const { Icon } = step;
-
-        if (isCurrent) {
-          return (
-            <View key={step.key} style={[styles.dot, styles.activeDot]}>
-              <Icon size={15} color={colors.body} />
-            </View>
-          );
-        }
-
-        return (
-          <View
-            key={step.key}
-            style={[styles.dot, isComplete ? styles.completeDot : styles.pendingDot]}
-          />
-        );
-      })}
+    <View
+      style={styles.root}
+      accessibilityRole="progressbar"
+      accessibilityLabel={`Step ${step} of ${total}`}
+      accessibilityValue={{ min: 1, max: total, now: step }}
+    >
+      <Text style={styles.label}>
+        Step {step} of {total}
+      </Text>
+      <View style={styles.track}>
+        <View style={[styles.fill, { width: `${(step / total) * 100}%` }]} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
+    gap: space.sm,
   },
-  dot: {
-    width: DOT,
-    height: DOT,
-    borderRadius: DOT / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+  label: {
+    ...type.caption,
+    color: colors.muted,
   },
-  activeDot: {
-    width: ACTIVE_DOT,
-    height: ACTIVE_DOT,
-    borderRadius: ACTIVE_DOT / 2,
-    backgroundColor: colors.yellowDot,
+  track: {
+    height: 4,
+    borderRadius: radius.pill,
+    backgroundColor: colors.divider,
+    overflow: 'hidden',
   },
-  completeDot: {
-    backgroundColor: colors.yellowDot,
-  },
-  pendingDot: {
-    backgroundColor: '#E3E1D6',
+  fill: {
+    height: '100%',
+    borderRadius: radius.pill,
+    backgroundColor: colors.saffron,
   },
 });

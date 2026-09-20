@@ -1,45 +1,39 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { quickCategories } from '@/data/content';
-import { BlogReader, Gem, KundliChart, MatchRings, Sunrise } from '@/icons';
-import { colors, fontFamily, weight } from '@/theme';
-
-import { PressableScale } from '../PressableScale';
+import { Gem, KundliChart, MatchRings, Sunrise } from '@/icons';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 const ICONS = {
   sunrise: Sunrise,
   kundli: KundliChart,
-  gem: Gem,
   rings: MatchRings,
-  blog: BlogReader,
+  gem: Gem,
 } as const;
 
-/** Five yellow circles under the home search field. */
+/** Four shortcuts under the search field — the things people open first. */
 export function QuickCategories({ onSelect }: { onSelect?: (id: string) => void }) {
   return (
     <View style={styles.row}>
       {quickCategories.map((category) => {
         const Icon = ICONS[category.icon];
-        const label = category.label.replace('\n', ' ');
 
         return (
-          <PressableScale
+          <Pressable
             key={category.id}
             accessibilityRole="button"
-            accessibilityLabel={label}
+            accessibilityLabel={category.label}
             onPress={() => onSelect?.(category.id)}
-            scaleTo={0.92}
-            containerStyle={styles.item}
-            style={styles.itemInner}
+            style={({ pressed }) => [styles.item, pressed && styles.pressed]}
           >
-            <View style={styles.circle}>
-              <Icon size={34} color="#1A1A1A" strokeWidth={1.6} />
+            <View style={styles.tile}>
+              <Icon size={26} color={colors.saffronDeep} strokeWidth={1.8} />
             </View>
-            <Text style={styles.label} numberOfLines={2}>
+            <Text style={styles.label} numberOfLines={1}>
               {category.label}
             </Text>
-          </PressableScale>
+          </Pressable>
         );
       })}
     </View>
@@ -49,32 +43,31 @@ export function QuickCategories({ onSelect }: { onSelect?: (id: string) => void 
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 6,
+    paddingHorizontal: GUTTER - space.sm,
+    paddingTop: space.xs,
   },
   item: {
     flex: 1,
-  },
-  itemInner: {
     alignItems: 'center',
+    gap: space.sm,
+    paddingVertical: space.sm,
   },
-  circle: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: colors.yellowCategory,
+  pressed: {
+    opacity: 0.6,
+  },
+  tile: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.lg,
+    backgroundColor: colors.saffronSoft,
+    borderWidth: 1,
+    borderColor: colors.saffronBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
-    fontFamily,
-    fontSize: 11.5,
-    lineHeight: 14,
-    fontWeight: weight.medium,
+    ...type.caption,
+    color: colors.body,
     textAlign: 'center',
-    color: '#42464B',
-    marginTop: 7,
   },
 });

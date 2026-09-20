@@ -15,7 +15,7 @@ export default function Index() {
   if (!hydrated) {
     return (
       <View style={styles.splash}>
-        <ActivityIndicator color="#C9B42E" />
+        <ActivityIndicator color={colors.saffron} />
       </View>
     );
   }
@@ -28,6 +28,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.cream,
+    backgroundColor: colors.white,
   },
 });

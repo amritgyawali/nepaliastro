@@ -6,7 +6,7 @@ export type Astrologer = {
   id: string;
   name: string;
   photo: string;
-  /** Comma-joined skills line, e.g. "Tarot, AI Astrologer". */
+  /** Comma-joined skills line, e.g. "Tarot, Vastu". */
   skills: string;
   /** Comma-joined languages line, e.g. "English, Hindi, Marathi". */
   languages: string;
@@ -25,16 +25,10 @@ export type Astrologer = {
   waitTime?: string;
   /** Free to take a consultation right now; drives the green dot on the rail. */
   online?: boolean;
-  /**
-   * Renders the condensed card — name, skills and languages only. The designs
-   * use this for the third card in each directory, which the live-session
-   * banner overlaps.
-   */
-  preview?: boolean;
   specialities: Speciality[];
 };
 
-/** Cards in the horizontal "Astrologers" rail on the home screen. */
+/** Cards in the horizontal rails on the home screen. */
 export const featuredAstrologers: Astrologer[] = [
   {
     id: 'dhruvansh',
@@ -81,13 +75,13 @@ export const featuredAstrologers: Astrologer[] = [
   },
 ];
 
-/** The chat directory listing (design/astrologer_directory_home). */
+/** The chat directory listing. */
 export const chatAstrologers: Astrologer[] = [
   {
     id: 'vihana',
     name: 'Vihana Ji',
     photo: photos.vihana,
-    skills: 'Tarot, AI Astrologer',
+    skills: 'Tarot, Vastu',
     languages: 'English',
     experience: 14,
     rate: 0.49,
@@ -119,12 +113,11 @@ export const chatAstrologers: Astrologer[] = [
     languages: 'English, Hindi, Marathi',
     rate: 0.49,
     verified: true,
-    preview: true,
     specialities: ['all', 'tarot'],
   },
 ];
 
-/** The call directory listing (design/astrologer_directory_call). */
+/** The call directory listing. */
 export const callAstrologers: Astrologer[] = [
   {
     id: 'kailash',
@@ -166,7 +159,6 @@ export const callAstrologers: Astrologer[] = [
     languages: 'Hindi',
     rate: 0.49,
     verified: true,
-    preview: true,
     specialities: ['all', 'palmistry'],
   },
 ];
@@ -179,7 +171,6 @@ export const callAstrologers: Astrologer[] = [
  */
 export const topNearbyAstrologer = {
   ...chatAstrologers
-    .filter((a) => !a.preview)
     .sort(
       (a, b) =>
         (b.rating ?? 0) - (a.rating ?? 0) || (b.experience ?? 0) - (a.experience ?? 0),
@@ -189,15 +180,13 @@ export const topNearbyAstrologer = {
   distance: '2.4 km away',
 };
 
-/** The live consultation docked above the tab bar on both directories. */
+/** The consultation already running, offered at the top of both directories. */
 export const ongoingSession = {
   id: 'kiran',
   name: 'Kiran Ji',
   photo: photos.kiran,
   portrait: photos.kiran,
-  rate: 0,
-  mode: 'CHAT' as const,
-  status: 'Chat is in progress',
+  status: 'Chat in progress',
   verified: true,
 };
 

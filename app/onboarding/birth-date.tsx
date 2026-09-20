@@ -10,7 +10,7 @@ import {
   WheelColumn,
   WheelPicker,
 } from '@/components';
-import { colors, fontFamily, weight } from '@/theme';
+import { GUTTER, colors, space, type } from '@/theme';
 import { useOnboarding } from '@/store/onboarding';
 
 const MONTHS = [
@@ -69,13 +69,13 @@ export default function BirthDateStep() {
 
   return (
     <Screen background={colors.white}>
-      <NavHeader title="Enter your details" bordered />
+      <NavHeader title="Your details" bordered />
 
-      <View style={styles.body}>
-        <View style={styles.content}>
+      <View style={styles.content}>
+        <View style={styles.inner}>
           <Stepper current="birth-date" />
 
-          <Text style={styles.heading}>Enter your birth date</Text>
+          <Text style={styles.heading}>When were you born?</Text>
 
           <WheelPicker>
             <WheelColumn
@@ -97,10 +97,11 @@ export default function BirthDateStep() {
             />
           </WheelPicker>
 
+          <View style={styles.spacer} />
+
           <PrimaryButton
-            label="Next"
+            label="Continue"
             onPress={() => router.push('/onboarding/birth-time')}
-            style={styles.cta}
           />
         </View>
       </View>
@@ -109,26 +110,23 @@ export default function BirthDateStep() {
 }
 
 const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    backgroundColor: colors.cream,
-  },
   content: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 20,
+  },
+  inner: {
+    flex: 1,
+    paddingHorizontal: GUTTER,
+    paddingTop: space.xl,
+    paddingBottom: space.xl,
   },
   heading: {
-    fontFamily,
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: weight.bold,
-    letterSpacing: -0.6,
-    color: '#3B4045',
-    marginTop: 40,
-    marginBottom: 20,
+    ...type.display,
+    color: colors.ink,
+    marginTop: space.xl,
+    marginBottom: space.lg,
   },
-  cta: {
-    marginTop: 28,
+  spacer: {
+    flex: 1,
+    minHeight: space.xl,
   },
 });
