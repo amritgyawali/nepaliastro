@@ -1,8 +1,9 @@
 # AstroNepali
 
 An Expo (React Native) app for **iOS, Android and web**: onboarding that
-collects your birth details, a daily reading, astrologer directories for chat
-and call, a live consultation screen, and remedies.
+collects your birth details, a reading written from your own kundli and sent to
+you every five hours, astrologer directories for chat and call, a live
+consultation screen, and remedies.
 
 ## Running it
 
@@ -27,6 +28,9 @@ npm run typecheck    # TypeScript, no emit
 | `/(tabs)/call` | Astrologers you can call |
 | `/(tabs)/remedies` | Poojas, gemstones and healing sessions |
 | `/chat/[id]` | The live consultation, including the free first minute |
+| `/predictions` | Every reading written for you: this window, the ones still to come, and the ones you have had |
+| `/prediction/[id]` | One reading in full — where a tapped notification lands, with an astrologer at the bottom |
+| `/notifications` | Prediction alerts: the cadence, the AI key, and a test notification |
 | `/profile` | Your details and the way back into each part of the app |
 
 ## Design
@@ -67,6 +71,44 @@ src/store/           onboarding profile, persisted with AsyncStorage
 design/              the original Stitch exports and screenshots
 ```
 
+## Your prediction, every five hours
+
+Four times a day — 6 AM, 11 AM, 4 PM and 9 PM, with a fifth at 1 AM if you ask
+for it — the app sends one short reading written for your chart alone. Tapping
+it opens the whole text, the chart facts it was written from, and a button
+through to an astrologer.
+
+**What makes it yours.** Not your sun sign. `src/lib/predictions.ts` takes the
+kundli already computed in `src/lib/kundli.ts` — your moon sign, nakshatra and
+lagna — and asks where the moon is *now* relative to it: the house it is
+transiting counted from your natal moon. That number is different for every
+rashi, changes through the day, and is the oldest answer to "what about today,
+for me?". The tithi, the weekday lord and the hour of the window come in on top
+of it. Two people with different birth details never receive the same reading.
+
+**Who writes it.** If an Anthropic key is configured, one request per day asks
+`claude-opus-5` for all of the day's windows at once — it sees what it wrote at
+eleven when it writes the four o'clock one, so they do not repeat — in the
+language you picked during onboarding. With no key, or when the call fails,
+`composePrediction` writes the reading on the device from the same facts, and
+the notification still goes out. The screen says which of the two wrote it.
+
+**Setting the key.** Either paste it into *Profile → Prediction alerts*, where
+it is kept on that device only, or set `EXPO_PUBLIC_ANTHROPIC_API_KEY` in a
+`.env` before building (see `.env.example`). Be clear-eyed about the second one:
+a key compiled into an app ships to every device that installs it and can be
+read back off any of them. For a published build, set `EXPO_PUBLIC_ASTRO_AI_URL`
+to your own endpoint that holds the real key and forwards to the Messages API —
+the app then sends no key at all.
+
+**How delivery works.** These are local notifications, so there is no server, no
+push token and no account: the readings for the next day are written while the
+app is open and handed to the operating system with the instant each should
+appear, and the schedule is topped up every time the app comes back to the
+foreground. That needs a development build or a store build — `expo-notifications`
+cannot schedule from Expo Go on Android — and the web build has no equivalent, so
+there the readings wait in `/predictions` instead.
+
 ## State
 
 The onboarding answers are held in `src/store/onboarding.tsx` and persisted
@@ -75,3 +117,8 @@ The daily reading is derived from the date and your sign (`src/lib/astro.ts`),
 so it is stable for a day and needs no backend. The chat replies with canned
 responses from `src/data/content.ts`; wiring it to a real backend means
 replacing `send()` in `app/chat/[id].tsx`.
+
+The five-hourly readings, the alert settings and the API key live in
+`src/store/predictions.tsx`, persisted under a signature of the birth details
+they were written from — change a birth time, or log out, and the old readings
+are dropped rather than shown to the next person.

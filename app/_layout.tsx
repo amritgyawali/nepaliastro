@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { OnboardingProvider } from '@/store/onboarding';
+import { PredictionsProvider } from '@/store/predictions';
 import { colors, fontAssets } from '@/theme';
 
 // Hold the splash until Mukta is in memory, so no screen is ever painted in
@@ -31,27 +32,32 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.white }}>
       <SafeAreaProvider>
         <OnboardingProvider>
-          <StatusBar style="dark" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.white },
-              animation: 'slide_from_right',
-            }}
-          >
-            <Stack.Screen name="index" options={{ animation: 'none' }} />
-            <Stack.Screen name="onboarding" />
-            <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
-            <Stack.Screen name="chat/[id]" />
-            <Stack.Screen name="call/[id]" />
-            <Stack.Screen name="astrologer/[id]" />
-            <Stack.Screen name="remedy/[id]" />
-            <Stack.Screen name="horoscope" />
-            <Stack.Screen name="kundli" />
-            <Stack.Screen name="matching" />
-            <Stack.Screen name="panchang" />
-            <Stack.Screen name="profile" />
-          </Stack>
+          <PredictionsProvider>
+            <StatusBar style="dark" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.white },
+                animation: 'slide_from_right',
+              }}
+            >
+              <Stack.Screen name="index" options={{ animation: 'none' }} />
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+              <Stack.Screen name="chat/[id]" />
+              <Stack.Screen name="call/[id]" />
+              <Stack.Screen name="astrologer/[id]" />
+              <Stack.Screen name="remedy/[id]" />
+              <Stack.Screen name="horoscope" />
+              <Stack.Screen name="kundli" />
+              <Stack.Screen name="matching" />
+              <Stack.Screen name="panchang" />
+              <Stack.Screen name="profile" />
+              <Stack.Screen name="predictions" />
+              <Stack.Screen name="prediction/[id]" />
+              <Stack.Screen name="notifications" />
+            </Stack>
+          </PredictionsProvider>
         </OnboardingProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

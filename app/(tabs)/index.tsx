@@ -6,6 +6,7 @@ import {
   AstrologerRail,
   DailyInsightCard,
   HomeHeader,
+  NextReadingCard,
   QuickCategories,
   Screen,
   SearchResults,
@@ -20,6 +21,7 @@ import {
 import { formatToday, greetingFor, readingFor, signForDate } from '@/lib/astro';
 import { panchangFor } from '@/lib/panchang';
 import { useOnboarding } from '@/store/onboarding';
+import { usePredictions } from '@/store/predictions';
 import { colors, space } from '@/theme';
 
 /** How long the greeting is allowed to go stale. */
@@ -29,6 +31,7 @@ const CLOCK_TICK_MS = 60_000;
 export default function HomeScreen() {
   const router = useRouter();
   const { profile } = useOnboarding();
+  const { current: prediction, upcoming } = usePredictions();
 
   const scrollRef = useRef<ScrollView>(null);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -173,6 +176,18 @@ export default function HomeScreen() {
         ) : (
           <View>
             <QuickCategories onSelect={openCategory} />
+
+            {prediction ? (
+              <View style={styles.reading}>
+                <NextReadingCard
+                  reading={prediction}
+                  next={upcoming[0]}
+                  now={now}
+                  onOpen={() => router.push(`/prediction/${prediction.id}`)}
+                  onSeeAll={() => router.push('/predictions')}
+                />
+              </View>
+            ) : null}
 
             <View style={styles.reading}>
               <DailyInsightCard

@@ -17,6 +17,7 @@ export { ITEM_HEIGHT, VISIBLE_ITEMS, WHEEL_HEIGHT, WheelColumn, WheelPicker } fr
 export { AstrologerRail } from './home/AstrologerRail';
 export { DailyInsightCard } from './home/DailyInsightCard';
 export { HomeHeader } from './home/HomeHeader';
+export { NextReadingCard } from './home/NextReadingCard';
 export { QuickCategories } from './home/QuickCategories';
 export { SearchResults } from './home/SearchResults';
 export { TodayPanchang } from './home/TodayPanchang';
