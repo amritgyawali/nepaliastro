@@ -1,189 +1,226 @@
 import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { NavHeader, PrimaryButton, Screen } from '@/components';
-import { formatBirthMoment, kundliFor } from '@/lib/kundli';
+import {
+  Card, DataRow, KundliDiagram, NavHeader, NeedsBirth, PrimaryButton, Screen,
+  Segmented, Tag, type DiagramHouse,
+} from '@/components';
+import {
+  GRAHAS, GRAHA_ORDER, HOUSE_MEANINGS, RASHIS, VARGAS, chartFor, describeBirth, vargaSign,
+  type VargaId,
+} from '@/lib/jyotish';
 import { useOnboarding } from '@/store/onboarding';
-import { GUTTER, colors, radius, space, type } from '@/theme';
+import { GUTTER, colors, space, type } from '@/theme';
 
-/** Your birth chart, as far as it can honestly be computed on the device. */
+/**
+ * The janma kundali — the chart itself.
+ *
+ * Everything else in the app is derived from this screen's numbers, so it
+ * shows its working: each graha's exact degree, the nakshatra it falls in,
+ * its dignity, and whether it is retrograde or combust. The divisional
+ * charts are on the same screen rather than behind a paywall, because a
+ * navamsa is half of what an astrologer looks at.
+ */
 export default function KundliScreen() {
   const router = useRouter();
   const { profile } = useOnboarding();
+  const [varga, setVarga] = useState<VargaId>('D1');
 
-  const kundli = useMemo(() => kundliFor(profile), [profile]);
+  const chart = useMemo(() => chartFor(profile), [profile]);
 
-  if (!kundli) {
+  if (!chart) {
     return (
-      <Screen background={colors.white}>
-        <NavHeader title="Your kundli" bordered />
-        <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>We need your birth details first</Text>
-          <Text style={styles.emptyBody}>
-            A chart is built from the date, time and place you were born. Add them and
-            this screen fills in.
-          </Text>
-          <PrimaryButton
-            label="Add birth details"
-            onPress={() => router.push('/onboarding/name')}
-            style={styles.emptyCta}
-          />
-        </View>
+      <Screen>
+        <NavHeader title="Janma Kundali" bordered />
+        <NeedsBirth what="Your birth chart is drawn from the exact moment and place you were born." />
       </Screen>
     );
   }
 
-  const rows = [
-    {
-      label: 'Rashi (moon sign)',
-      value: `${kundli.rashi.vedic} · ${kundli.rashi.western}`,
-      note: `Ruled by ${kundli.rashi.lord}`,
-    },
-    {
-      label: 'Nakshatra',
-      value: `${kundli.nakshatra.name}`,
-      note: `Pada ${kundli.nakshatra.pada}`,
-    },
-    {
-      label: 'Sun sign (sidereal)',
-      value: `${kundli.sunRashi.vedic} · ${kundli.sunRashi.western}`,
-      note: 'Vedic charts use the sidereal zodiac, so this can differ by a sign from the one you know',
-    },
-    {
-      label: 'Lagna (rising sign)',
-      value: kundli.lagna ? `${kundli.lagna.vedic} · ${kundli.lagna.western}` : 'Needs your birth time',
-      note: kundli.lagna
-        ? 'Estimated — roughly two hours per sign from sunrise'
-        : 'Add an exact birth time and this can be estimated',
-    },
-    {
-      label: 'Tithi at birth',
-      value: `${kundli.tithi.paksha} ${kundli.tithi.name}`,
-      note: `Lunar day ${kundli.tithi.index} of 30`,
-    },
-    { label: 'Vara (weekday)', value: kundli.vara, note: 'The day you were born' },
-  ];
+  // In a divisional chart the houses are recounted from that chart's own
+  // ascendant, which is why a graha moves house between D1 and D9.
+  const vargaLagna = vargaSign(varga, chart.ascendant);
+  const houses: DiagramHouse[] = Array.from({ length: 12 }, (_, i) => {
+    const signIndex = (vargaLagna + i) % 12;
+    const grahas = GRAHA_ORDER.filter(
+      (id) => vargaSign(varga, chart.grahas[id].longitude) === signIndex,
+    );
+    return {
+      house: i + 1,
+      rashiNumber: signIndex + 1,
+      grahas: grahas.map((id) => chart.grahas[id].graha.short),
+      retrograde: grahas
+        .filter((id) => chart.grahas[id].retrograde && !chart.grahas[id].graha.shadow)
+        .map((id) => chart.grahas[id].graha.short),
+    };
+  });
+
+  const activeVarga = VARGAS.find((v) => v.id === varga);
 
   return (
-    <Screen background={colors.white}>
-      <NavHeader title="Your kundli" bordered />
+    <Screen>
+      <NavHeader title="Janma Kundali" bordered />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.birth}>
-          <Text style={styles.birthLabel}>Born</Text>
-          <Text style={styles.birthValue}>{formatBirthMoment(kundli.moment)}</Text>
-          <Text style={styles.birthPlace}>{kundli.moment.place}</Text>
+        <Text style={styles.birth}>{describeBirth(chart.moment)}</Text>
+
+        {chart.approximate ? (
+          <Card style={styles.warning}>
+            <Text style={styles.warningTitle}>Drawn for noon</Text>
+            <Text style={styles.warningBody}>
+              Without a birth time the ascendant and the houses cannot be placed. The
+              moon sign, nakshatra and dasha below are still reliable; the chart
+              diagram is not.
+            </Text>
+          </Card>
+        ) : null}
+
+        <View style={styles.diagram}>
+          <KundliDiagram houses={houses} size={300} caption={varga} />
+          <Text style={styles.diagramNote}>
+            The number in each house is its sign — 1 is Mesha, 12 is Meena.
+          </Text>
         </View>
 
-        <View style={styles.card}>
-          {rows.map((row, index) => (
-            <View key={row.label} style={[styles.row, index > 0 && styles.rowDivider]}>
-              <Text style={styles.rowLabel}>{row.label}</Text>
-              <Text style={styles.rowValue}>{row.value}</Text>
-              <Text style={styles.rowNote}>{row.note}</Text>
+        <Segmented
+          scrollable
+          value={varga}
+          onChange={setVarga}
+          options={VARGAS.map((v) => ({ value: v.id, label: v.id }))}
+        />
+        {activeVarga ? (
+          <Text style={styles.vargaAbout}>
+            <Text style={styles.vargaName}>{activeVarga.name}</Text> — {activeVarga.about}
+          </Text>
+        ) : null}
+
+        <Card title="The essentials" style={styles.card}>
+          <DataRow
+            label="Lagna (ascendant)"
+            value={chart.approximate ? 'Needs birth time' : chart.lagna.vedic}
+            note={chart.approximate ? undefined : `${chart.lagna.western} rising, ruled by ${GRAHAS[chart.lagna.lord].vedic}`}
+            divided={false}
+          />
+          <DataRow
+            label="Rashi (moon sign)"
+            value={chart.rashi.vedic}
+            note="What a Nepali means by “my rashi” — the sign the moon stood in"
+          />
+          <DataRow
+            label="Nakshatra"
+            value={`${chart.nakshatra.name}, pada ${chart.pada}`}
+            note={`${chart.nakshatra.deity} presides. Dasha lord: ${GRAHAS[chart.nakshatra.lord].vedic}`}
+          />
+          <DataRow
+            label="Sun sign"
+            value={chart.sunRashi.vedic}
+            note="Sidereal — not the same as the western sun sign"
+          />
+          <DataRow label="Gana" value={chart.nakshatra.gana} note={`Yoni ${chart.nakshatra.yoni}, nadi ${chart.nakshatra.nadi}`} />
+        </Card>
+
+        <Text style={styles.sectionTitle}>The nine grahas</Text>
+        <Card padded={false} style={styles.card}>
+          {GRAHA_ORDER.map((id, index) => {
+            const g = chart.grahas[id];
+            const flags = [
+              g.retrograde && !g.graha.shadow ? 'Retrograde' : null,
+              g.combust ? 'Combust' : null,
+            ].filter(Boolean);
+
+            return (
+              <View key={id} style={[styles.grahaRow, index > 0 && styles.grahaDivider]}>
+                <View style={styles.grahaHead}>
+                  <Text style={styles.grahaName}>{g.graha.vedic}</Text>
+                  <Text style={styles.grahaPosition}>
+                    {g.degreeLabel} {RASHIS[g.rashi].vedic}
+                  </Text>
+                </View>
+                <Text style={styles.grahaDetail}>
+                  House {g.house} · {g.nakshatraMeta.name} pada {g.pada}
+                  {flags.length ? ` · ${flags.join(', ')}` : ''}
+                </Text>
+                <View style={styles.tagRow}>
+                  <Tag
+                    label={g.dignity}
+                    tone={
+                      ['Exalted', 'Own sign', 'Moolatrikona'].includes(g.dignity)
+                        ? 'good'
+                        : g.dignity === 'Debilitated'
+                          ? 'bad'
+                          : 'neutral'
+                    }
+                  />
+                  {g.combust ? <Tag label="Combust" tone="bad" /> : null}
+                  {g.retrograde && !g.graha.shadow ? <Tag label="Retrograde" tone="accent" /> : null}
+                </View>
+              </View>
+            );
+          })}
+        </Card>
+
+        <Text style={styles.sectionTitle}>The twelve houses</Text>
+        <Card padded={false} style={styles.card}>
+          {chart.houses.map((house, index) => (
+            <View key={house.house} style={[styles.houseRow, index > 0 && styles.grahaDivider]}>
+              <Text style={styles.houseNumber}>{house.house}</Text>
+              <View style={styles.houseText}>
+                <Text style={styles.houseName}>
+                  {HOUSE_MEANINGS[house.house - 1].name} · {house.rashi.vedic}
+                </Text>
+                <Text style={styles.houseAbout}>{HOUSE_MEANINGS[house.house - 1].about}</Text>
+                {house.grahas.length ? (
+                  <Text style={styles.houseGrahas}>
+                    {house.grahas.map((g) => g.graha.vedic).join(', ')}
+                  </Text>
+                ) : null}
+              </View>
             </View>
           ))}
-        </View>
+        </Card>
 
-        <Text style={styles.note}>
-          Everything above follows from the sun and moon positions for your birth moment,
-          computed on the device. The other seven grahas, the house cusps and the dashas
-          need a full ephemeris — that is what an astrologer brings to a consultation.
-        </Text>
-
-        <View style={styles.actions}>
-          <PrimaryButton
-            label="Ask an astrologer to read it"
-            onPress={() => router.push('/(tabs)/chat')}
-          />
-          <PrimaryButton
-            label="Edit birth details"
-            variant="outline"
-            onPress={() => router.push('/onboarding/name')}
-          />
-        </View>
+        <PrimaryButton
+          label="See your graha dasha"
+          onPress={() => router.push('/dasha')}
+          style={styles.cta}
+        />
+        <PrimaryButton
+          label="Check for doshas"
+          variant="outline"
+          onPress={() => router.push('/dosha')}
+          style={styles.ctaSecond}
+        />
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: GUTTER,
-    paddingTop: space.lg,
-    paddingBottom: space.xxl,
-  },
-  birth: {
-    padding: space.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.saffronSoft,
-    borderWidth: 1,
-    borderColor: colors.saffronBorder,
-  },
-  birthLabel: {
-    ...type.caption,
-    color: colors.saffronDeep,
-  },
-  birthValue: {
-    ...type.section,
-    color: colors.ink,
-  },
-  birthPlace: {
-    ...type.small,
-    color: colors.muted,
-  },
-  card: {
-    marginTop: space.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: 'hidden',
-  },
-  row: {
-    paddingHorizontal: space.lg,
-    paddingVertical: space.md,
-    gap: 1,
-  },
-  rowDivider: {
-    borderTopWidth: 1,
-    borderTopColor: colors.divider,
-  },
-  rowLabel: {
-    ...type.caption,
-    color: colors.muted,
-  },
-  rowValue: {
-    ...type.section,
-    color: colors.ink,
-  },
-  rowNote: {
-    ...type.small,
-    color: colors.muted,
-  },
-  note: {
-    ...type.small,
-    color: colors.muted,
-    marginTop: space.lg,
-  },
-  actions: {
-    marginTop: space.xl,
-    gap: space.md,
-  },
-  empty: {
-    paddingHorizontal: GUTTER,
-    paddingTop: space.xxl,
-  },
-  emptyTitle: {
-    ...type.section,
-    color: colors.ink,
-  },
-  emptyBody: {
-    ...type.body,
-    color: colors.muted,
-    marginTop: space.sm,
-  },
-  emptyCta: {
-    marginTop: space.xl,
-  },
+  content: { paddingTop: space.lg, paddingBottom: space.xxl },
+  birth: { ...type.small, color: colors.muted, paddingHorizontal: GUTTER },
+  warning: { marginHorizontal: GUTTER, marginTop: space.md, backgroundColor: colors.redSoft, borderColor: colors.redSoft },
+  warningTitle: { ...type.label, color: colors.red },
+  warningBody: { ...type.small, color: colors.body, marginTop: 2 },
+  diagram: { marginTop: space.lg, marginBottom: space.lg },
+  diagramNote: { ...type.caption, color: colors.subtle, marginTop: space.sm, textAlign: 'center' },
+  vargaAbout: { ...type.small, color: colors.muted, paddingHorizontal: GUTTER, marginTop: space.md },
+  vargaName: { ...type.label, color: colors.ink },
+  card: { marginHorizontal: GUTTER, marginTop: space.md },
+  sectionTitle: { ...type.section, color: colors.ink, paddingHorizontal: GUTTER, marginTop: space.xl },
+  grahaRow: { paddingHorizontal: space.lg, paddingVertical: space.md },
+  grahaDivider: { borderTopWidth: 1, borderTopColor: colors.divider },
+  grahaHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: space.sm },
+  grahaName: { ...type.label, color: colors.ink },
+  grahaPosition: { ...type.small, color: colors.muted, flexShrink: 1, textAlign: 'right' },
+  grahaDetail: { ...type.small, color: colors.muted, marginTop: 1 },
+  tagRow: { flexDirection: 'row', gap: space.xs, marginTop: space.sm, flexWrap: 'wrap' },
+  houseRow: { flexDirection: 'row', gap: space.md, paddingHorizontal: space.lg, paddingVertical: space.md },
+  houseNumber: { ...type.title, color: colors.saffronBorder, width: 28 },
+  houseText: { flex: 1 },
+  houseName: { ...type.label, color: colors.ink },
+  houseAbout: { ...type.small, color: colors.muted },
+  houseGrahas: { ...type.small, color: colors.saffronDeep, marginTop: 2 },
+  cta: { marginHorizontal: GUTTER, marginTop: space.xl },
+  ctaSecond: { marginHorizontal: GUTTER, marginTop: space.sm },
 });

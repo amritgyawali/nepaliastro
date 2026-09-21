@@ -15,6 +15,9 @@
  */
 import Anthropic from '@anthropic-ai/sdk';
 
+import {
+  allDoshas, dashaAt, nepaliClock, tithiAt, vimshottariDasha, VARA,
+} from './jyotish';
 import { ordinal, predictionId, type PredictionFacts, type PredictionText } from './predictions';
 
 /**
@@ -97,6 +100,25 @@ function brief(person: AiPerson, facts: PredictionFacts[]): string {
   const [first] = facts;
   const chart = first.kundli;
 
+  // The engine can say more than the old chart could, and a reading written
+  // without the running dasha is a reading written without the clock. Only
+  // facts that survive the engine's own checks are passed on — a cancelled
+  // dosha is reported as absent, not as a caveat for Claude to weigh.
+  const birthTithi = tithiAt(chart.moment.at);
+  const birthVara = VARA[nepaliClock(chart.moment.at).weekday].en;
+
+  const running = dashaAt(vimshottariDasha(chart, 2));
+  const dashaLine = running
+    ? `${running.maha.lordName} mahadasha${running.antar ? `, ${running.antar.lordName} antardasha` : ''}`
+    : 'not available';
+
+  const active = allDoshas(chart).filter(
+    (dosha) => dosha.present && dosha.severity !== 'cancelled',
+  );
+  const doshaLine = active.length
+    ? active.map((dosha) => `${dosha.name} (${dosha.severity})`).join(', ')
+    : 'none active';
+
   const windows = facts
     .map((slot) =>
       [
@@ -119,10 +141,12 @@ function brief(person: AiPerson, facts: PredictionFacts[]): string {
 
 Their chart
 - moon sign (rashi): ${chart.rashi.vedic} / ${chart.rashi.western}, lord ${chart.rashi.lord}
-- birth nakshatra: ${chart.nakshatra.name}, pada ${chart.nakshatra.pada}
+- birth nakshatra: ${chart.nakshatra.name}, pada ${chart.pada}, lord ${chart.nakshatra.lord}
 - sidereal sun sign: ${chart.sunRashi.vedic}
-- lagna: ${chart.lagna ? `${chart.lagna.vedic} (estimated)` : 'unknown — they did not give an exact birth time, so do not mention the rising sign'}
-- tithi at birth: ${chart.tithi.paksha} ${chart.tithi.name}, born on a ${chart.vara}
+- lagna: ${chart.approximate ? 'unknown — they did not give an exact birth time, so do not mention the rising sign or any house placement' : `${chart.lagna.vedic}`}
+- tithi at birth: ${birthTithi.paksha} ${birthTithi.name}, born on a ${birthVara}
+- running dasha: ${dashaLine}
+- doshas active: ${doshaLine}
 
 The windows to write, one reading each, in this order
 ${windows}

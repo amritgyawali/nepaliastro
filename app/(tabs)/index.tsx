@@ -18,8 +18,9 @@ import {
   featuredAstrologers,
   type Astrologer,
 } from '@/data/astrologers';
-import { formatToday, greetingFor, readingFor, signForDate } from '@/lib/astro';
-import { panchangFor } from '@/lib/panchang';
+import {
+  chartFor, formatShortDay, greetingFor, panchangFor, placeOf, rashifalFor,
+} from '@/lib/jyotish';
 import { useOnboarding } from '@/store/onboarding';
 import { usePredictions } from '@/store/predictions';
 import { colors, space } from '@/theme';
@@ -57,10 +58,16 @@ export default function HomeScreen() {
     [],
   );
 
-  const sign = useMemo(() => signForDate(profile.birthDate), [profile.birthDate]);
-  const reading = useMemo(() => readingFor(sign, now), [sign, now]);
-  const panchang = useMemo(() => panchangFor(now), [now]);
-  const dateLabel = useMemo(() => formatToday(now), [now]);
+  // Vedic astrology reads a person by their moon sign, not their sun sign, so
+  // the card opens on the chart's rashi and falls back to Mesha before any
+  // birth date has been given.
+  const chart = useMemo(() => chartFor(profile), [profile]);
+  const reading = useMemo(
+    () => rashifalFor(chart?.rashi.index ?? 0, 'daily', now),
+    [chart, now],
+  );
+  const panchang = useMemo(() => panchangFor(now, placeOf(profile)), [now, profile]);
+  const dateLabel = useMemo(() => formatShortDay(now), [now]);
 
   const greeting = useMemo(() => {
     const base = greetingFor(now);
@@ -127,14 +134,17 @@ export default function HomeScreen() {
       case 'daily-horoscope':
         router.push('/horoscope');
         break;
+      case 'patro':
+        router.push('/patro');
+        break;
+      case 'sait':
+        router.push('/muhurta');
+        break;
       case 'free-kundli':
         router.push('/kundli');
         break;
-      case 'kundli-matching':
-        router.push('/matching');
-        break;
       default:
-        router.push('/(tabs)/remedies');
+        router.push('/(tabs)/services');
     }
   };
 

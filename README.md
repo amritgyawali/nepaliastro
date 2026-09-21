@@ -1,9 +1,14 @@
 # AstroNepali
 
-An Expo (React Native) app for **iOS, Android and web**: onboarding that
-collects your birth details, a reading written from your own kundli and sent to
-you every five hours, astrologer directories for chat and call, a live
-consultation screen, and remedies.
+An Expo (React Native) app for **iOS, Android and web**: twenty jyotish
+services computed on the device from a real ephemeris, onboarding that collects
+your birth details, a reading written from your own kundli and sent to you
+every five hours, astrologer directories for chat and call, a live consultation
+screen, and remedies.
+
+Everything astrological is computed on the phone. There is no server, no API
+key and no network call in any of it, so a chart can be drawn in a village with
+no signal.
 
 ## Running it
 
@@ -14,9 +19,72 @@ npm run android      # Android emulator or a connected device
 npm run ios          # iOS simulator (macOS only)
 npm start            # dev server + QR code for Expo Go
 npm run typecheck    # TypeScript, no emit
+npm run selftest     # the astrology engine, checked against outside sources
 ```
 
 `npm run build:web` produces a static web bundle in `dist/`.
+
+## The twenty services
+
+| Group | Services |
+| --- | --- |
+| **Every day** | Rashifal (daily/weekly/monthly/yearly) · Panchang · Nepali Patro · Date converter · Lucky colour and number · Festivals and tika sait |
+| **Your chart** | Janma Kundali · Graha Dasha · Dosha check · Kundali Milan · Gochar transits · Varshaphal · Ank Jyotish |
+| **Choosing a time** | Shubha Sait · Shubha Lagna · Prashna |
+| **Remedies** | Ratna and Rudraksha · Namkaran · Vastu · Puja and remedies |
+
+## The engine
+
+`src/lib/jyotish/` is the whole of it — pure TypeScript, no native module, so
+it runs unchanged on iOS, Android and web.
+
+Positions come from [`astronomy-engine`](https://github.com/cosinekitty/astronomy)
+(VSOP87 for the planets, a Brown lunar theory for the moon). Everything on top
+of that is rules applied to those numbers:
+
+| File | What it does |
+| --- | --- |
+| `ephemeris.ts` | Sidereal positions of the nine grahas, Lahiri ayanamsa, retrogression, combustion, rise and set |
+| `chart.ts` | Sidereal ascendant, whole-sign houses, dignity, aspects, fourteen divisional charts |
+| `panchang.ts` | The five limbs with exact end times, rahu kaal, choghadiya, hora |
+| `bikram.ts` | Bikram Sambat, Nepal Sambat, the patro grid |
+| `dasha.ts` | Vimshottari to three levels |
+| `dosha.ts` | Manglik, Kaal Sarp, Sade Sati, Gandmool, Pitru — with the classical cancellations |
+| `matching.ts` | The eight koots, out of thirty-six |
+| `muhurta.ts` | Activity-specific sait, tarabala, chandrabala, lagna windows |
+| `festivals.ts` | The festival year, found from the real lunation |
+| `rashifal.ts`, `transit.ts`, `varshaphal.ts`, `prashna.ts` | Readings derived from the above |
+| `lucky.ts`, `numerology.ts`, `gemstone.ts`, `naming.ts`, `vastu.ts` | The smaller daily answers |
+
+### Where a convention is contested
+
+The code says which one it took and why. Mean Rahu, because that is what Nepali
+almanacs print. Amanta lunar months, because purnimanta cannot pin a
+Krishna-paksha tithi to one month. Noon for an unknown birth time, with the
+screens that depend on the ascendant saying plainly that they are unreliable.
+Where something cannot be computed honestly — a chart with no birth date, a BS
+year outside the published tables — it returns `null` rather than a plausible
+number.
+
+### Checking it
+
+`npm run selftest` verifies the parts an outside authority can settle:
+
+- Lahiri ayanamsa against published values for 1980, 2000 and 2025
+- A tithi ending at the exact instant of a real full moon
+- Fourteen 2025 festival dates against the days Nepal actually kept them
+- Nepal Sambat against Mha Puja; Bikram Sambat round-tripped over 3000 days
+- Vimshottari spanning 120 years less the balance already spent, with no gaps
+- All twelve lagnas rising in order and tiling a full day
+
+It is worth running under more than one zone, since the engine's whole contract
+is that it answers for Kathmandu whatever the phone is set to:
+
+```bash
+for tz in UTC America/New_York Asia/Kathmandu Australia/Sydney; do
+  TZ=$tz npm run selftest | tail -1
+done
+```
 
 ## Screens
 
@@ -24,6 +92,26 @@ npm run typecheck    # TypeScript, no emit
 | --- | --- |
 | `/onboarding/*` | Six questions: name, gender, birth date, birth time, birth place, languages |
 | `/(tabs)` | Home: greeting, search, shortcuts, today's reading, astrologers, panchang |
+| `/(tabs)/services` | All twenty services, grouped and searchable |
+| `/horoscope` | Rashifal for any sign, daily to yearly |
+| `/panchang` | The five limbs with end times, and the day's good and bad windows |
+| `/patro` | The Bikram Sambat calendar, a month at a time |
+| `/date-converter` | BS ↔ AD ↔ Nepal Sambat |
+| `/kundli` | The birth chart, with fourteen divisional charts |
+| `/dasha` | Vimshottari mahadasha and antardasha |
+| `/dosha` | Manglik, Kaal Sarp, Sade Sati, Gandmool, Pitru |
+| `/matching` | Kundali milan on the eight koots |
+| `/transit` | Gochar, counted from your moon sign |
+| `/varshaphal` | The year ahead, from your solar return |
+| `/numerology` | Mulank, bhagyank and the Lo Shu grid |
+| `/muhurta` | The right day for a marriage, a shop, a journey |
+| `/lagna` | Which lagna is rising, hour by hour |
+| `/prashna` | One question, answered from the moment you ask — no birth details needed |
+| `/gemstone` | Which stone suits your chart, and which to avoid |
+| `/naming` | The syllable a newborn's name should begin with |
+| `/festivals` | The festival year, with Dashain and Bhai Tika sait |
+| `/lucky` | Today's colour, number and direction |
+| `/vastu` | Room by room, and the direction that favours you |
 | `/(tabs)/chat` | Astrologers you can message |
 | `/(tabs)/call` | Astrologers you can call |
 | `/(tabs)/remedies` | Poojas, gemstones and healing sessions |
