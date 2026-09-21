@@ -2,14 +2,14 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { quickCategories } from '@/data/content';
-import { Gem, KundliChart, MatchRings, Sunrise } from '@/icons';
+import { Clock, Grid, KundliChart, Star } from '@/icons';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
 const ICONS = {
-  sunrise: Sunrise,
+  star: Star,
+  grid: Grid,
+  clock: Clock,
   kundli: KundliChart,
-  rings: MatchRings,
-  gem: Gem,
 } as const;
 
 /** Four shortcuts under the search field — the things people open first. */

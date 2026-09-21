@@ -1,11 +1,19 @@
 import { photos } from './images';
 
 /** The four shortcuts under the home search field. */
+/**
+ * The four shortcuts under the search field.
+ *
+ * These are the things opened first in Nepal specifically: the day's rashifal,
+ * the patro everyone checks a date against, the sait before anything is
+ * begun, and the chart itself. Everything else lives one tap away on the
+ * Services tab.
+ */
 export const quickCategories = [
-  { id: 'daily-horoscope', label: 'Horoscope', icon: 'sunrise' },
+  { id: 'daily-horoscope', label: 'Rashifal', icon: 'star' },
+  { id: 'patro', label: 'Patro', icon: 'grid' },
+  { id: 'sait', label: 'Shubha Sait', icon: 'clock' },
   { id: 'free-kundli', label: 'Kundli', icon: 'kundli' },
-  { id: 'kundli-matching', label: 'Matching', icon: 'rings' },
-  { id: 'remedies', label: 'Remedies', icon: 'gem' },
 ] as const;
 
 export type QuickCategory = (typeof quickCategories)[number];

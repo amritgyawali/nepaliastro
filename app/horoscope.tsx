@@ -1,237 +1,166 @@
-import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { NavHeader, PrimaryButton, Screen } from '@/components';
-import { formatToday, readingFor, signForDate, zodiacSigns } from '@/lib/astro';
+import { Card, NavHeader, Screen, ScoreBar, Segmented } from '@/components';
+import {
+  GRAHAS, RASHIS, chartFor, rashifalFor, todayHeadline, type Period,
+} from '@/lib/jyotish';
 import { useOnboarding } from '@/store/onboarding';
-import { GUTTER, colors, font, radius, space, type } from '@/theme';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
-/** Today's reading, for your sign or any other. */
+const PERIODS: { value: Period; label: string }[] = [
+  { value: 'daily', label: 'Today' },
+  { value: 'weekly', label: 'Week' },
+  { value: 'monthly', label: 'Month' },
+  { value: 'yearly', label: 'Year' },
+];
+
+/**
+ * Rashifal.
+ *
+ * The sign opens on the reader's own moon sign where one is known, because
+ * that is the sign Vedic astrology reads a person by — not the sun sign a
+ * western horoscope uses. All twelve are one tap away, and every line is
+ * computed from where the grahas stand today rather than written ahead.
+ */
 export default function HoroscopeScreen() {
-  const router = useRouter();
   const { profile } = useOnboarding();
-
-  const yourSign = useMemo(() => signForDate(profile.birthDate), [profile.birthDate]);
-  const [signId, setSignId] = useState(yourSign.id);
-
-  const sign = zodiacSigns.find((entry) => entry.id === signId) ?? yourSign;
   const now = useMemo(() => new Date(), []);
-  const reading = useMemo(() => readingFor(sign, now), [sign, now]);
-  const dateLabel = formatToday(now);
+  const chart = useMemo(() => chartFor(profile), [profile]);
+
+  const [selected, setSelected] = useState(() => chart?.rashi.index ?? 0);
+  const [period, setPeriod] = useState<Period>('daily');
+
+  const reading = useMemo(
+    () => rashifalFor(selected, period, now),
+    [selected, period, now],
+  );
 
   return (
-    <Screen background={colors.white}>
-      <NavHeader title="Daily horoscope" bordered />
+    <Screen>
+      <NavHeader title="Rashifal" bordered />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.date}>{dateLabel}</Text>
+        <Text style={styles.today}>{todayHeadline(now)}</Text>
 
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.signs}
+          contentContainerStyle={styles.signRow}
         >
-          {zodiacSigns.map((entry) => {
-            const selected = entry.id === sign.id;
+          {RASHIS.map((rashi) => {
+            const active = rashi.index === selected;
+            const isYours = chart?.rashi.index === rashi.index;
 
             return (
               <Pressable
-                key={entry.id}
+                key={rashi.index}
                 accessibilityRole="button"
-                accessibilityState={{ selected }}
-                accessibilityLabel={`${entry.name}${entry.id === yourSign.id ? ', your sign' : ''}`}
-                onPress={() => setSignId(entry.id)}
-                style={({ pressed }) => [
-                  styles.sign,
-                  selected && styles.signSelected,
-                  pressed && styles.pressed,
-                ]}
+                accessibilityState={{ selected: active }}
+                accessibilityLabel={`${rashi.vedic}, ${rashi.western}${isYours ? ', your sign' : ''}`}
+                onPress={() => setSelected(rashi.index)}
+                style={({ pressed }) => [styles.sign, active && styles.signActive, pressed && styles.pressed]}
               >
-                <Text
-                  style={[styles.glyph, selected && styles.glyphSelected]}
-                  allowFontScaling={false}
-                >
-                  {`${entry.glyph}︎`}
+                <Text style={[styles.glyph, active && styles.signActiveText]}>{rashi.glyph}</Text>
+                <Text style={[styles.signName, active && styles.signActiveText]} numberOfLines={1}>
+                  {rashi.vedic}
                 </Text>
-                <Text style={[styles.signName, selected && styles.signNameSelected]}>
-                  {entry.name}
-                </Text>
+                {isYours ? <View style={styles.yoursDot} /> : null}
               </Pressable>
             );
           })}
         </ScrollView>
 
-        <View style={styles.card}>
-          <Text style={styles.signTitle}>
-            {sign.name}
-            {sign.id === yourSign.id ? ' · your sign' : ''}
+        <View style={styles.segmented}>
+          <Segmented value={period} onChange={setPeriod} options={PERIODS} />
+        </View>
+
+        <Card accent style={styles.card}>
+          <Text style={styles.rashiName}>
+            {reading.rashi} <Text style={styles.rashiNp}>{reading.np}</Text>
           </Text>
-          <Text style={styles.element}>{sign.element} sign</Text>
-
+          <Text style={styles.rashiWestern}>
+            {reading.western} · ruled by {GRAHAS[reading.lord].vedic}
+          </Text>
           <Text style={styles.headline}>{reading.headline}</Text>
-          <Text style={styles.body}>{reading.body}</Text>
-
-          <View style={styles.lucky}>
-            <View style={styles.luckyItem}>
-              <Text style={styles.luckyLabel}>Lucky number</Text>
-              <Text style={styles.luckyValue}>{reading.luckyNumber}</Text>
-            </View>
-            <View style={styles.luckyDivider} />
-            <View style={styles.luckyItem}>
-              <Text style={styles.luckyLabel}>Lucky colour</Text>
-              <View style={styles.luckyColourRow}>
-                <View
-                  style={[styles.swatch, { backgroundColor: reading.luckyColour.hex }]}
-                />
-                <Text style={styles.luckyValue}>{reading.luckyColour.name}</Text>
-              </View>
-            </View>
+          <View style={styles.scoreWrap}>
+            <ScoreBar value={reading.score} label="Overall" caption={`${reading.score} / 100`} />
           </View>
-        </View>
+        </Card>
 
-        <Text style={styles.note}>
-          The reading is written for the sign and the day, not for your chart. For
-          something that takes your own birth details into account, ask an astrologer.
-        </Text>
+        {reading.sections.map((section) => (
+          <Card key={section.title} style={styles.card}>
+            <View style={styles.sectionHead}>
+              <Text style={styles.sectionTitle}>{section.title}</Text>
+              <Text style={styles.stars}>
+                {'★'.repeat(section.rating)}
+                <Text style={styles.starsDim}>{'★'.repeat(5 - section.rating)}</Text>
+              </Text>
+            </View>
+            <Text style={styles.sectionBody}>{section.body}</Text>
+          </Card>
+        ))}
 
-        <View style={styles.actions}>
-          <PrimaryButton
-            label="Ask an astrologer about this"
-            onPress={() => router.push('/(tabs)/chat')}
-          />
-          <PrimaryButton
-            label="See your kundli"
-            variant="outline"
-            onPress={() => router.push('/kundli')}
-          />
-        </View>
+        <Card title="Lucky today" style={styles.card}>
+          <View style={styles.swatchRow}>
+            {reading.luckySwatch.map((hex, i) => (
+              <View key={hex + i} style={[styles.swatch, { backgroundColor: hex }]} />
+            ))}
+            <Text style={styles.luckyText}>{reading.luckyColours.join(', ')}</Text>
+          </View>
+          <Text style={styles.luckyLine}>
+            Numbers {reading.luckyNumbers.join(', ')} · direction {reading.luckyDirection}
+          </Text>
+        </Card>
+
+        <Card title="What this was read from" style={styles.card}>
+          {reading.basis.map((t) => (
+            <Text key={t.graha} style={styles.basis}>
+              • {t.name} in {t.rashi}, your {t.house}th{t.retrograde ? ', retrograde' : ''}
+            </Text>
+          ))}
+          <Text style={styles.basisNote}>
+            Nothing here is written in advance. The lines above follow from these
+            positions, counted from {reading.rashi} — which is why the same day reads
+            differently for a different sign.
+          </Text>
+        </Card>
       </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingTop: space.lg,
-    paddingBottom: space.xxl,
-  },
-  date: {
-    ...type.caption,
-    color: colors.muted,
-    paddingHorizontal: GUTTER,
-  },
-  signs: {
-    gap: space.sm,
-    paddingHorizontal: GUTTER,
-    paddingTop: space.md,
-    paddingBottom: space.lg,
-  },
+  content: { paddingTop: space.lg, paddingBottom: space.xxl },
+  today: { ...type.small, color: colors.muted, paddingHorizontal: GUTTER, marginBottom: space.md },
+  signRow: { paddingHorizontal: GUTTER, gap: space.sm },
   sign: {
-    width: 76,
-    alignItems: 'center',
-    gap: space.xs,
-    paddingVertical: space.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    width: 68, paddingVertical: space.sm, alignItems: 'center', gap: 2,
+    borderRadius: radius.md, borderWidth: 1, borderColor: colors.border,
     backgroundColor: colors.white,
   },
-  signSelected: {
-    borderColor: colors.saffron,
-    backgroundColor: colors.saffronSoft,
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-  glyph: {
-    fontSize: 20,
-    lineHeight: 26,
-    color: colors.muted,
-  },
-  glyphSelected: {
-    color: colors.saffronDeep,
-  },
-  signName: {
-    ...type.caption,
-    color: colors.muted,
-  },
-  signNameSelected: {
-    fontFamily: font.semibold,
-    color: colors.saffronDeep,
-  },
-  card: {
-    marginHorizontal: GUTTER,
-    padding: space.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  signTitle: {
-    ...type.section,
-    color: colors.ink,
-  },
-  element: {
-    ...type.caption,
-    color: colors.muted,
-  },
-  headline: {
-    ...type.title,
-    color: colors.ink,
-    marginTop: space.lg,
-  },
-  body: {
-    ...type.body,
-    color: colors.body,
-    marginTop: space.sm,
-  },
-  lucky: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: space.lg,
-    paddingTop: space.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.divider,
-  },
-  luckyItem: {
-    flex: 1,
-    gap: 2,
-  },
-  luckyDivider: {
-    width: 1,
-    alignSelf: 'stretch',
-    marginHorizontal: space.md,
-    backgroundColor: colors.divider,
-  },
-  luckyLabel: {
-    ...type.caption,
-    color: colors.muted,
-  },
-  luckyValue: {
-    ...type.label,
-    color: colors.ink,
-  },
-  luckyColourRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.sm,
-  },
-  swatch: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 1,
-    borderColor: colors.hairline,
-  },
-  note: {
-    ...type.small,
-    color: colors.muted,
-    paddingHorizontal: GUTTER,
-    marginTop: space.lg,
-  },
-  actions: {
-    paddingHorizontal: GUTTER,
-    marginTop: space.xl,
-    gap: space.md,
-  },
+  signActive: { backgroundColor: colors.saffron, borderColor: colors.saffron },
+  signActiveText: { color: colors.onSaffron },
+  pressed: { opacity: 0.6 },
+  glyph: { fontSize: 20, color: colors.saffronDeep },
+  signName: { ...type.caption, color: colors.body },
+  yoursDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors.saffronDeep },
+  segmented: { marginTop: space.lg },
+  card: { marginHorizontal: GUTTER, marginTop: space.md },
+  rashiName: { ...type.display, color: colors.ink },
+  rashiNp: { ...type.title, color: colors.saffronDeep },
+  rashiWestern: { ...type.small, color: colors.muted },
+  headline: { ...type.body, color: colors.body, marginTop: space.sm },
+  scoreWrap: { marginTop: space.lg },
+  sectionHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: space.sm },
+  sectionTitle: { ...type.section, color: colors.ink },
+  stars: { ...type.small, color: colors.saffron },
+  starsDim: { color: colors.border },
+  sectionBody: { ...type.body, color: colors.body, marginTop: space.xs },
+  swatchRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.sm },
+  swatch: { width: 26, height: 26, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border },
+  luckyText: { ...type.small, color: colors.body, flexShrink: 1 },
+  luckyLine: { ...type.small, color: colors.muted, marginTop: space.sm },
+  basis: { ...type.small, color: colors.body },
+  basisNote: { ...type.small, color: colors.muted, marginTop: space.sm },
 });

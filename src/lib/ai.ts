@@ -8,9 +8,11 @@
  * chart, in their language, and do not repeat each other.
  *
  * Groq's free tier is what makes that affordable: one request writes the whole
- * day. The transport, the key and the model all live in `groq.ts`.
+ * day. The transport, the key and the model all live in `groq.ts`, and the
+ * chart the model is handed is built in `chart-brief.ts`, which the AI
+ * Astrologer Baba chat shares.
  */
-import { whoBrief, kundliBrief, type AiPerson } from './chart-brief';
+import { kundliBrief, whoBrief, type AiPerson } from './chart-brief';
 import { AiError, groqChat, parseJsonReply } from './groq';
 import { ordinal, predictionId, type PredictionFacts, type PredictionText } from './predictions';
 
@@ -56,6 +58,9 @@ function brief(person: AiPerson, facts: PredictionFacts[]): string {
     )
     .join('\n');
 
+  // The chart section is the same one Baba answers from: the engine can say
+  // more than the old chart could, and a reading written without the running
+  // dasha is a reading written without the clock.
   return `${whoBrief(person)}
 
 ${kundliBrief(first.kundli)}

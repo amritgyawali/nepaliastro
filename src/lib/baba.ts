@@ -4,15 +4,15 @@
  * He sits in the chat list next to the human astrologers and costs nothing,
  * because Groq's free tier answers him. What makes him worth talking to is the
  * brief: before a single word is sent he is handed the person's name, birth
- * date, birth time, birth place and the kundli computed from them — generated
- * on the spot if the person has never opened the Kundli screen — plus where
- * the moon is right now against that chart. Every answer is read from that one
- * person's chart, and he is told plainly not to invent a placement he was not
- * given.
+ * date, birth time, birth place and the chart the engine computes from them —
+ * built on the spot if no screen has asked for one yet — down to the running
+ * mahadasha and whichever doshas are actually active, plus where the moon is
+ * right now against that chart. Every answer is read from that one person's
+ * chart, and he is told plainly not to invent a placement he was not given.
  */
 import type { OnboardingProfile } from '@/store/onboarding';
 
-import { chartBriefFor, type ChartBrief } from './chart-brief';
+import { chartBriefFor, dashaLineFor, grahaName, type ChartBrief } from './chart-brief';
 import { AiError, groqChat, type GroqMessage } from './groq';
 import { ordinal } from './predictions';
 
@@ -40,7 +40,8 @@ const PERSONA = `You are "AI Astrologer Baba", the AI astrologer inside AstroNep
 You are given that person's birth details and the kundli computed from them, plus where the moon is right now against that chart. That brief is everything you know about them.
 
 How you answer:
-- Answer only from the brief. Never invent a planet, a dasha, a yoga, an aspect or a placement that is not in it. The brief says which placements are computed and which are not — if someone asks about one you were not given, say plainly that this chart only has the moon, the sun, the nakshatra and the lagna computed, and answer from those.
+- Answer only from the brief. Never invent a planet, a dasha, a yoga, an aspect or a placement that is not in it. If someone asks about something the brief does not contain, say plainly that it is not in front of you, and answer from what is.
+- The brief names the running mahadasha and the doshas that are active. A dosha it does not list is not present — say so rather than hedging, and never frighten someone about one.
 - Tie the answer to their chart out loud: name their rashi, their nakshatra, or the house the moon is transiting, and say what it means in the same sentence. Do not use a Sanskrit term without explaining it once.
 - Answer the question that was asked. One question gets one answer: two or three short paragraphs, under 180 words, no headings and no bullet lists.
 - Be warm, direct and practical. End with one concrete thing they can do, or one simple traditional remedy fitting the weekday lord in the brief.
@@ -75,11 +76,11 @@ export function greetingFor(profile: OnboardingProfile): string {
     return `${hello} I am AI Astrologer Baba. Before I can read anything I need your birth date, and your birth time and place if you know them — add them in your profile and come back, and I will have your kundli open.`;
   }
 
-  const { kundli, facts } = brief;
+  const { chart, facts } = brief;
 
   return [
     `${hello} I am AI Astrologer Baba, and I have your kundli open in front of me.`,
-    `You were born under ${kundli.nakshatra.name} nakshatra with the moon in ${kundli.rashi.vedic} — ${kundli.rashi.western} — so ${kundli.rashi.lord} rules your chart. Right now the moon is crossing your ${ordinal(facts.house)} house, the house of ${facts.houseTheme}.`,
+    `You were born under ${chart.nakshatra.name} nakshatra with the moon in ${chart.rashi.vedic} — ${chart.rashi.western} — so ${grahaName(chart.rashi.lord)} rules your chart. You are running your ${dashaLineFor(chart)}, and right now the moon is crossing your ${ordinal(facts.house)} house, the house of ${facts.houseTheme}.`,
     'Ask me anything — career, study, marriage, money, a remedy — and I will answer from your chart alone.',
   ].join('\n\n');
 }

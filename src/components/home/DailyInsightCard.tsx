@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { DailyReading } from '@/lib/astro';
+import { RASHIS, type Rashifal } from '@/lib/jyotish';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
 type DailyInsightCardProps = {
-  reading: DailyReading;
+  reading: Rashifal;
   /** "Sun 20 Sep", shown next to the sign name. */
   dateLabel: string;
   /** Opens the full horoscope screen, where every sign is readable. */
@@ -19,6 +19,9 @@ type DailyInsightCardProps = {
  * out of a hundred. They were invented numbers wearing the clothes of data,
  * so they are gone: what is left is the sign, the day's line, and the two
  * details people actually repeat — the lucky number and colour.
+ *
+ * The line itself is now derived from where the grahas stand today, counted
+ * from this sign, rather than drawn from a list of headlines.
  */
 export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCardProps) {
   const [expanded, setExpanded] = useState(false);
@@ -33,16 +36,16 @@ export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCar
             ink colour set here.
           */}
           <Text style={styles.glyph} allowFontScaling={false}>
-            {`${reading.sign.glyph}︎`}
+            {`${reading.glyph}︎`}
           </Text>
         </View>
 
         <View style={styles.identity}>
           <Text style={styles.signName} numberOfLines={1}>
-            {reading.sign.name}
+            {reading.rashi}
           </Text>
           <Text style={styles.dateLine} numberOfLines={1}>
-            {dateLabel} · {reading.sign.element} sign
+            {dateLabel} · {RASHIS[reading.index].element} sign
           </Text>
         </View>
       </View>
@@ -50,7 +53,7 @@ export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCar
       <Text style={styles.headline}>{reading.headline}</Text>
 
       <Text style={styles.body} numberOfLines={expanded ? undefined : 2}>
-        {reading.body}
+        {reading.sections.map((section) => section.body).join(' ')}
       </Text>
 
       <View style={styles.links}>
@@ -81,7 +84,7 @@ export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCar
       <View style={styles.lucky}>
         <View style={styles.luckyItem}>
           <Text style={styles.luckyLabel}>Lucky number</Text>
-          <Text style={styles.luckyValue}>{reading.luckyNumber}</Text>
+          <Text style={styles.luckyValue}>{reading.luckyNumbers.join(', ')}</Text>
         </View>
 
         <View style={styles.luckyDivider} />
@@ -89,8 +92,8 @@ export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCar
         <View style={styles.luckyItem}>
           <Text style={styles.luckyLabel}>Lucky colour</Text>
           <View style={styles.luckyColourRow}>
-            <View style={[styles.swatch, { backgroundColor: reading.luckyColour.hex }]} />
-            <Text style={styles.luckyValue}>{reading.luckyColour.name}</Text>
+            <View style={[styles.swatch, { backgroundColor: reading.luckySwatch[0] }]} />
+            <Text style={styles.luckyValue}>{reading.luckyColours[0]}</Text>
           </View>
         </View>
       </View>
