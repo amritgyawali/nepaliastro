@@ -25,8 +25,10 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
   const actionLabel = mode === 'call' ? 'Call' : 'Chat';
   const rate = astrologer.discountedRate ?? astrologer.rate;
   const hasDiscount = typeof astrologer.discountedRate === 'number';
+  const free = rate === 0;
 
   const facts = [
+    astrologer.ai ? 'AI astrologer' : null,
     astrologer.experience ? `${astrologer.experience} yrs experience` : null,
     astrologer.languages,
   ]
@@ -75,7 +77,9 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
       </Pressable>
 
       <View style={styles.side}>
-        <Text style={styles.price}>USD {rate.toFixed(2)}/min</Text>
+        <Text style={[styles.price, free && styles.priceFree]}>
+          {free ? 'Free' : `USD ${rate.toFixed(2)}/min`}
+        </Text>
         {hasDiscount ? (
           <Text style={styles.struck}>USD {astrologer.rate.toFixed(2)}</Text>
         ) : null}
@@ -160,6 +164,10 @@ const styles = StyleSheet.create({
   price: {
     ...type.caption,
     color: colors.ink,
+  },
+  priceFree: {
+    ...type.label,
+    color: colors.green,
   },
   struck: {
     ...type.caption,

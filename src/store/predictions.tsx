@@ -12,6 +12,7 @@ import React, {
 import { AppState, type AppStateStatus } from 'react-native';
 
 import { AiError, BUILD_TIME_KEY, canUseAi, writeReadings } from '@/lib/ai';
+import { personFor } from '@/lib/chart-brief';
 import {
   cancelScheduled,
   configureNotificationHandler,
@@ -24,7 +25,6 @@ import {
   syncSchedule,
   type PermissionState,
 } from '@/lib/notifications';
-import { formatBirthMoment } from '@/lib/kundli';
 import {
   buildPrediction,
   composePrediction,
@@ -47,14 +47,19 @@ const KEEP = 24;
 /** A foreground that arrives sooner than this does not re-run the writing. */
 const REFRESH_INTERVAL_MS = 10 * 60_000;
 
-const STORAGE_KEY = 'astronepali.predictions.v1';
+/**
+ * Bumped from v1 when the writing moved from Anthropic to Groq: a key saved
+ * under the old version is an `sk-ant-` one, and sending it to Groq would
+ * only earn a 401. Dropping it asks for the right one instead.
+ */
+const STORAGE_KEY = 'astronepali.predictions.v2';
 
 export type PredictionSettings = {
   /** Whether the five-hourly notification is on at all. */
   enabled: boolean;
   /** Adds the 01:00 reading to the four daytime ones. */
   overnight: boolean;
-  /** Anthropic key, typed in by whoever runs the app. May be empty. */
+  /** Groq key, typed in by whoever runs the app. May be empty. */
   apiKey: string;
 };
 
@@ -247,13 +252,7 @@ export function PredictionsProvider({ children }: { children: React.ReactNode })
             try {
               aiText = await writeReadings(
                 key,
-                {
-                  firstName: who.name.trim().split(/\s+/)[0] ?? '',
-                  gender: who.gender ?? 'not given',
-                  birthDetails: formatBirthMoment(pending[0].kundli.moment),
-                  birthPlace: who.birthPlace.trim() || 'Kathmandu, Nepal',
-                  language: who.languages[0] ?? 'English',
-                },
+                personFor(who, pending[0].kundli),
                 pending,
               );
               setAiError(null);
