@@ -144,6 +144,7 @@ export default function PredictionScreen() {
 
         <PrimaryButton
           label="Talk with our astrology guru"
+          arrow
           onPress={() => router.push(`/chat/${guru.id}`)}
         />
       </View>

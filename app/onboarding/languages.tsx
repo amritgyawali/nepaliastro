@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { NavHeader, PrimaryButton, Screen, Stepper } from '@/components';
+import { NavHeader, PrimaryButton, Screen, Stepper, Tappable } from '@/components';
 import { languageOptions } from '@/data/content';
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, colors, font, radius, space, type } from '@/theme';
@@ -35,17 +35,14 @@ export default function LanguagesStep() {
               const selected = profile.languages.includes(language);
 
               return (
-                <Pressable
+                <Tappable
                   key={language}
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: selected }}
                   accessibilityLabel={language}
                   onPress={() => toggleLanguage(language)}
-                  style={({ pressed }) => [
-                    styles.chip,
-                    selected && styles.chipSelected,
-                    pressed && styles.pressed,
-                  ]}
+                  style={[styles.chip, selected && styles.chipSelected]}
+                  pressedStyle={styles.pressed}
                 >
                   <Text
                     style={[styles.chipLabel, selected && styles.chipLabelSelected]}
@@ -53,7 +50,7 @@ export default function LanguagesStep() {
                   >
                     {language}
                   </Text>
-                </Pressable>
+                </Tappable>
               );
             })}
           </View>

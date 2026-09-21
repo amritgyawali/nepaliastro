@@ -1,12 +1,19 @@
 // expo-router vendors react-navigation's bottom tabs behind `expo-router/tabs`,
 // so the props type comes from there rather than a separate package.
 import type { BottomTabBarProps } from 'expo-router/tabs';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChatDots, Home, Phone, PrayingHands, Sparkle } from '@/icons';
-import { SCREEN_MAX_WIDTH, TAB_BAR_HEIGHT, colors, font, space, type } from '@/theme';
+import { SCREEN_MAX_WIDTH, TAB_BAR_HEIGHT, colors, font, motion, radius, space, type } from '@/theme';
 
 const TAB_ICONS = {
   index: Home,
@@ -20,7 +27,9 @@ const TAB_ICONS = {
  * A plain bottom bar: five tabs, icon over label, saffron for the current one.
  *
  * It sits in the layout rather than floating over it, so nothing is ever
- * hidden behind it and no screen has to reserve space for it.
+ * hidden behind it and no screen has to reserve space for it. The tab that
+ * becomes current lifts its icon two points and draws a short saffron rule
+ * above it — the only movement in the bar, and only on a change.
  */
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
@@ -58,7 +67,10 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               }
               style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
             >
-              <Icon size={24} color={tint} filled={focused} />
+              <TabMark focused={focused} />
+              <TabIcon focused={focused}>
+                <Icon size={24} color={tint} filled={focused} />
+              </TabIcon>
               <Text style={[styles.label, { color: tint }, focused && styles.labelActive]}>
                 {label}
               </Text>
@@ -68,6 +80,41 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       </View>
     </View>
   );
+}
+
+/** The short rule over the current tab, drawn out from its centre. */
+function TabMark({ focused }: { focused: boolean }) {
+  const reduceMotion = useReducedMotion();
+  const shown = useSharedValue(focused ? 1 : 0);
+
+  useEffect(() => {
+    const target = focused ? 1 : 0;
+    shown.value = reduceMotion ? target : withTiming(target, motion.link);
+  }, [focused, reduceMotion, shown]);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: shown.value,
+    transform: [{ scaleX: shown.value }],
+  }));
+
+  return <Animated.View style={[styles.mark, style]} />;
+}
+
+/** The icon's small lift when its tab becomes the current one. */
+function TabIcon({ focused, children }: { focused: boolean; children: React.ReactNode }) {
+  const reduceMotion = useReducedMotion();
+  const lift = useSharedValue(focused ? 1 : 0);
+
+  useEffect(() => {
+    const target = focused ? 1 : 0;
+    lift.value = reduceMotion ? target : withSpring(target, motion.tabSpring);
+  }, [focused, reduceMotion, lift]);
+
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateY: -2 * lift.value }],
+  }));
+
+  return <Animated.View style={style}>{children}</Animated.View>;
 }
 
 const styles = StyleSheet.create({
@@ -93,6 +140,15 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.6,
+  },
+  mark: {
+    position: 'absolute',
+    top: 0,
+    width: 28,
+    height: 3,
+    borderBottomLeftRadius: radius.sm,
+    borderBottomRightRadius: radius.sm,
+    backgroundColor: colors.saffron,
   },
   label: {
     ...type.caption,

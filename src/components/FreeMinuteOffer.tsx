@@ -1,11 +1,12 @@
 import React from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 
 import { topNearbyAstrologer } from '@/data/astrologers';
 import { colors, radius, space, type } from '@/theme';
 
 import { Avatar } from './Avatar';
 import { PrimaryButton } from './PrimaryButton';
+import { Tappable } from './Tappable';
 
 type FreeMinuteOfferProps = {
   visible: boolean;
@@ -49,14 +50,15 @@ export function FreeMinuteOffer({ visible, onClaim, onCancel }: FreeMinuteOfferP
 
           <PrimaryButton label="Start free chat" onPress={onClaim} style={styles.claim} />
 
-          <Pressable
+          <Tappable
             accessibilityRole="button"
             accessibilityLabel="Skip the free minute"
             onPress={onCancel}
-            style={({ pressed }) => [styles.skip, pressed && styles.pressed]}
+            style={styles.skip}
+            pressedStyle={styles.pressed}
           >
             <Text style={styles.skipLabel}>Maybe later</Text>
-          </Pressable>
+          </Tappable>
         </View>
       </View>
     </Modal>

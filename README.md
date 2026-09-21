@@ -142,9 +142,20 @@ One brand colour, one typeface, one spacing scale — all of it in
 - **Wide screens.** The app centres a phone-width column on desktop web and
   tablets instead of stretching the layout.
 - **Icons** are hand-drawn SVG paths in `src/icons/`, not an icon font.
-- **Photography** comes from the CDN URLs in `src/data/images.ts`. `Avatar`
-  falls back to an initials circle if one fails; to go fully offline, download
-  them into `assets/` and swap those values for `require()` calls.
+- **Motion** answers a touch and nothing else: buttons and cards sink on a
+  spring (`Tappable`, `PrimaryButton`), links draw their underline in and nudge
+  their arrow (`TextLink`), and a screen's sections settle in once when it opens
+  (`Reveal`). The timings live in `src/theme/motion.ts`, and all of it switches
+  off under the system's reduced-motion setting.
+- **Photography** of remedies and festivals is real, not generated: photos
+  from Wikimedia Commons, bundled in `assets/images/` so they work offline, and
+  credited in `assets/images/CREDITS.md` and under each large photo. The
+  astrologer portraits still come from CDN URLs in `src/data/images.ts`; `Avatar`
+  falls back to an initials circle if one fails.
+
+The rules behind all of this, including what counts as "AI-looking" design
+and is kept out of the app, are in [`CLAUDE.md`](CLAUDE.md). Read it before
+changing any UI.
 
 `design/` holds the original Stitch mockups the first version was traced from.
 They are kept for reference only — the app no longer follows them.

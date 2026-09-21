@@ -5,6 +5,7 @@ import { PLACES, type Place, searchPlaces } from '@/lib/jyotish';
 import { colors, radius, space, type } from '@/theme';
 
 import { WheelColumn, WheelPicker } from '../WheelPicker';
+import { Tappable } from '../Tappable';
 
 export type BirthDetails = {
   name: string;
@@ -153,15 +154,17 @@ export function BirthDetailsForm({ value, onChange, title, askTime = true }: Bir
       ) : null}
 
       <Text style={styles.label}>Place of birth</Text>
-      <Pressable
+      <Tappable
+        feel="card"
         accessibilityRole="button"
         accessibilityLabel={`Place of birth, currently ${value.place.name}`}
         onPress={() => setPickingPlace((open) => !open)}
-        style={({ pressed }) => [styles.input, styles.placeButton, pressed && styles.pressed]}
+        style={[styles.input, styles.placeButton]}
+        pressedStyle={styles.pressed}
       >
         <Text style={styles.placeName}>{value.place.name}</Text>
         <Text style={styles.placeRegion}>{value.place.region}</Text>
-      </Pressable>
+      </Tappable>
 
       {pickingPlace ? (
         <View style={styles.placePanel}>
@@ -176,7 +179,8 @@ export function BirthDetailsForm({ value, onChange, title, askTime = true }: Bir
           />
           <ScrollView style={styles.placeList} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
             {results.map((place) => (
-              <Pressable
+              <Tappable
+                feel="card"
                 key={place.id}
                 accessibilityRole="button"
                 accessibilityLabel={`${place.name}, ${place.region}`}
@@ -185,11 +189,12 @@ export function BirthDetailsForm({ value, onChange, title, askTime = true }: Bir
                   setPickingPlace(false);
                   setPlaceQuery('');
                 }}
-                style={({ pressed }) => [styles.placeRow, pressed && styles.pressed]}
+                style={styles.placeRow}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.placeName}>{place.name}</Text>
                 <Text style={styles.placeRegion}>{place.region}</Text>
-              </Pressable>
+              </Tappable>
             ))}
           </ScrollView>
         </View>

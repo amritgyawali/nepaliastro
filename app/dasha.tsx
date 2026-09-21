@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, NavHeader, NeedsBirth, Screen, ScoreBar, Tag } from '@/components';
+import { Card, NavHeader, NeedsBirth, ScoreBar, Screen, Tag, Tappable } from '@/components';
 import {
   chartFor, dashaAt, dashaVerdict, formatGregorian, vimshottariDasha,
   type DashaPeriod,
@@ -112,17 +112,14 @@ export default function DashaScreen() {
 
             return (
               <View key={`${maha.lord}-${index}`}>
-                <Pressable
+                <Tappable
+                  feel="card"
                   accessibilityRole="button"
                   accessibilityState={{ expanded: isOpen }}
                   accessibilityLabel={`${maha.lordName} mahadasha, ${formatGregorian(maha.from)} to ${formatGregorian(maha.to)}`}
                   onPress={() => setOpen(isOpen ? null : `${maha.lord}-${index}`)}
-                  style={({ pressed }) => [
-                    styles.mahaRow,
-                    index > 0 && styles.divider,
-                    isRunning && styles.mahaRunning,
-                    pressed && styles.pressed,
-                  ]}
+                  style={[styles.mahaRow, index > 0 && styles.divider, isRunning && styles.mahaRunning]}
+                  pressedStyle={styles.pressed}
                 >
                   <View style={styles.mahaText}>
                     <Text style={[styles.mahaName, isPast && styles.past]}>
@@ -135,7 +132,7 @@ export default function DashaScreen() {
                   <Text style={[styles.mahaYears, isPast && styles.past]}>
                     {maha.years.toFixed(1)}y
                   </Text>
-                </Pressable>
+                </Tappable>
 
                 {isOpen
                   ? maha.children.map((antar) => {

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import {
   FreeMinuteOffer,
@@ -8,6 +8,7 @@ import {
   PrimaryButton,
   Screen,
   Stepper,
+  Tappable,
   WheelColumn,
   WheelPicker,
 } from '@/components';
@@ -92,18 +93,20 @@ export default function BirthTimeStep() {
           />
         </WheelPicker>
 
-        <Pressable
+        <Tappable
+          feel="card"
           accessibilityRole="checkbox"
           accessibilityState={{ checked: unknown }}
           accessibilityLabel="I do not know my exact time of birth"
           onPress={() => update({ birthTimeUnknown: !unknown })}
-          style={({ pressed }) => [styles.checkRow, pressed && styles.pressed]}
+          style={styles.checkRow}
+          pressedStyle={styles.pressed}
         >
           <View style={[styles.checkbox, unknown && styles.checkboxOn]}>
             {unknown ? <Check size={13} color={colors.onSaffron} strokeWidth={3} /> : null}
           </View>
           <Text style={styles.checkLabel}>I don’t know my exact birth time</Text>
-        </Pressable>
+        </Tappable>
 
         <Text style={styles.note}>
           Without a time, a reading is still possible — it is just less precise about
@@ -112,7 +115,7 @@ export default function BirthTimeStep() {
 
         <View style={styles.spacer} />
 
-        <PrimaryButton label="Continue" onPress={() => setOfferVisible(true)} />
+        <PrimaryButton label="Continue" arrow onPress={() => setOfferVisible(true)} />
       </View>
 
       <FreeMinuteOffer

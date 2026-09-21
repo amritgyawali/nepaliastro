@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, NavHeader, Screen, Segmented, Tag } from '@/components';
+import { Card, NavHeader, Photo, Reveal, Screen, Segmented, Tag } from '@/components';
+import { festivalScene } from '@/data/images';
 import {
   festivalsIn, formatBsNepali, formatClock, formatGregorian, startOfNepaliDay,
 } from '@/lib/jyotish';
-import { GUTTER, colors, space, type } from '@/theme';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 /**
  * The festival year.
@@ -22,6 +23,7 @@ export default function FestivalsScreen() {
   const festivals = useMemo(() => festivalsIn(year), [year]);
   const upcoming = festivals.filter((f) => f.date >= today);
   const next = upcoming[0];
+  const nextScene = next ? festivalScene(next.id) : undefined;
 
   return (
     <Screen>
@@ -29,22 +31,29 @@ export default function FestivalsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {next && year === today.getFullYear() ? (
-          <Card accent style={styles.card}>
-            <Text style={styles.nextLabel}>Next</Text>
-            <Text style={styles.nextName}>
-              {next.name} <Text style={styles.nextNp}>{next.np}</Text>
-            </Text>
-            <Text style={styles.nextDate}>
-              {formatGregorian(next.date)}
-              {next.bs ? ` · ${formatBsNepali(next.bs)}` : ''}
-            </Text>
-            <Text style={styles.nextAbout}>{next.about}</Text>
-            {next.sait ? (
-              <Text style={styles.sait}>
-                Tika sait {formatClock(next.sait.from)} – {formatClock(next.sait.to)}
+          <Reveal>
+            <Card accent style={styles.card}>
+              {nextScene ? (
+                <View style={styles.nextPhoto}>
+                  <Photo scene={nextScene} height={176} credited style={styles.nextImage} />
+                </View>
+              ) : null}
+              <Text style={styles.nextLabel}>Next</Text>
+              <Text style={styles.nextName}>
+                {next.name} <Text style={styles.nextNp}>{next.np}</Text>
               </Text>
-            ) : null}
-          </Card>
+              <Text style={styles.nextDate}>
+                {formatGregorian(next.date)}
+                {next.bs ? ` · ${formatBsNepali(next.bs)}` : ''}
+              </Text>
+              <Text style={styles.nextAbout}>{next.about}</Text>
+              {next.sait ? (
+                <Text style={styles.sait}>
+                  Tika sait {formatClock(next.sait.from)} – {formatClock(next.sait.to)}
+                </Text>
+              ) : null}
+            </Card>
+          </Reveal>
         ) : null}
 
         <View style={styles.segmented}>
@@ -105,6 +114,8 @@ export default function FestivalsScreen() {
 const styles = StyleSheet.create({
   content: { paddingTop: space.lg, paddingBottom: space.xxl },
   card: { marginHorizontal: GUTTER, marginTop: space.md },
+  nextPhoto: { marginBottom: space.md },
+  nextImage: { borderRadius: radius.md },
   segmented: { marginTop: space.lg, marginBottom: space.xs },
   nextLabel: { ...type.caption, color: colors.saffronDeep, textTransform: 'uppercase', letterSpacing: 0.6 },
   nextName: { ...type.display, color: colors.ink },

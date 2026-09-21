@@ -101,6 +101,7 @@ export default function BirthDateStep() {
 
           <PrimaryButton
             label="Continue"
+            arrow
             onPress={() => router.push('/onboarding/birth-time')}
           />
         </View>

@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Close, Search } from '@/icons';
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, TOUCH_SIZE, colors, radius, space, type } from '@/theme';
 
 import { Avatar } from '../Avatar';
+import { Tappable } from '../Tappable';
 
 type HomeHeaderProps = {
   /** "Good evening, Amrit" — from the clock and the saved profile. */
@@ -48,15 +49,16 @@ export function HomeHeader({
           </Text>
         </View>
 
-        <Pressable
+        <Tappable
+          feel="icon"
           accessibilityRole="button"
           accessibilityLabel="Profile and settings"
           onPress={() => router.push('/profile')}
           hitSlop={6}
-          style={({ pressed }) => pressed && styles.pressed}
+          pressedStyle={styles.pressed}
         >
           <Avatar name={profile.name.trim() || 'You'} size={44} />
-        </Pressable>
+        </Tappable>
       </View>
 
       <View style={styles.searchWrap}>
@@ -78,15 +80,17 @@ export function HomeHeader({
         />
 
         {hasQuery ? (
-          <Pressable
+          <Tappable
+            feel="icon"
             accessibilityRole="button"
             accessibilityLabel="Clear search"
             onPress={() => onQueryChange('')}
             hitSlop={12}
-            style={({ pressed }) => [styles.clear, pressed && styles.pressed]}
+            style={styles.clear}
+            pressedStyle={styles.pressed}
           >
             <Close size={13} color={colors.muted} strokeWidth={2.4} />
-          </Pressable>
+          </Tappable>
         ) : null}
       </View>
     </View>

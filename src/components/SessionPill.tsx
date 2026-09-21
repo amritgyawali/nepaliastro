@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { ongoingSession } from '@/data/astrologers';
 import { colors, radius, space, type } from '@/theme';
 
 import { Avatar } from './Avatar';
+import { Tappable } from './Tappable';
 
 /**
  * The consultation already in progress, offered at the top of the directory
@@ -23,14 +24,16 @@ export function SessionPill({ onResume }: { onResume?: () => void }) {
         </Text>
       </View>
 
-      <Pressable
+      <Tappable
         accessibilityRole="button"
         accessibilityLabel={`Resume chat with ${ongoingSession.name}`}
         onPress={onResume}
-        style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
+        style={styles.cta}
+        hoveredStyle={styles.ctaPressed}
+        pressedStyle={styles.ctaPressed}
       >
         <Text style={styles.ctaLabel}>Resume</Text>
-      </Pressable>
+      </Tappable>
     </View>
   );
 }

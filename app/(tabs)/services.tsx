@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Card, PageHeader, Screen, ServiceIcon, Tag } from '@/components';
+import { Card, PageHeader, Reveal, Screen, ServiceIcon, Tag, Tappable } from '@/components';
 import {
   SERVICES, SERVICE_GROUPS, searchServices, servicesInGroup, type Service,
 } from '@/data/services';
@@ -36,12 +36,14 @@ export default function ServicesScreen() {
       (service.needsBirth && !hasBirth) || (service.needsTime && !hasTime);
 
     return (
-      <Pressable
+      <Tappable
+        feel="card"
         key={service.id}
         accessibilityRole="button"
         accessibilityLabel={`${service.name} — ${service.tagline}`}
         onPress={() => router.push(service.href as never)}
-        style={({ pressed }) => [styles.item, pressed && styles.pressed]}
+        style={styles.item}
+        pressedStyle={styles.pressed}
       >
         <View style={styles.iconTile}>
           <ServiceIcon name={service.icon} size={24} color={colors.saffronDeep} strokeWidth={1.8} />
@@ -62,7 +64,7 @@ export default function ServicesScreen() {
             </View>
           ) : null}
         </View>
-      </Pressable>
+      </Tappable>
     );
   };
 
@@ -103,14 +105,14 @@ export default function ServicesScreen() {
             <Card padded={false}>{results.map(renderCard)}</Card>
           </View>
         ) : (
-          SERVICE_GROUPS.map((group) => (
-            <View key={group.id} style={styles.group}>
+          SERVICE_GROUPS.map((group, index) => (
+            <Reveal key={group.id} index={index} style={styles.group}>
               <View style={styles.groupHead}>
                 <Text style={styles.groupTitle}>{group.title}</Text>
                 <Text style={styles.groupNp}>{group.np}</Text>
               </View>
               <Card padded={false}>{servicesInGroup(group.id).map(renderCard)}</Card>
-            </View>
+            </Reveal>
           ))
         )}
 

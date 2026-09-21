@@ -1,7 +1,10 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { ArrowRight } from '@/icons';
 import { colors, radius, type } from '@/theme';
+
+import { Tappable } from './Tappable';
 
 type PrimaryButtonProps = {
   label: string;
@@ -9,35 +12,52 @@ type PrimaryButtonProps = {
   disabled?: boolean;
   /** `outline` is the quiet twin — same size, same target, no fill. */
   variant?: 'solid' | 'outline';
-  style?: ViewStyle;
+  /** Ends the label with an arrow, for a button that moves you forward a step. */
+  arrow?: boolean;
+  /** Swaps the label for a spinner and ignores presses until it is done. */
+  loading?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-/** The one button shape in the app: full width, saffron, 52pt tall. */
+/**
+ * The one button shape in the app: full width, saffron, 52pt tall.
+ *
+ * It sinks under the finger and deepens its fill while held; on web a hover
+ * deepens the fill too, so the pointer gets the same answer the finger does.
+ */
 export function PrimaryButton({
   label,
   onPress,
   disabled,
   variant = 'solid',
+  arrow,
+  loading,
   style,
 }: PrimaryButtonProps) {
   const outline = variant === 'outline';
+  const ink = outline ? colors.body : colors.onSaffron;
+  const inert = disabled || loading;
 
   return (
-    <Pressable
+    <Tappable
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled, busy: !!loading }}
       onPress={onPress}
-      disabled={disabled}
-      style={({ pressed }) => [
-        styles.button,
-        outline ? styles.outline : styles.solid,
-        pressed && (outline ? styles.outlinePressed : styles.solidPressed),
-        disabled && styles.disabled,
-        style,
-      ]}
+      disabled={inert}
+      style={[styles.button, outline ? styles.outline : styles.solid, disabled && styles.disabled, style]}
+      hoveredStyle={outline ? styles.outlineHovered : styles.solidPressed}
+      pressedStyle={outline ? styles.outlinePressed : styles.solidPressed}
     >
-      <Text style={[styles.label, outline && styles.outlineLabel]}>{label}</Text>
-    </Pressable>
+      {loading ? (
+        <ActivityIndicator color={ink} />
+      ) : (
+        <View style={styles.content}>
+          <Text style={[styles.label, { color: ink }]}>{label}</Text>
+          {arrow ? <ArrowRight size={18} color={ink} strokeWidth={2.2} /> : null}
+        </View>
+      )}
+    </Tappable>
   );
 }
 
@@ -48,6 +68,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   solid: {
     backgroundColor: colors.saffron,
@@ -60,6 +85,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  outlineHovered: {
+    borderColor: colors.subtle,
+  },
   outlinePressed: {
     backgroundColor: colors.fill,
   },
@@ -68,9 +96,5 @@ const styles = StyleSheet.create({
   },
   label: {
     ...type.button,
-    color: colors.onSaffron,
-  },
-  outlineLabel: {
-    color: colors.body,
   },
 });

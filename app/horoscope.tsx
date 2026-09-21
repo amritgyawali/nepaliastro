@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, NavHeader, Screen, ScoreBar, Segmented } from '@/components';
+import { Card, NavHeader, ScoreBar, Screen, Segmented, Tappable } from '@/components';
 import {
   GRAHAS, RASHIS, chartFor, rashifalFor, todayHeadline, type Period,
 } from '@/lib/jyotish';
@@ -53,20 +53,21 @@ export default function HoroscopeScreen() {
             const isYours = chart?.rashi.index === rashi.index;
 
             return (
-              <Pressable
+              <Tappable
                 key={rashi.index}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
                 accessibilityLabel={`${rashi.vedic}, ${rashi.western}${isYours ? ', your sign' : ''}`}
                 onPress={() => setSelected(rashi.index)}
-                style={({ pressed }) => [styles.sign, active && styles.signActive, pressed && styles.pressed]}
+                style={[styles.sign, active && styles.signActive]}
+                pressedStyle={styles.pressed}
               >
                 <Text style={[styles.glyph, active && styles.signActiveText]}>{rashi.glyph}</Text>
                 <Text style={[styles.signName, active && styles.signActiveText]} numberOfLines={1}>
                   {rashi.vedic}
                 </Text>
                 {isYours ? <View style={styles.yoursDot} /> : null}
-              </Pressable>
+              </Tappable>
             );
           })}
         </ScrollView>

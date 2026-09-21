@@ -182,11 +182,13 @@ export default function KundliScreen() {
 
         <PrimaryButton
           label="See your graha dasha"
+          arrow
           onPress={() => router.push('/dasha')}
           style={styles.cta}
         />
         <PrimaryButton
           label="Check for doshas"
+          arrow
           variant="outline"
           onPress={() => router.push('/dosha')}
           style={styles.ctaSecond}
