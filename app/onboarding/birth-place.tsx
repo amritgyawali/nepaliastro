@@ -53,6 +53,7 @@ export default function BirthPlaceStep() {
 
           <PrimaryButton
             label="Continue"
+            arrow
             disabled={!canContinue}
             onPress={() => router.push('/onboarding/languages')}
           />

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { Astrologer } from '@/data/astrologers';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
 import { Avatar } from '../Avatar';
 import { SectionHeader } from '../SectionHeader';
+import { Tappable } from '../Tappable';
 
 const CARD_WIDTH = 160;
 
@@ -78,11 +79,13 @@ function RailCard({ astrologer, mode, onSelect, onAction }: CardProps) {
 
   return (
     <View style={styles.card}>
-      <Pressable
+      <Tappable
         accessibilityRole="button"
         accessibilityLabel={`${astrologer.name}, ${astrologer.skills}, USD ${rate} per minute`}
         onPress={onSelect}
-        style={({ pressed }) => [styles.cardBody, pressed && styles.pressed]}
+        feel="card"
+        style={styles.cardBody}
+        pressedStyle={styles.pressed}
       >
         <Avatar uri={astrologer.photo} name={astrologer.name} size={64} />
 
@@ -102,16 +105,18 @@ function RailCard({ astrologer, mode, onSelect, onAction }: CardProps) {
         <Text style={styles.price} numberOfLines={1}>
           USD {rate}/min
         </Text>
-      </Pressable>
+      </Tappable>
 
-      <Pressable
+      <Tappable
         accessibilityRole="button"
         accessibilityLabel={`${actionLabel} with ${astrologer.name}`}
         onPress={onAction}
-        style={({ pressed }) => [styles.action, pressed && styles.actionPressed]}
+        style={styles.action}
+        hoveredStyle={styles.actionPressed}
+        pressedStyle={styles.actionPressed}
       >
         <Text style={styles.actionLabel}>{actionLabel}</Text>
-      </Pressable>
+      </Tappable>
     </View>
   );
 }
@@ -138,7 +143,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   pressed: {
-    opacity: 0.6,
+    opacity: 0.75,
   },
   name: {
     ...type.label,

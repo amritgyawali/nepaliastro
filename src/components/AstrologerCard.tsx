@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import type { Astrologer } from '@/data/astrologers';
 import { Star } from '@/icons';
@@ -7,6 +7,7 @@ import { colors, radius, space, type } from '@/theme';
 
 import { Avatar } from './Avatar';
 import { VerifiedBadge } from './Badges';
+import { Tappable } from './Tappable';
 
 type Mode = 'chat' | 'call';
 
@@ -39,11 +40,13 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
     // A plain View, so the action is a sibling of the tappable body rather
     // than a child — nesting pressables emits nested <button>s on web.
     <View style={styles.card}>
-      <Pressable
+      <Tappable
+        feel="card"
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={`${astrologer.name}, ${astrologer.skills}`}
-        style={({ pressed }) => [styles.body, pressed && styles.pressed]}
+        style={styles.body}
+        pressedStyle={styles.pressed}
       >
         <Avatar uri={astrologer.photo} name={astrologer.name} size={60} />
 
@@ -74,7 +77,7 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
             </View>
           ) : null}
         </View>
-      </Pressable>
+      </Tappable>
 
       <View style={styles.side}>
         <Text style={[styles.price, free && styles.priceFree]}>
@@ -84,14 +87,16 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
           <Text style={styles.struck}>USD {astrologer.rate.toFixed(2)}</Text>
         ) : null}
 
-        <Pressable
+        <Tappable
           accessibilityRole="button"
           accessibilityLabel={`${actionLabel} with ${astrologer.name}`}
           onPress={onAction}
-          style={({ pressed }) => [styles.action, pressed && styles.actionPressed]}
+          style={styles.action}
+          hoveredStyle={styles.actionPressed}
+          pressedStyle={styles.actionPressed}
         >
           <Text style={styles.actionLabel}>{actionLabel}</Text>
-        </Pressable>
+        </Tappable>
 
         <Text style={[styles.status, astrologer.online && styles.statusOnline]}>
           {astrologer.online ? 'Online' : astrologer.waitTime ?? 'Busy'}

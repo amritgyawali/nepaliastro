@@ -1,9 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import type { Prediction } from '@/lib/predictions';
 import { formatCountdown, formatSlotTime } from '@/lib/predictions';
 import { GUTTER, colors, radius, space, type } from '@/theme';
+
+import { Tappable } from '../Tappable';
+import { TextLink } from '../TextLink';
 
 type NextReadingCardProps = {
   /** The reading for the window the person is in now. */
@@ -39,34 +42,28 @@ export function NextReadingCard({
         ) : null}
       </View>
 
-      <Pressable
+      <Tappable
         accessibilityRole="button"
         accessibilityLabel={`Open your reading: ${reading.title}`}
         onPress={onOpen}
-        style={({ pressed }) => pressed && styles.pressed}
+        feel="card"
       >
         <Text style={styles.title}>{reading.title}</Text>
         <Text style={styles.body} numberOfLines={3}>
           {reading.preview}
         </Text>
-      </Pressable>
+      </Tappable>
 
       <View style={styles.foot}>
         <Text style={styles.focus} numberOfLines={1}>
           {reading.focus}
         </Text>
 
-        <Pressable
-          accessibilityRole="button"
+        <TextLink
+          label={next ? `All readings · ${formatSlotTime(new Date(next.at))}` : 'All readings'}
           accessibilityLabel="See all of your readings"
           onPress={onSeeAll}
-          hitSlop={8}
-          style={({ pressed }) => pressed && styles.pressed}
-        >
-          <Text style={styles.link}>
-            {next ? `All readings · ${formatSlotTime(new Date(next.at))}` : 'All readings'}
-          </Text>
-        </Pressable>
+        />
       </View>
     </View>
   );
@@ -119,12 +116,5 @@ const styles = StyleSheet.create({
     ...type.caption,
     color: colors.muted,
     flexShrink: 1,
-  },
-  link: {
-    ...type.label,
-    color: colors.saffronDeep,
-  },
-  pressed: {
-    opacity: 0.6,
   },
 });

@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { NavHeader, PrimaryButton, Screen } from '@/components';
+import { NavHeader, Photo, PrimaryButton, Screen } from '@/components';
 import { findRemedy } from '@/data/content';
 import { Check } from '@/icons';
 import { GUTTER, colors, radius, space, type } from '@/theme';
@@ -34,12 +34,7 @@ export default function RemedyScreen() {
       <NavHeader title={remedy.title} bordered />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Image
-          source={{ uri: remedy.image }}
-          style={styles.image}
-          resizeMode="cover"
-          accessibilityLabel={remedy.title}
-        />
+        <Photo scene={remedy.image} height={220} credited />
 
         <Text style={styles.title}>{remedy.title}</Text>
         <Text style={styles.description}>{remedy.description}</Text>
@@ -75,6 +70,7 @@ export default function RemedyScreen() {
         <View style={styles.actions}>
           <PrimaryButton
             label="Request this remedy"
+            arrow
             onPress={() => router.push('/(tabs)/chat')}
           />
           <PrimaryButton
@@ -93,12 +89,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: GUTTER,
     paddingTop: space.lg,
     paddingBottom: space.xxl,
-  },
-  image: {
-    width: '100%',
-    height: 180,
-    borderRadius: radius.lg,
-    backgroundColor: colors.fill,
   },
   title: {
     ...type.display,

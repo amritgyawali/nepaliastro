@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 
-import { Avatar, Screen, VerifiedBadge } from '@/components';
+import { Avatar, Screen, Tappable, VerifiedBadge } from '@/components';
 import { findAstrologer, ongoingSession } from '@/data/astrologers';
 import { astroReplies, babaPrompts, quickPrompts } from '@/data/content';
 import { ChevronLeft, DoubleCheck, Send } from '@/icons';
@@ -285,21 +285,25 @@ export default function ChatScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Pressable
+          <Tappable
+            feel="icon"
             accessibilityRole="button"
             accessibilityLabel="Go back"
             hitSlop={8}
             onPress={leaveChat}
-            style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
+            style={styles.backButton}
+            pressedStyle={styles.pressed}
           >
             <ChevronLeft size={24} color={colors.ink} strokeWidth={2} />
-          </Pressable>
+          </Tappable>
 
-          <Pressable
+          <Tappable
+            feel="card"
             accessibilityRole="button"
             accessibilityLabel={`About ${astrologer.name}`}
             onPress={() => router.push(`/astrologer/${astrologer.id}`)}
-            style={({ pressed }) => [styles.who, pressed && styles.pressed]}
+            style={styles.who}
+            pressedStyle={styles.pressed}
           >
             <Avatar uri={astrologer.photo} name={astrologer.name} size={44} />
 
@@ -322,18 +326,18 @@ export default function ChatScreen() {
                 </View>
               )}
             </View>
-          </Pressable>
+          </Tappable>
         </View>
 
-        <Pressable
+        <Tappable
           accessibilityRole="button"
           accessibilityLabel="End consultation"
           onPress={() => setConfirmEnd(true)}
           hitSlop={8}
-          style={({ pressed }) => pressed && styles.pressed}
+          pressedStyle={styles.pressed}
         >
           <Text style={styles.endLabel}>End</Text>
-        </Pressable>
+        </Tappable>
       </View>
 
       {/* Session info strip */}
@@ -430,19 +434,17 @@ export default function ChatScreen() {
             contentContainerStyle={styles.prompts}
           >
             {(isAi ? babaPrompts : quickPrompts).map((prompt) => (
-              <Pressable
+              <Tappable
                 key={prompt}
                 accessibilityRole="button"
                 disabled={asking}
                 onPress={() => send(prompt)}
-                style={({ pressed }) => [
-                  styles.prompt,
-                  pressed && styles.promptPressed,
-                  asking && styles.promptDisabled,
-                ]}
+                style={[styles.prompt, asking && styles.promptDisabled]}
+                hoveredStyle={styles.promptPressed}
+                pressedStyle={styles.promptPressed}
               >
                 <Text style={styles.promptLabel}>{prompt}</Text>
-              </Pressable>
+              </Tappable>
             ))}
           </ScrollView>
         </View>
@@ -462,19 +464,17 @@ export default function ChatScreen() {
             />
           </View>
 
-          <Pressable
+          <Tappable
+            feel="icon"
             accessibilityRole="button"
             accessibilityLabel="Send message"
             disabled={asking}
             onPress={() => send(draft)}
-            style={({ pressed }) => [
-              styles.sendButton,
-              pressed && styles.pressed,
-              asking && styles.sendButtonBusy,
-            ]}
+            style={[styles.sendButton, asking && styles.sendButtonBusy]}
+            pressedStyle={styles.pressed}
           >
             <Send size={18} color={colors.onSaffron} />
-          </Pressable>
+          </Tappable>
         </View>
       </KeyboardAvoidingView>
 
@@ -493,20 +493,22 @@ export default function ChatScreen() {
               what you have discussed is already saved.
             </Text>
             <View style={styles.modalActions}>
-              <Pressable
+              <Tappable
                 accessibilityRole="button"
                 onPress={endSession}
-                style={({ pressed }) => [styles.modalCancel, pressed && styles.pressed]}
+                style={styles.modalCancel}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.modalCancelLabel}>End chat</Text>
-              </Pressable>
-              <Pressable
+              </Tappable>
+              <Tappable
                 accessibilityRole="button"
                 onPress={continuePaid}
-                style={({ pressed }) => [styles.modalContinue, pressed && styles.pressed]}
+                style={styles.modalContinue}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.modalContinueLabel}>Keep talking</Text>
-              </Pressable>
+              </Tappable>
             </View>
           </View>
         </View>
@@ -527,20 +529,22 @@ export default function ChatScreen() {
               history.
             </Text>
             <View style={styles.modalActions}>
-              <Pressable
+              <Tappable
                 accessibilityRole="button"
                 onPress={() => setConfirmEnd(false)}
-                style={({ pressed }) => [styles.modalCancel, pressed && styles.pressed]}
+                style={styles.modalCancel}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.modalCancelLabel}>Keep talking</Text>
-              </Pressable>
-              <Pressable
+              </Tappable>
+              <Tappable
                 accessibilityRole="button"
                 onPress={endSession}
-                style={({ pressed }) => [styles.modalConfirm, pressed && styles.pressed]}
+                style={styles.modalConfirm}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.modalConfirmLabel}>End now</Text>
-              </Pressable>
+              </Tappable>
             </View>
           </Pressable>
         </Pressable>

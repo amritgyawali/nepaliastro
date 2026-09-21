@@ -1,9 +1,10 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { quickCategories } from '@/data/content';
 import { Clock, Grid, KundliChart, Star } from '@/icons';
 import { GUTTER, colors, radius, space, type } from '@/theme';
+import { Tappable } from '../Tappable';
 
 const ICONS = {
   star: Star,
@@ -20,12 +21,13 @@ export function QuickCategories({ onSelect }: { onSelect?: (id: string) => void 
         const Icon = ICONS[category.icon];
 
         return (
-          <Pressable
+          <Tappable
             key={category.id}
             accessibilityRole="button"
             accessibilityLabel={category.label}
             onPress={() => onSelect?.(category.id)}
-            style={({ pressed }) => [styles.item, pressed && styles.pressed]}
+            style={styles.item}
+            pressedStyle={styles.pressed}
           >
             <View style={styles.tile}>
               <Icon size={26} color={colors.saffronDeep} strokeWidth={1.8} />
@@ -33,7 +35,7 @@ export function QuickCategories({ onSelect }: { onSelect?: (id: string) => void 
             <Text style={styles.label} numberOfLines={1}>
               {category.label}
             </Text>
-          </Pressable>
+          </Tappable>
         );
       })}
     </View>

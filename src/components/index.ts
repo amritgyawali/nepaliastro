@@ -6,12 +6,16 @@ export { FilterChips } from './FilterChips';
 export { FreeMinuteOffer } from './FreeMinuteOffer';
 export { NavHeader } from './NavHeader';
 export { PageHeader } from './PageHeader';
+export { Photo } from './Photo';
 export { PrimaryButton } from './PrimaryButton';
+export { Reveal } from './Reveal';
 export { Screen } from './Screen';
 export { SectionHeader } from './SectionHeader';
 export { SessionPill } from './SessionPill';
 export { ONBOARDING_STEPS, Stepper, type OnboardingStepKey } from './Stepper';
 export { TabBar } from './TabBar';
+export { Tappable, type TappableProps } from './Tappable';
+export { TextLink } from './TextLink';
 export { ITEM_HEIGHT, VISIBLE_ITEMS, WHEEL_HEIGHT, WheelColumn, WheelPicker } from './WheelPicker';
 
 export { AstrologerRail } from './home/AstrologerRail';

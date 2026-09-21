@@ -1,9 +1,10 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 import type { Speciality } from '@/data/astrologers';
 import { directoryFilters } from '@/data/content';
 import { GUTTER, colors, font, radius, space, type } from '@/theme';
+import { Tappable } from './Tappable';
 
 type FilterChipsProps = {
   value: Speciality;
@@ -22,22 +23,19 @@ export function FilterChips({ value, onChange }: FilterChipsProps) {
         const selected = value === filter.id;
 
         return (
-          <Pressable
+          <Tappable
             key={filter.id}
             accessibilityRole="button"
             accessibilityState={{ selected }}
             accessibilityLabel={`Show ${filter.label}`}
             onPress={() => onChange(filter.id as Speciality)}
-            style={({ pressed }) => [
-              styles.chip,
-              selected && styles.chipSelected,
-              pressed && styles.pressed,
-            ]}
+            style={[styles.chip, selected && styles.chipSelected]}
+            pressedStyle={styles.pressed}
           >
             <Text style={[styles.label, selected && styles.labelSelected]}>
               {filter.label}
             </Text>
-          </Pressable>
+          </Tappable>
         );
       })}
     </ScrollView>

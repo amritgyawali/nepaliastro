@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { ChevronLeft } from '@/icons';
 import { GUTTER, TOUCH_SIZE, colors, type } from '@/theme';
+import { Tappable } from './Tappable';
 
 type NavHeaderProps = {
   title: string;
@@ -30,15 +31,17 @@ export function NavHeader({ title, right, bordered = false, onBack }: NavHeaderP
 
   return (
     <View style={[styles.root, bordered && styles.bordered]}>
-      <Pressable
+      <Tappable
+        feel="icon"
         accessibilityRole="button"
         accessibilityLabel="Go back"
         onPress={handleBack}
         hitSlop={8}
-        style={({ pressed }) => [styles.back, pressed && styles.pressed]}
+        style={styles.back}
+        pressedStyle={styles.pressed}
       >
         <ChevronLeft size={24} color={colors.ink} strokeWidth={2} />
-      </Pressable>
+      </Tappable>
 
       <Text style={styles.title} numberOfLines={1}>
         {title}

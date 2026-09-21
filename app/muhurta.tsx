@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, NavHeader, Screen, ScoreBar, Segmented, Tag } from '@/components';
+import { Card, NavHeader, ScoreBar, Screen, Segmented, Tag, Tappable } from '@/components';
 import {
   ACTIVITIES, chartFor, findMuhurta, formatClock, formatGregorian, placeOf,
   type ActivityId, type DayScore,
@@ -43,13 +43,15 @@ export default function MuhurtaScreen() {
     const isOpen = expanded === key;
 
     return (
-      <Pressable
+      <Tappable
+        feel="card"
         key={key}
         accessibilityRole="button"
         accessibilityState={{ expanded: isOpen }}
         accessibilityLabel={`${formatGregorian(day.date)}, ${day.verdict}, score ${day.score}`}
         onPress={() => setExpanded(isOpen ? null : key)}
-        style={({ pressed }) => [styles.dayRow, pressed && styles.pressed]}
+        style={styles.dayRow}
+        pressedStyle={styles.pressed}
       >
         <View style={styles.dayHead}>
           <View style={styles.dayText}>
@@ -88,7 +90,7 @@ export default function MuhurtaScreen() {
             ))}
           </View>
         ) : null}
-      </Pressable>
+      </Tappable>
     );
   };
 

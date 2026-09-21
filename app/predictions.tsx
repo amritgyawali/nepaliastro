@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { NavHeader, PrimaryButton, Screen } from '@/components';
+import { NavHeader, PrimaryButton, Screen, Tappable, TextLink } from '@/components';
 import { ChevronRight } from '@/icons';
 import {
   formatCountdown,
@@ -72,15 +72,13 @@ export default function PredictionsScreen() {
         title="Your predictions"
         bordered
         right={
-          <Pressable
-            accessibilityRole="button"
+          <TextLink
+            label="Alerts"
+            arrow={false}
             accessibilityLabel="Prediction alerts"
             onPress={() => router.push('/notifications')}
-            hitSlop={8}
-            style={({ pressed }) => pressed && styles.pressed}
-          >
-            <Text style={styles.headerAction}>Alerts</Text>
-          </Pressable>
+            style={styles.headerAction}
+          />
         }
       />
 
@@ -123,11 +121,14 @@ export default function PredictionsScreen() {
         {current ? (
           <>
             <Text style={styles.sectionTitle}>This window</Text>
-            <Pressable
+            <Tappable
+              feel="card"
               accessibilityRole="button"
               accessibilityLabel={`Open the reading: ${current.title}`}
               onPress={() => open(current)}
-              style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+              style={styles.card}
+              hoveredStyle={styles.cardPressed}
+              pressedStyle={styles.cardPressed}
             >
               <Text style={styles.cardMeta}>
                 {current.phaseLabel} · {formatSlot(new Date(current.at))}
@@ -140,7 +141,7 @@ export default function PredictionsScreen() {
                 <Text style={styles.cardFocus}>{current.focus}</Text>
                 <Text style={styles.cardLink}>Read in full</Text>
               </View>
-            </Pressable>
+            </Tappable>
           </>
         ) : null}
 
@@ -149,16 +150,15 @@ export default function PredictionsScreen() {
             <Text style={styles.sectionTitle}>Still to come</Text>
             <View style={styles.list}>
               {upcoming.map((prediction, index) => (
-                <Pressable
+                <Tappable
+                  feel="card"
                   key={prediction.id}
                   accessibilityRole="button"
                   accessibilityLabel={`Reading arriving at ${formatSlotTime(new Date(prediction.at))}`}
                   onPress={() => open(prediction)}
-                  style={({ pressed }) => [
-                    styles.row,
-                    index > 0 && styles.rowDivider,
-                    pressed && styles.rowPressed,
-                  ]}
+                  style={[styles.row, index > 0 && styles.rowDivider]}
+                  hoveredStyle={styles.rowPressed}
+                  pressedStyle={styles.rowPressed}
                 >
                   <View style={styles.rowText}>
                     <Text style={styles.rowTime}>
@@ -172,7 +172,7 @@ export default function PredictionsScreen() {
                     {formatCountdown(now, new Date(prediction.at))}
                   </Text>
                   <ChevronRight size={18} color={colors.subtle} />
-                </Pressable>
+                </Tappable>
               ))}
             </View>
           </>
@@ -183,16 +183,15 @@ export default function PredictionsScreen() {
             <Text style={styles.sectionTitle}>Earlier</Text>
             <View style={styles.list}>
               {earlier.map((prediction, index) => (
-                <Pressable
+                <Tappable
+                  feel="card"
                   key={prediction.id}
                   accessibilityRole="button"
                   accessibilityLabel={`Open the reading: ${prediction.title}`}
                   onPress={() => open(prediction)}
-                  style={({ pressed }) => [
-                    styles.row,
-                    index > 0 && styles.rowDivider,
-                    pressed && styles.rowPressed,
-                  ]}
+                  style={[styles.row, index > 0 && styles.rowDivider]}
+                  hoveredStyle={styles.rowPressed}
+                  pressedStyle={styles.rowPressed}
                 >
                   <View style={styles.rowText}>
                     <Text style={styles.rowTitle} numberOfLines={1}>
@@ -204,7 +203,7 @@ export default function PredictionsScreen() {
                   </View>
                   {prediction.readAt ? null : <View style={styles.unread} />}
                   <ChevronRight size={18} color={colors.subtle} />
-                </Pressable>
+                </Tappable>
               ))}
             </View>
           </>
@@ -226,12 +225,7 @@ const styles = StyleSheet.create({
     paddingBottom: space.xxl,
   },
   headerAction: {
-    ...type.label,
-    color: colors.saffronDeep,
-    paddingHorizontal: space.sm,
-  },
-  pressed: {
-    opacity: 0.5,
+    marginHorizontal: space.sm,
   },
   banner: {
     padding: space.lg,

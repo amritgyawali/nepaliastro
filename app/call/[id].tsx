@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Avatar, PrimaryButton, Screen } from '@/components';
+import { Avatar, PrimaryButton, Screen, Tappable } from '@/components';
 import { findAstrologer } from '@/data/astrologers';
 import { Phone } from '@/icons';
 import { GUTTER, colors, font, radius, space, type } from '@/theme';
@@ -121,14 +121,16 @@ export default function CallScreen() {
           />
         </View>
 
-        <Pressable
+        <Tappable
           accessibilityRole="button"
           accessibilityLabel="End call"
           onPress={() => setState('ended')}
-          style={({ pressed }) => [styles.end, pressed && styles.endPressed]}
+          style={styles.end}
+          hoveredStyle={styles.endPressed}
+          pressedStyle={styles.endPressed}
         >
           <Phone size={26} color={colors.white} filled />
-        </Pressable>
+        </Tappable>
         <Text style={styles.endLabel}>End call</Text>
       </View>
     </Screen>
@@ -145,16 +147,14 @@ function Toggle({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Tappable
       accessibilityRole="switch"
       accessibilityState={{ checked: active }}
       accessibilityLabel={label}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.toggle,
-        active && styles.toggleActive,
-        pressed && styles.togglePressed,
-      ]}
+      style={[styles.toggle, active && styles.toggleActive]}
+      hoveredStyle={styles.togglePressed}
+      pressedStyle={styles.togglePressed}
     >
       <Text style={[styles.toggleLabel, active && styles.toggleLabelActive]}>
         {label}
@@ -162,7 +162,7 @@ function Toggle({
       <Text style={[styles.toggleState, active && styles.toggleLabelActive]}>
         {active ? 'On' : 'Off'}
       </Text>
-    </Pressable>
+    </Tappable>
   );
 }
 

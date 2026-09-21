@@ -1,4 +1,4 @@
-import { photos } from './images';
+import { scenes } from './images';
 
 /** The four shortcuts under the home search field. */
 /**
@@ -47,7 +47,7 @@ export const remedyServices = [
     id: 'pooja',
     title: 'Book a Pooja',
     description: 'A priest performs it in your name and sends the recording.',
-    image: photos.pooja,
+    image: scenes.pooja,
     price: 45,
     lead: 'Performed within 3 days of booking',
     includes: [
@@ -61,7 +61,7 @@ export const remedyServices = [
     id: 'ganesh',
     title: 'Festival specials',
     description: 'Ganesh Chaturthi and Dashain rituals, arranged end to end.',
-    image: photos.ganesh,
+    image: scenes.festivalRitual,
     price: 60,
     lead: 'Booked up to six weeks before the festival',
     includes: [
@@ -75,7 +75,7 @@ export const remedyServices = [
     id: 'spells',
     title: 'Gemstones & malas',
     description: 'Rudraksha and stones chosen for your chart, not for a trend.',
-    image: photos.spells,
+    image: scenes.mala,
     price: 30,
     lead: 'Recommendation in 24 hours, delivery in 5–7 days',
     includes: [
@@ -89,7 +89,7 @@ export const remedyServices = [
     id: 'healings',
     title: 'Healing sessions',
     description: 'One-to-one sessions for grounding, calm and protection.',
-    image: photos.healings,
+    image: scenes.singingBowl,
     price: 25,
     lead: 'Sessions run 40 minutes, booked at a time you choose',
     includes: [

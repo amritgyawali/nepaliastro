@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { RASHIS, type Rashifal } from '@/lib/jyotish';
 import { GUTTER, colors, radius, space, type } from '@/theme';
+
+import { TextLink } from '../TextLink';
 
 type DailyInsightCardProps = {
   reading: Rashifal;
@@ -57,27 +59,20 @@ export function DailyInsightCard({ reading, dateLabel, onOpen }: DailyInsightCar
       </Text>
 
       <View style={styles.links}>
-        <Pressable
-          accessibilityRole="button"
+        <TextLink
+          label={expanded ? 'Show less' : 'Read more'}
+          arrow={false}
           accessibilityState={{ expanded }}
           accessibilityLabel={expanded ? 'Show less of today’s reading' : 'Read all of today’s reading'}
           onPress={() => setExpanded((current) => !current)}
-          hitSlop={8}
-          style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-        >
-          <Text style={styles.moreLabel}>{expanded ? 'Show less' : 'Read more'}</Text>
-        </Pressable>
+        />
 
         {onOpen ? (
-          <Pressable
-            accessibilityRole="button"
+          <TextLink
+            label="All signs"
             accessibilityLabel="Open the daily horoscope"
             onPress={onOpen}
-            hitSlop={8}
-            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-          >
-            <Text style={styles.moreLabel}>All signs</Text>
-          </Pressable>
+          />
         ) : null}
       </View>
 
@@ -152,17 +147,8 @@ const styles = StyleSheet.create({
   links: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: space.lg,
-  },
-  more: {
-    paddingVertical: space.sm,
-  },
-  pressed: {
-    opacity: 0.5,
-  },
-  moreLabel: {
-    ...type.label,
-    color: colors.saffronDeep,
+    gap: space.xl,
+    paddingVertical: space.md,
   },
   lucky: {
     flexDirection: 'row',

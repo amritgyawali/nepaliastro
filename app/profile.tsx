@@ -2,7 +2,7 @@ import { Redirect, useRouter, type Href } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Avatar, NavHeader, Screen } from '@/components';
+import { Avatar, NavHeader, Screen, Tappable } from '@/components';
 import { profileGroups } from '@/data/content';
 import {
   Calendar,
@@ -88,23 +88,22 @@ export default function ProfileScreen() {
                 const Icon = ROW_ICONS[item.icon as keyof typeof ROW_ICONS];
 
                 return (
-                  <Pressable
+                  <Tappable
+                    feel="card"
                     key={item.id}
                     accessibilityRole="button"
                     accessibilityLabel={item.label}
                     onPress={() => router.push(item.href as Href)}
-                    style={({ pressed }) => [
-                      styles.row,
-                      index > 0 && styles.rowDivider,
-                      pressed && styles.rowPressed,
-                    ]}
+                    style={[styles.row, index > 0 && styles.rowDivider]}
+                    hoveredStyle={styles.rowPressed}
+                    pressedStyle={styles.rowPressed}
                   >
                     <Icon size={20} color={colors.saffronDeep} />
                     <Text style={styles.rowLabel} numberOfLines={1}>
                       {item.label}
                     </Text>
                     <ChevronRight size={18} color={colors.subtle} />
-                  </Pressable>
+                  </Tappable>
                 );
               })}
             </View>
@@ -115,17 +114,20 @@ export default function ProfileScreen() {
           <Text style={styles.groupTitle}>Account</Text>
 
           <View style={styles.groupCard}>
-            <Pressable
+            <Tappable
+              feel="card"
               accessibilityRole="button"
               accessibilityLabel="Log out"
               onPress={() => setConfirmLogout(true)}
-              style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+              style={styles.row}
+              hoveredStyle={styles.rowPressed}
+              pressedStyle={styles.rowPressed}
             >
               <LogOut size={20} color={colors.red} />
               <Text style={[styles.rowLabel, styles.logoutLabel]} numberOfLines={1}>
                 Log out
               </Text>
-            </Pressable>
+            </Tappable>
           </View>
 
           <Text style={styles.groupNote}>
@@ -149,22 +151,24 @@ export default function ProfileScreen() {
               The app starts again at the first onboarding question.
             </Text>
             <View style={styles.modalActions}>
-              <Pressable
+              <Tappable
                 accessibilityRole="button"
                 accessibilityLabel="Stay logged in"
                 onPress={() => setConfirmLogout(false)}
-                style={({ pressed }) => [styles.modalCancel, pressed && styles.pressed]}
+                style={styles.modalCancel}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.modalCancelLabel}>Stay signed in</Text>
-              </Pressable>
-              <Pressable
+              </Tappable>
+              <Tappable
                 accessibilityRole="button"
                 accessibilityLabel="Confirm log out"
                 onPress={logOut}
-                style={({ pressed }) => [styles.modalConfirm, pressed && styles.pressed]}
+                style={styles.modalConfirm}
+                pressedStyle={styles.pressed}
               >
                 <Text style={styles.modalConfirmLabel}>Log out</Text>
-              </Pressable>
+              </Tappable>
             </View>
           </Pressable>
         </Pressable>

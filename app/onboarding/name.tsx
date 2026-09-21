@@ -52,7 +52,7 @@ export default function NameStep() {
 
           <View style={styles.spacer} />
 
-          <PrimaryButton label="Continue" disabled={!canContinue} onPress={next} />
+          <PrimaryButton label="Continue" arrow disabled={!canContinue} onPress={next} />
         </View>
       </KeyboardAvoidingView>
     </Screen>

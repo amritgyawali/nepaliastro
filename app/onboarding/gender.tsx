@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { NavHeader, PrimaryButton, Screen, Stepper } from '@/components';
+import { NavHeader, PrimaryButton, Screen, Stepper, Tappable } from '@/components';
 import { FemaleFigure, MaleFigure } from '@/icons';
 import { useOnboarding, type Gender } from '@/store/onboarding';
 import { GUTTER, colors, radius, space, type } from '@/theme';
@@ -35,23 +35,21 @@ export default function GenderStep() {
             const selected = profile.gender === value;
 
             return (
-              <Pressable
+              <Tappable
+                feel="card"
                 key={value}
                 accessibilityRole="radio"
                 accessibilityState={{ selected }}
                 accessibilityLabel={label}
                 onPress={() => update({ gender: value })}
-                style={({ pressed }) => [
-                  styles.option,
-                  selected && styles.optionSelected,
-                  pressed && styles.pressed,
-                ]}
+                style={[styles.option, selected && styles.optionSelected]}
+                pressedStyle={styles.pressed}
               >
                 <Figure size={44} color={selected ? colors.saffronDeep : colors.muted} />
                 <Text style={[styles.label, selected && styles.labelSelected]}>
                   {label}
                 </Text>
-              </Pressable>
+              </Tappable>
             );
           })}
         </View>
@@ -60,6 +58,7 @@ export default function GenderStep() {
 
         <PrimaryButton
           label="Continue"
+          arrow
           disabled={!profile.gender}
           onPress={() => router.push('/onboarding/birth-date')}
         />

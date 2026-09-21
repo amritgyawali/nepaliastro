@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, NavHeader, Screen, Tag } from '@/components';
+import { Card, NavHeader, Screen, Tag, Tappable, TextLink } from '@/components';
 import { ChevronLeft, ChevronRight } from '@/icons';
 import {
   BS_MAX_YEAR, BS_MIN_YEAR, BS_MONTHS, BS_MONTHS_NP, bsMonthGrid, devanagariNumber,
@@ -64,16 +64,18 @@ export default function PatroScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.monthBar}>
-          <Pressable
+          <Tappable
+            feel="icon"
             accessibilityRole="button"
             accessibilityLabel="Previous month"
             disabled={!canGoBack}
             onPress={() => step(-1)}
             hitSlop={10}
-            style={({ pressed }) => [styles.arrow, pressed && styles.pressed, !canGoBack && styles.disabled]}
+            style={[styles.arrow, !canGoBack && styles.disabled]}
+            pressedStyle={styles.pressed}
           >
             <ChevronLeft size={22} color={colors.ink} strokeWidth={2.2} />
-          </Pressable>
+          </Tappable>
 
           <View style={styles.monthText}>
             <Text style={styles.monthNp}>
@@ -86,16 +88,18 @@ export default function PatroScreen() {
             </Text>
           </View>
 
-          <Pressable
+          <Tappable
+            feel="icon"
             accessibilityRole="button"
             accessibilityLabel="Next month"
             disabled={!canGoForward}
             onPress={() => step(1)}
             hitSlop={10}
-            style={({ pressed }) => [styles.arrow, pressed && styles.pressed, !canGoForward && styles.disabled]}
+            style={[styles.arrow, !canGoForward && styles.disabled]}
+            pressedStyle={styles.pressed}
           >
             <ChevronRight size={22} color={colors.ink} strokeWidth={2.2} />
-          </Pressable>
+          </Tappable>
         </View>
 
         <View style={styles.weekHead}>
@@ -116,17 +120,13 @@ export default function PatroScreen() {
             const isSelected = isSameNepaliDay(day.gregorian, selected);
 
             return (
-              <Pressable
+              <Tappable
                 key={day.bsDay}
                 accessibilityRole="button"
                 accessibilityLabel={`${day.bsDay} ${BS_MONTHS[month.month - 1]}, ${formatGregorian(day.gregorian)}${festival ? `, ${festival.name}` : ''}`}
                 onPress={() => setSelected(day.gregorian)}
-                style={({ pressed }) => [
-                  styles.cell,
-                  isSelected && styles.cellSelected,
-                  day.isToday && styles.cellToday,
-                  pressed && styles.pressed,
-                ]}
+                style={[styles.cell, isSelected && styles.cellSelected, day.isToday && styles.cellToday]}
+                pressedStyle={styles.pressed}
               >
                 <Text
                   style={[
@@ -141,7 +141,7 @@ export default function PatroScreen() {
                   {day.gregorianDay}
                 </Text>
                 {festival ? <View style={styles.dot} /> : null}
-              </Pressable>
+              </Tappable>
             );
           })}
         </View>
@@ -178,14 +178,12 @@ export default function PatroScreen() {
             </Text>
           </View>
 
-          <Pressable
-            accessibilityRole="button"
+          <TextLink
+            label="See the full panchang"
             accessibilityLabel="Open the full panchang"
             onPress={() => router.push('/panchang')}
-            style={({ pressed }) => pressed && styles.pressed}
-          >
-            <Text style={styles.link}>See the full panchang →</Text>
-          </Pressable>
+            style={styles.link}
+          />
         </Card>
 
         <Text style={styles.footnote}>
@@ -240,6 +238,6 @@ const styles = StyleSheet.create({
   sait: { ...type.small, color: colors.saffronDeep },
   sunRow: { flexDirection: 'row', gap: space.lg, marginTop: space.md },
   sunText: { ...type.small, color: colors.body },
-  link: { ...type.label, color: colors.saffronDeep, marginTop: space.md },
+  link: { marginTop: space.md },
   footnote: { ...type.small, color: colors.subtle, paddingHorizontal: GUTTER, marginTop: space.xl },
 });

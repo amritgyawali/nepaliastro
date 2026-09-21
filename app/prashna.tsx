@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, NavHeader, PrimaryButton, Screen, ScoreBar, Tag } from '@/components';
+import { Card, NavHeader, PrimaryButton, ScoreBar, Screen, Tag, Tappable } from '@/components';
 import {
   TOPICS, formatClock, formatGregorian, placeOf, prashnaFor,
   type PrashnaReading, type QuestionTopic,
@@ -109,17 +109,14 @@ export default function PrashnaScreen() {
               {TOPICS.map((option) => {
                 const selected = topic?.id === option.id;
                 return (
-                  <Pressable
+                  <Tappable
                     key={option.id}
                     accessibilityRole="radio"
                     accessibilityState={{ selected }}
                     accessibilityLabel={option.label}
                     onPress={() => setTopic(option)}
-                    style={({ pressed }) => [
-                      styles.topic,
-                      selected && styles.topicSelected,
-                      pressed && styles.pressed,
-                    ]}
+                    style={[styles.topic, selected && styles.topicSelected]}
+                    pressedStyle={styles.pressed}
                   >
                     <Text style={[styles.topicLabel, selected && styles.topicLabelSelected]}>
                       {option.label}
@@ -127,7 +124,7 @@ export default function PrashnaScreen() {
                     <Text style={[styles.topicNp, selected && styles.topicLabelSelected]}>
                       {option.np} · {option.house}th house
                     </Text>
-                  </Pressable>
+                  </Tappable>
                 );
               })}
             </View>

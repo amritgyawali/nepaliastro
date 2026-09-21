@@ -1,11 +1,12 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, colors, space, type } from '@/theme';
 
 import { Avatar } from './Avatar';
+import { Tappable } from './Tappable';
 
 type PageHeaderProps = {
   title: string;
@@ -27,15 +28,16 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
 
-      <Pressable
+      <Tappable
+        feel="icon"
         accessibilityRole="button"
         accessibilityLabel="Profile and settings"
         onPress={() => router.push('/profile')}
         hitSlop={6}
-        style={({ pressed }) => pressed && styles.pressed}
+        pressedStyle={styles.pressed}
       >
         <Avatar name={profile.name.trim() || 'You'} size={44} />
-      </Pressable>
+      </Tappable>
     </View>
   );
 }

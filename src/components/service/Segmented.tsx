@@ -1,7 +1,8 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { GUTTER, colors, radius, space, type } from '@/theme';
+import { Tappable } from '../Tappable';
 
 type Option<T extends string> = { value: T; label: string };
 
@@ -29,23 +30,19 @@ export function Segmented<T extends string>({
   const items = options.map((option) => {
     const selected = option.value === value;
     return (
-      <Pressable
+      <Tappable
         key={option.value}
         accessibilityRole="tab"
         accessibilityState={{ selected }}
         accessibilityLabel={option.label}
         onPress={() => onChange(option.value)}
-        style={({ pressed }) => [
-          styles.item,
-          scrollable ? styles.itemScroll : styles.itemFixed,
-          selected && styles.itemSelected,
-          pressed && styles.pressed,
-        ]}
+        style={[styles.item, scrollable ? styles.itemScroll : styles.itemFixed, selected && styles.itemSelected]}
+        pressedStyle={styles.pressed}
       >
         <Text style={[styles.label, selected && styles.labelSelected]} numberOfLines={1}>
           {option.label}
         </Text>
-      </Pressable>
+      </Tappable>
     );
   });
 

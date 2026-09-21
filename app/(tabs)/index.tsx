@@ -8,6 +8,7 @@ import {
   HomeHeader,
   NextReadingCard,
   QuickCategories,
+  Reveal,
   Screen,
   SearchResults,
   TodayPanchang,
@@ -185,10 +186,12 @@ export default function HomeScreen() {
           />
         ) : (
           <View>
-            <QuickCategories onSelect={openCategory} />
+            <Reveal index={0}>
+              <QuickCategories onSelect={openCategory} />
+            </Reveal>
 
             {prediction ? (
-              <View style={styles.reading}>
+              <Reveal index={1} style={styles.reading}>
                 <NextReadingCard
                   reading={prediction}
                   next={upcoming[0]}
@@ -196,30 +199,34 @@ export default function HomeScreen() {
                   onOpen={() => router.push(`/prediction/${prediction.id}`)}
                   onSeeAll={() => router.push('/predictions')}
                 />
-              </View>
+              </Reveal>
             ) : null}
 
-            <View style={styles.reading}>
+            <Reveal index={2} style={styles.reading}>
               <DailyInsightCard
                 reading={reading}
                 dateLabel={dateLabel}
                 onOpen={() => router.push('/horoscope')}
               />
-            </View>
+            </Reveal>
 
-            <AstrologerRail
-              title="Available now"
-              data={availableNow}
-              onViewAll={() => router.push('/(tabs)/chat')}
-              onSelect={openAstrologer}
-              onAction={(astrologer) => router.push(`/chat/${astrologer.id}`)}
-            />
+            <Reveal index={3}>
+              <AstrologerRail
+                title="Available now"
+                data={availableNow}
+                onViewAll={() => router.push('/(tabs)/chat')}
+                onSelect={openAstrologer}
+                onAction={(astrologer) => router.push(`/chat/${astrologer.id}`)}
+              />
+            </Reveal>
 
-            <TodayPanchang
-              panchang={panchang}
-              dateLabel={dateLabel}
-              onSeeAll={() => router.push('/panchang')}
-            />
+            <Reveal index={4}>
+              <TodayPanchang
+                panchang={panchang}
+                dateLabel={dateLabel}
+                onSeeAll={() => router.push('/panchang')}
+              />
+            </Reveal>
 
             <AstrologerRail
               title="Book a call"

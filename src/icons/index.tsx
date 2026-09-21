@@ -58,6 +58,23 @@ export function ChevronRight(props: IconProps) {
   );
 }
 
+/** The arrow that ends a text link: "See all →". Drawn short so it reads as a mark, not a button. */
+export function ArrowRight(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ size: 16, strokeWidth: 2, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Line x1="5" y1="12" x2="18" y2="12" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Polyline
+        points="12 6 18 12 12 18"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 export function Search(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
   return (
