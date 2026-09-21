@@ -146,6 +146,21 @@ export const quickPrompts = [
   'When is a good time to marry?',
 ];
 
+/**
+ * Openers for the AI astrologer.
+ *
+ * Different from `quickPrompts` on purpose: Baba has the whole chart in front
+ * of him, so these ask him to read it rather than to guess at a yes or no.
+ */
+export const babaPrompts = [
+  'Read my kundli for me',
+  'What does my nakshatra say about me?',
+  'Which career suits my chart?',
+  'How is today looking for me?',
+  'A remedy for peace of mind?',
+  'When is a good time to marry?',
+];
+
 /** Canned astrologer replies for the demo chat. */
 export const astroReplies = [
   'I see a powerful alignment of Mercury and Venus in your horoscope. This indicates excellent communication skills and success in analytical or technical domains.',

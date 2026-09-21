@@ -14,9 +14,18 @@ import {
 
 import { Avatar, Screen, VerifiedBadge } from '@/components';
 import { findAstrologer, ongoingSession } from '@/data/astrologers';
-import { astroReplies, quickPrompts } from '@/data/content';
+import { astroReplies, babaPrompts, quickPrompts } from '@/data/content';
 import { ChevronLeft, DoubleCheck, Send } from '@/icons';
+import {
+  AI_ASTROLOGER_ID,
+  askBaba,
+  chartReady,
+  greetingFor,
+  type BabaTurn,
+} from '@/lib/baba';
+import { AI_MODEL, AiError, BUILD_TIME_KEY, canUseAi } from '@/lib/groq';
 import { useOnboarding } from '@/store/onboarding';
+import { usePredictions } from '@/store/predictions';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
 type Message = {
@@ -26,7 +35,19 @@ type Message = {
   /** Extra highlighted callout beneath the body. */
   insight?: string;
   time: string;
+  /** Set when this bubble is an apology rather than a reading. */
+  failed?: boolean;
 };
+
+/** The conversation as the AI is given it back on every question. */
+function asTurns(messages: Message[]): BabaTurn[] {
+  return messages
+    .filter((message) => !message.failed)
+    .map((message) => ({
+      role: message.from === 'me' ? ('user' as const) : ('assistant' as const),
+      content: message.text,
+    }));
+}
 
 function clockLabel(date = new Date()): string {
   const hours = date.getHours();
@@ -49,9 +70,17 @@ function formatElapsed(totalSeconds: number): string {
 export default function ChatScreen() {
   const router = useRouter();
   const { id, free } = useLocalSearchParams<{ id: string; free?: string }>();
-  /** Set by the onboarding "1 minute free chat" offer. */
-  const freeSession = free === '1';
+  /** This consultation is with the AI, not with a person. */
+  const isAi = id === AI_ASTROLOGER_ID;
+  /** Set by the onboarding "1 minute free chat" offer. Baba is free anyway. */
+  const freeSession = free === '1' && !isAi;
   const { profile, update } = useOnboarding();
+  const { settings } = usePredictions();
+
+  /** The same key the five-hourly readings are written with. */
+  const apiKey = settings.apiKey.trim() || BUILD_TIME_KEY;
+  const aiConfigured = canUseAi(apiKey);
+  const haveChart = chartReady(profile);
 
   const astrologer = useMemo(() => {
     if (id === ongoingSession.id) {
@@ -78,21 +107,39 @@ export default function ChatScreen() {
   /** Frozen at mount so the header pill and first bubble agree. */
   const startedAt = useMemo(() => clockLabel(), []);
 
-  const [messages, setMessages] = useState<Message[]>(() => [
-    {
-      id: 'intro',
-      from: 'them',
-      text: freeSession
-        ? `Namaste ${firstName}! 🙏 Your free minute has started — I have opened your Kundli${knownPlace ? ` from ${place}` : ''} and I am reading it right now.\n\nAsk me anything about your career, studies or relationships.`
-        : `Namaste ${firstName}! 🙏 I have opened your Kundli and I am analyzing your birth chart from ${place}.\n\nHow can I guide you today regarding your career, higher studies, or relationships?`,
-      insight: freeSession
-        ? 'Your free minute is running. You are not charged until it ends.'
-        : undefined,
-      time: freeSession ? startedAt : '8:56 PM',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (isAi) {
+      return [
+        {
+          id: 'intro',
+          from: 'them',
+          text: greetingFor(profile),
+          insight: aiConfigured
+            ? undefined
+            : 'Baba is not connected yet. Add a free Groq key in Profile → Prediction alerts and he can read your chart.',
+          time: startedAt,
+        },
+      ];
+    }
+
+    return [
+      {
+        id: 'intro',
+        from: 'them',
+        text: freeSession
+          ? `Namaste ${firstName}! 🙏 Your free minute has started — I have opened your Kundli${knownPlace ? ` from ${place}` : ''} and I am reading it right now.\n\nAsk me anything about your career, studies or relationships.`
+          : `Namaste ${firstName}! 🙏 I have opened your Kundli and I am analyzing your birth chart from ${place}.\n\nHow can I guide you today regarding your career, higher studies, or relationships?`,
+        insight: freeSession
+          ? 'Your free minute is running. You are not charged until it ends.'
+          : undefined,
+        time: freeSession ? startedAt : '8:56 PM',
+      },
+    ];
+  });
   const [draft, setDraft] = useState('');
   const [typing, setTyping] = useState(false);
+  /** True while Baba's answer is in flight, so a second question has to wait. */
+  const [asking, setAsking] = useState(false);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [elapsed, setElapsed] = useState(freeSession ? 0 : 116);
   /** Seconds left of the free minute; only meaningful while `paid` is false. */
@@ -103,13 +150,21 @@ export default function ChatScreen() {
 
   const scrollRef = useRef<ScrollView>(null);
   const replyTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  /**
+   * The conversation and the chart, readable from inside the async request
+   * without making `send` depend on either — a question sent mid-answer would
+   * otherwise be written against the history as it was two renders ago.
+   */
+  const latest = useRef({ messages, profile, apiKey });
+  latest.current = { messages, profile, apiKey };
 
   // Paid time only ticks up once the free minute is spent (or was never on).
+  // Baba is free, so nothing is counted for him at all.
   useEffect(() => {
-    if (!paid) return;
+    if (!paid || isAi) return;
     const interval = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(interval);
-  }, [paid]);
+  }, [paid, isAi]);
 
   // The claimed free minute counts down, then pauses the session.
   useEffect(() => {
@@ -132,28 +187,80 @@ export default function ChatScreen() {
     [],
   );
 
-  const send = useCallback((raw: string) => {
-    const text = raw.trim();
-    if (!text) return;
+  /**
+   * One question to Baba.
+   *
+   * The whole conversation goes back with it, so he answers in context, and
+   * the chart is rebuilt inside `askBaba` from the profile as it stands now.
+   * A failure is answered in the bubble rather than swallowed: the person
+   * asked something and deserves to be told why nothing came back.
+   */
+  const askAi = useCallback(async (text: string) => {
+    const mine: Message = { id: `me-${Date.now()}`, from: 'me', text, time: clockLabel() };
+    const history = asTurns([...latest.current.messages, mine]);
 
-    setMessages((current) => [
-      ...current,
-      { id: `me-${Date.now()}`, from: 'me', text, time: clockLabel() },
-    ]);
+    setMessages((current) => [...current, mine]);
     setDraft('');
+    setAsking(true);
+    setTyping(true);
 
-    replyTimers.current.push(setTimeout(() => setTyping(true), 450));
-    replyTimers.current.push(
-      setTimeout(() => {
-        setTyping(false);
-        const reply = astroReplies[Math.floor(Math.random() * astroReplies.length)];
-        setMessages((current) => [
-          ...current,
-          { id: `them-${Date.now()}`, from: 'them', text: reply, time: clockLabel() },
-        ]);
-      }, 1800),
-    );
+    try {
+      const reply = await askBaba(latest.current.apiKey, latest.current.profile, history);
+      setMessages((current) => [
+        ...current,
+        { id: `them-${Date.now()}`, from: 'them', text: reply, time: clockLabel() },
+      ]);
+    } catch (error) {
+      const reason =
+        error instanceof AiError ? error.message : 'Baba could not be reached just now.';
+      setMessages((current) => [
+        ...current,
+        {
+          id: `them-${Date.now()}`,
+          from: 'them',
+          text: 'I could not read your chart just then. Ask me again in a moment.',
+          insight: reason,
+          time: clockLabel(),
+          failed: true,
+        },
+      ]);
+    } finally {
+      setTyping(false);
+      setAsking(false);
+    }
   }, []);
+
+  const send = useCallback(
+    (raw: string) => {
+      const text = raw.trim();
+      if (!text) return;
+
+      if (isAi) {
+        if (asking) return;
+        void askAi(text);
+        return;
+      }
+
+      setMessages((current) => [
+        ...current,
+        { id: `me-${Date.now()}`, from: 'me', text, time: clockLabel() },
+      ]);
+      setDraft('');
+
+      replyTimers.current.push(setTimeout(() => setTyping(true), 450));
+      replyTimers.current.push(
+        setTimeout(() => {
+          setTyping(false);
+          const reply = astroReplies[Math.floor(Math.random() * astroReplies.length)];
+          setMessages((current) => [
+            ...current,
+            { id: `them-${Date.now()}`, from: 'them', text: reply, time: clockLabel() },
+          ]);
+        }, 1800),
+      );
+    },
+    [isAi, asking, askAi],
+  );
 
   const leaveChat = useCallback(() => {
     if (freeSession) router.replace('/(tabs)');
@@ -201,7 +308,12 @@ export default function ChatScreen() {
                 <Text style={styles.name}>{astrologer.name}</Text>
                 {astrologer.verified ? <VerifiedBadge size={16} /> : null}
               </View>
-              {paid ? (
+              {isAi ? (
+                <View style={styles.freeTimerRow}>
+                  <Text style={styles.freeTimerChip}>Free</Text>
+                  <Text style={styles.freeTimer}>Always online</Text>
+                </View>
+              ) : paid ? (
                 <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
               ) : (
                 <View style={styles.freeTimerRow}>
@@ -229,12 +341,15 @@ export default function ChatScreen() {
         <View style={styles.infoLeft}>
           <View style={styles.liveDot} />
           <Text style={styles.infoText} numberOfLines={1}>
-            Chart shared: {profile.name.trim() || 'your profile'}
-            {profile.birthPlace.trim() ? ` (${profile.birthPlace.trim()})` : ''}
+            {isAi && !haveChart
+              ? 'No birth date yet — add one in your profile'
+              : `${isAi ? 'Reading your kundli' : 'Chart shared'}: ${
+                  profile.name.trim() || 'your profile'
+                }${profile.birthPlace.trim() ? ` (${profile.birthPlace.trim()})` : ''}`}
           </Text>
         </View>
-        <Text style={[styles.infoRate, !paid && styles.infoRateFree]}>
-          {paid ? 'USD 0.49/min' : 'First minute free'}
+        <Text style={[styles.infoRate, (isAi || !paid) && styles.infoRateFree]}>
+          {isAi ? 'Free, unlimited' : paid ? 'USD 0.49/min' : 'First minute free'}
         </Text>
       </View>
 
@@ -253,7 +368,7 @@ export default function ChatScreen() {
         >
           <View style={styles.datePillRow}>
             <Text style={styles.datePill}>
-              Today · {freeSession ? startedAt : '8:56 PM'}
+              Today · {freeSession || isAi ? startedAt : '8:56 PM'}
             </Text>
           </View>
 
@@ -264,8 +379,12 @@ export default function ChatScreen() {
                 <View style={styles.inBubble}>
                   <Text style={styles.inText}>{message.text}</Text>
                   {message.insight ? (
-                    <View style={styles.insight}>
-                      <Text style={styles.insightText}>{message.insight}</Text>
+                    <View style={[styles.insight, message.failed && styles.insightWarn]}>
+                      <Text
+                        style={[styles.insightText, message.failed && styles.insightWarnText]}
+                      >
+                        {message.insight}
+                      </Text>
                     </View>
                   ) : null}
                   <Text style={styles.inTime}>{message.time}</Text>
@@ -283,6 +402,13 @@ export default function ChatScreen() {
               </View>
             ),
           )}
+
+          {isAi ? (
+            <Text style={styles.aiFooter}>
+              Baba is an AI ({AI_MODEL}, free through Groq) reading the kundli this app
+              computed from your birth details. He is guidance, not a professional opinion.
+            </Text>
+          ) : null}
 
           {typing ? (
             <View style={styles.typingRow}>
@@ -303,12 +429,17 @@ export default function ChatScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.prompts}
           >
-            {quickPrompts.map((prompt) => (
+            {(isAi ? babaPrompts : quickPrompts).map((prompt) => (
               <Pressable
                 key={prompt}
                 accessibilityRole="button"
+                disabled={asking}
                 onPress={() => send(prompt)}
-                style={({ pressed }) => [styles.prompt, pressed && styles.promptPressed]}
+                style={({ pressed }) => [
+                  styles.prompt,
+                  pressed && styles.promptPressed,
+                  asking && styles.promptDisabled,
+                ]}
               >
                 <Text style={styles.promptLabel}>{prompt}</Text>
               </Pressable>
@@ -322,7 +453,7 @@ export default function ChatScreen() {
             <TextInput
               value={draft}
               onChangeText={setDraft}
-              placeholder="Type your message..."
+              placeholder={asking ? 'Baba is reading your chart…' : 'Type your message...'}
               placeholderTextColor={colors.subtle}
               style={styles.input}
               returnKeyType="send"
@@ -334,8 +465,13 @@ export default function ChatScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Send message"
+            disabled={asking}
             onPress={() => send(draft)}
-            style={({ pressed }) => [styles.sendButton, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.sendButton,
+              pressed && styles.pressed,
+              asking && styles.sendButtonBusy,
+            ]}
           >
             <Send size={18} color={colors.onSaffron} />
           </Pressable>
@@ -567,6 +703,19 @@ const styles = StyleSheet.create({
     ...type.small,
     color: colors.saffronDeep,
   },
+  insightWarn: {
+    backgroundColor: colors.redSoft,
+  },
+  insightWarnText: {
+    color: colors.red,
+  },
+  aiFooter: {
+    ...type.caption,
+    color: colors.subtle,
+    textAlign: 'center',
+    paddingHorizontal: space.md,
+    paddingTop: space.xs,
+  },
   inTime: {
     ...type.caption,
     color: colors.subtle,
@@ -651,6 +800,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.saffronSoft,
     borderColor: colors.saffron,
   },
+  promptDisabled: {
+    opacity: 0.4,
+  },
   promptLabel: {
     ...type.caption,
     color: colors.body,
@@ -688,6 +840,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.saffron,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sendButtonBusy: {
+    opacity: 0.4,
   },
 
   modalBackdrop: {

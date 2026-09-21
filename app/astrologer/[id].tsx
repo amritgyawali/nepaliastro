@@ -33,8 +33,16 @@ export default function AstrologerScreen() {
   }
 
   const rate = astrologer.discountedRate ?? astrologer.rate;
+  const free = rate === 0;
   const facts = [
-    { label: 'Experience', value: astrologer.experience ? `${astrologer.experience} years` : '—' },
+    {
+      label: 'Experience',
+      value: astrologer.ai
+        ? 'An AI, not a person'
+        : astrologer.experience
+          ? `${astrologer.experience} years`
+          : '—',
+    },
     { label: 'Languages', value: astrologer.languages },
     { label: 'Practises', value: astrologer.skills },
     {
@@ -76,7 +84,9 @@ export default function AstrologerScreen() {
         <View style={styles.rateCard}>
           <View>
             <Text style={styles.rateLabel}>Consultation</Text>
-            <Text style={styles.rate}>USD {rate.toFixed(2)} per minute</Text>
+            <Text style={styles.rate}>
+              {free ? 'Free, for as long as you like' : `USD ${rate.toFixed(2)} per minute`}
+            </Text>
           </View>
           <Text style={[styles.status, astrologer.online && styles.statusOnline]}>
             {astrologer.online ? 'Online now' : astrologer.waitTime ?? 'Busy'}
@@ -109,14 +119,17 @@ export default function AstrologerScreen() {
 
         <View style={styles.actions}>
           <PrimaryButton
-            label={`Chat · USD ${rate.toFixed(2)}/min`}
+            label={free ? 'Chat free' : `Chat · USD ${rate.toFixed(2)}/min`}
             onPress={() => router.push(`/chat/${astrologer.id}`)}
           />
-          <PrimaryButton
-            label="Call instead"
-            variant="outline"
-            onPress={() => router.push(`/call/${astrologer.id}`)}
-          />
+          {/* Baba answers in writing only — there is no voice to call. */}
+          {astrologer.ai ? null : (
+            <PrimaryButton
+              label="Call instead"
+              variant="outline"
+              onPress={() => router.push(`/call/${astrologer.id}`)}
+            />
+          )}
         </View>
       </ScrollView>
     </Screen>

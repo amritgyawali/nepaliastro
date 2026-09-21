@@ -1,3 +1,5 @@
+import { AI_ASTROLOGER_ID, AI_ASTROLOGER_NAME } from '@/lib/baba';
+
 import { photos } from './images';
 
 export type Speciality = 'all' | 'tarot' | 'palmistry';
@@ -27,7 +29,36 @@ export type Astrologer = {
   online?: boolean;
   /** Two or three sentences for the astrologer's own screen. */
   about?: string;
+  /**
+   * This one is the AI, not a person. It changes what the card says about the
+   * price, and `/chat/[id]` answers with Groq instead of a canned reply.
+   */
+  ai?: boolean;
   specialities: Speciality[];
+};
+
+/**
+ * AI Astrologer Baba — free, always online, and answering from your own chart.
+ *
+ * He is listed alongside the human astrologers rather than hidden behind a
+ * separate button, because from the person's side he is the same thing: a name
+ * in the chat list you can ask a question. The difference is the price and the
+ * wait, so the card says both.
+ */
+export const aiAstrologer: Astrologer = {
+  id: AI_ASTROLOGER_ID,
+  name: AI_ASTROLOGER_NAME,
+  photo: photos.ganesh,
+  skills: 'Vedic, Kundli reading, Remedies',
+  languages: 'English, Nepali, Hindi',
+  rate: 0,
+  rating: 5,
+  verified: true,
+  online: true,
+  about:
+    'An AI trained on the same Vedic method the app computes your kundli with. He reads your own chart — your moon sign, your nakshatra, your lagna and the house the moon is crossing today — and answers from it alone, free and without a queue. He is not a person, and he will tell you so.',
+  ai: true,
+  specialities: ['all'],
 };
 
 /** Cards in the horizontal rails on the home screen. */
@@ -83,8 +114,9 @@ export const featuredAstrologers: Astrologer[] = [
   },
 ];
 
-/** The chat directory listing. */
+/** The chat directory listing, with the free AI astrologer at the top. */
 export const chatAstrologers: Astrologer[] = [
+  aiAstrologer,
   {
     id: 'vihana',
     name: 'Vihana Ji',
@@ -191,6 +223,7 @@ export const callAstrologers: Astrologer[] = [
  */
 export const topNearbyAstrologer = {
   ...chatAstrologers
+    .filter((astrologer) => !astrologer.ai)
     .sort(
       (a, b) =>
         (b.rating ?? 0) - (a.rating ?? 0) || (b.experience ?? 0) - (a.experience ?? 0),

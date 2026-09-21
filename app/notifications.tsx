@@ -49,18 +49,18 @@ export default function PredictionAlertsScreen() {
     const trimmed = keyInput.trim();
     if (!trimmed) return;
     if (!looksLikeKey(trimmed)) {
-      setNotice('An Anthropic key starts with “sk-ant-”. Check what you pasted.');
+      setNotice('A Groq key starts with “gsk_”. Check what you pasted.');
       return;
     }
     setApiKey(trimmed);
     setKeyInput('');
-    setNotice('Key saved. Writing today’s readings with it now.');
+    setNotice('Key saved. Writing today’s readings with it, and Baba can read your chart.');
     await refresh({ rewrite: true });
   };
 
   const removeKey = () => {
     setApiKey('');
-    setNotice('Key removed. Readings are written on your device again.');
+    setNotice('Key removed. Readings are written on your device again, and Baba is offline.');
   };
 
   const test = async () => {
@@ -95,7 +95,8 @@ export default function PredictionAlertsScreen() {
         >
           <Text style={styles.lead}>
             A reading written from your own kundli, every five hours. Tapping it opens the
-            whole text, with an astrologer at the bottom of it.
+            whole text, with an astrologer at the bottom of it. The same key is what lets AI
+            Astrologer Baba answer you in the chat list.
           </Text>
 
           <View style={styles.card}>
@@ -173,8 +174,8 @@ export default function PredictionAlertsScreen() {
               </Text>
               <Text style={styles.rowNote}>
                 {aiReady
-                  ? `Written by ${AI_MODEL} from your chart, in your language, a day at a time.`
-                  : 'Composed from your chart on the phone itself. Add a key below and the writing gets better.'}
+                  ? `Written by ${AI_MODEL} on Groq’s free tier, from your chart, in your language, a day at a time.`
+                  : 'Composed from your chart on the phone itself. Add a free Groq key below and the writing gets better.'}
               </Text>
             </View>
 
@@ -196,14 +197,14 @@ export default function PredictionAlertsScreen() {
           </View>
 
           <View style={styles.keyBlock}>
-            <Text style={styles.fieldLabel}>Anthropic API key</Text>
+            <Text style={styles.fieldLabel}>Groq API key</Text>
             <TextInput
               value={keyInput}
               onChangeText={(value) => {
                 setKeyInput(value);
                 setNotice(null);
               }}
-              placeholder="sk-ant-…"
+              placeholder="gsk_…"
               placeholderTextColor={colors.subtle}
               autoCapitalize="none"
               autoCorrect={false}
@@ -233,9 +234,10 @@ export default function PredictionAlertsScreen() {
           {aiError ? <Text style={styles.warning}>{aiError}</Text> : null}
 
           <Text style={styles.note}>
-            The key is kept on this device only, and is sent nowhere but the Anthropic API. A
-            key inside an app can always be read off the phone it is on, so for a published
-            build set EXPO_PUBLIC_ASTRO_AI_URL to your own endpoint and keep the real key there.
+            A Groq key is free — make one at console.groq.com/keys. It is kept on this device
+            only and is sent nowhere but the Groq API. A key inside an app can always be read
+            off the phone it is on, so for a published build set EXPO_PUBLIC_ASTRO_AI_URL to
+            your own endpoint and keep the real key there.
           </Text>
 
           <View style={styles.footerActions}>
