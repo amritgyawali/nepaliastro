@@ -16,7 +16,7 @@ import { siderealLongitude } from './ephemeris';
 import { KATHMANDU, type Place } from './places';
 import { panchangFor, tithiAt, type Window } from './panchang';
 import { fromBs, toBs } from './bikram';
-import { addDays, startOfNepaliDay } from './time';
+import { addDays, fromNepaliClock, nepaliClock, startOfNepaliDay } from './time';
 
 export type FestivalDefinition = {
   id: string;
@@ -160,7 +160,11 @@ function findFestival(
   // Magh's lunation opens in December, so a listing for Gregorian year Y has
   // to begin its search in December of the year before.
   const searchYear = approximateMonth === 11 ? year - 1 : year;
-  const start = startOfNepaliDay(new Date(searchYear, approximateMonth, 1, 12));
+  // Anchored to Nepal's calendar, not the device's. Building the start date
+  // from local time makes the scan begin at a different instant in Sydney
+  // than in New York, and a crossing detected a few hours either side of a
+  // boundary then lands on a different day.
+  const start = startOfNepaliDay(fromNepaliClock(searchYear, approximateMonth + 1, 1, 12));
 
   // A hundred days rather than a lunation: the month itself drifts by up to
   // four weeks against the Gregorian calendar, so a tithi late in the month
@@ -248,7 +252,7 @@ export function festivalsIn(year: number, place: Place = KATHMANDU): Festival[] 
   }
 
   // The two festivals that are solar, not lunar, and so never move much.
-  const maghe = solarIngressDay(year, 9, place);
+  const maghe = solarIngressDay(year, 9);
   if (maghe) {
     found.push({
       id: 'maghesankranti', name: 'Maghe Sankranti', np: 'माघे संक्रान्ति',
@@ -269,10 +273,16 @@ export function festivalsIn(year: number, place: Place = KATHMANDU): Festival[] 
   return found.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-/** The day the sun enters a sidereal sign — a sankranti. */
-function solarIngressDay(year: number, sign: number, place: Place): Date | null {
+/**
+ * The day the sun enters a sidereal sign — a sankranti.
+ *
+ * The ingress is one instant for the whole world, so this takes no place; only
+ * which Nepali day that instant falls in depends on anything local, and that
+ * is handled by reading it in Nepal time.
+ */
+function solarIngressDay(year: number, sign: number): Date | null {
   const approximateMonth = (sign + 3) % 12;
-  const start = new Date(year, approximateMonth, 1, 12);
+  const start = fromNepaliClock(year, approximateMonth + 1, 1, 12);
 
   for (let i = 0; i < 45; i += 1) {
     const day = addDays(start, i);
@@ -285,7 +295,7 @@ function solarIngressDay(year: number, sign: number, place: Place): Date | null 
 
 /** Baishakh 1 of the Bikram Sambat year that begins in this Gregorian year. */
 function nepaliNewYear(year: number): Date | null {
-  const bs = toBs(new Date(year, 5, 1));
+  const bs = toBs(fromNepaliClock(year, 6, 1, 12));
   if (!bs) return null;
   return fromBs(bs.year, 1, 1);
 }
@@ -296,8 +306,9 @@ export function upcomingFestivals(
   count = 5,
   place: Place = KATHMANDU,
 ): Festival[] {
-  const thisYear = festivalsIn(from.getFullYear(), place);
-  const nextYear = festivalsIn(from.getFullYear() + 1, place);
+  const year = nepaliClock(from).year;
+  const thisYear = festivalsIn(year, place);
+  const nextYear = festivalsIn(year + 1, place);
   const start = startOfNepaliDay(from).getTime();
 
   return [...thisYear, ...nextYear]

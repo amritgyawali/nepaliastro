@@ -8,8 +8,8 @@
  * a single number. A low total is a prompt to look closer, not a verdict —
  * the report says so, and says which koot pulled it down.
  */
-import { GRAHAS, type GrahaId } from './ephemeris';
-import { RASHIS, friendshipBetween, type Gana, type Nadi, type Vashya } from './signs';
+import { GRAHAS } from './ephemeris';
+import { friendshipBetween, type Gana, type Vashya } from './signs';
 import type { Chart } from './chart';
 import { mangalDosha } from './dosha';
 
@@ -376,4 +376,3 @@ export function matchCharts(groom: Chart, bride: Chart): MatchResult {
   return { koots, total, max, percentage, verdict, summary, mangal, concerns };
 }
 
-export type { GrahaId, Nadi };

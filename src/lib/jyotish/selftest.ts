@@ -8,7 +8,7 @@
  * festival dates Nepal actually kept in 2025 — alongside the invariants that
  * must hold whatever the date.
  *
- * Run it with:  npx tsx src/lib/astro/selftest.ts
+ * Run it with:  npx tsx src/lib/jyotish/selftest.ts
  */
 import { ascendantAt, buildChart } from './chart';
 import { vimshottariDasha, dashaAt, TOTAL_YEARS } from './dasha';
@@ -19,9 +19,8 @@ import { findMuhurta, activityById, lagnaWindows } from './muhurta';
 import { panchangFor, tithiAt } from './panchang';
 import { KATHMANDU, resolvePlace } from './places';
 import { rashifalFor } from './rashifal';
-import { rashiAt } from './signs';
-import { toBs, fromBs, toNepalSambat } from './bikram';
-import { formatGregorian } from './time';
+import { toBs, fromBs, toNepalSambat, bsMonthGrid } from './bikram';
+import { formatGregorian, isSameNepaliDay, nepaliClock } from './time';
 
 type Result = { name: string; pass: boolean; detail: string };
 const results: Result[] = [];
@@ -89,29 +88,51 @@ for (const [year, expected] of [[1980, 23.5736], [2000, 23.8531], [2025, 24.2023
 /* -- Bikram Sambat --------------------------------------------------- */
 
 {
-  // Nepali New Year 2081 fell on 13 April 2024.
+  // Nepali New Year 2081 fell on 13 April 2024. Dates are read in Nepal time,
+  // which is the contract: `fromBs` returns the instant a Bikram day begins in
+  // Kathmandu, not the device's own midnight.
   const ny = fromBs(2081, 1, 1);
+  const nyClock = ny && nepaliClock(ny);
   check(
     'BS 2081-01-01 is 13 April 2024',
-    !!ny && ny.getFullYear() === 2024 && ny.getMonth() === 3 && ny.getDate() === 13,
-    ny ? ny.toDateString() : 'null',
+    !!nyClock && nyClock.year === 2024 && nyClock.month === 4 && nyClock.day === 13,
+    ny ? formatGregorian(ny) : 'null',
   );
 
   let mismatches = 0;
   for (let i = 0; i < 3000; i += 11) {
-    const ad = new Date(1965, 0, 1 + i);
+    // Midday keeps the sample clear of both midnights, so the round trip tests
+    // the conversion rather than the offset.
+    const ad = new Date(Date.UTC(1965, 0, 1 + i, 6));
     const bs = toBs(ad);
     const back = bs && fromBs(bs.year, bs.month, bs.day);
-    if (!back || back.toDateString() !== ad.toDateString()) mismatches += 1;
+    if (!back || formatGregorian(back) !== formatGregorian(ad)) mismatches += 1;
   }
   check('BS round-trips over 3000 days', mismatches === 0, `${mismatches} mismatches`);
+
+  // A patro cell and a festival must agree on which day they are, whatever
+  // zone the device is in. Both are anchored to Nepal midnight, so a festival
+  // found for a date must land on the grid cell carrying that same date —
+  // this is the check that fails if either side drifts back to local time.
+  const dashain2025 = festivalsIn(2025).find((f) => f.id === 'dashain');
+  const ashwinGrid = bsMonthGrid(2082, 6);
+  const dashainCell = dashain2025
+    ? ashwinGrid.find((d) => isSameNepaliDay(d.gregorian, dashain2025.date))
+    : undefined;
+  check(
+    'Patro grid and festival dates agree',
+    !!dashainCell && !!dashain2025 && formatGregorian(dashainCell.gregorian) === formatGregorian(dashain2025.date),
+    dashainCell ? `Dashain falls on Ashwin ${dashainCell.bsDay}, ${formatGregorian(dashainCell.gregorian)}` : 'no matching cell',
+  );
 
   // Mha Puja 2025 was 22 October, opening Nepal Sambat 1146.
   const ns = toNepalSambat(new Date(Date.UTC(2025, 11, 1)));
   check(
     'Nepal Sambat 1146 begins 22 Oct 2025',
-    ns.year === 1146 && ns.newYear.getMonth() === 9 && ns.newYear.getDate() === 22,
-    `NS ${ns.year}, ${ns.newYear.toDateString()}`,
+    ns.year === 1146 &&
+      nepaliClock(ns.newYear).month === 10 &&
+      nepaliClock(ns.newYear).day === 22,
+    `NS ${ns.year}, ${formatGregorian(ns.newYear)}`,
   );
 }
 

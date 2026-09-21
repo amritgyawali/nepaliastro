@@ -8,7 +8,7 @@
  * answer is read from the house the question belongs to.
  */
 import { GRAHAS, type GrahaId } from './ephemeris';
-import { buildChart, HOUSE_MEANINGS, type Chart } from './chart';
+import { buildChart, type Chart } from './chart';
 import { KATHMANDU, type Place } from './places';
 import { RASHIS } from './signs';
 

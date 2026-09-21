@@ -1,229 +1,172 @@
-import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
-  NavHeader,
-  PrimaryButton,
-  Screen,
-  WheelColumn,
-  WheelPicker,
+  BirthDetailsForm, Card, NavHeader, NeedsBirth, PrimaryButton, Screen, ScoreBar,
+  Tag, emptyBirthDetails, type BirthDetails,
 } from '@/components';
-import { matchCharts, type MatchResult } from '@/lib/matching';
+import {
+  buildChart, chartFor, matchCharts, type MatchResult,
+} from '@/lib/jyotish';
 import { useOnboarding } from '@/store/onboarding';
-import { GUTTER, colors, font, radius, space, type } from '@/theme';
+import { GUTTER, colors, space, type } from '@/theme';
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+/** A form's answers as a chart. */
+function chartFromDetails(details: BirthDetails) {
+  const { date, time, timeKnown, place } = details;
+  const hour = timeKnown ? time.hour : 12;
+  const minute = timeKnown ? time.minute : 0;
 
-const CURRENT_YEAR = new Date().getFullYear();
-const FIRST_YEAR = CURRENT_YEAR - 100;
-
-function daysInMonth(month: number, year: number): number {
-  return new Date(year, month, 0).getDate();
+  return buildChart({
+    at: new Date(
+      Date.UTC(date.year, date.month - 1, date.day, hour, minute) -
+        place.utcOffsetMinutes * 60_000,
+    ),
+    place,
+    timeKnown,
+  });
 }
 
-/** Kundli matching: your chart against someone else's, on the 36-point count. */
+/**
+ * Kundali milan — the eight koots, out of thirty-six.
+ *
+ * The number people know is eighteen, so the result leads with the total and
+ * says where it stands against that line. Every koot is then shown with its
+ * own score and the reason for it, because "19 out of 36" tells a family
+ * nothing about whether the thing pulling it down is serious or cancelled.
+ */
 export default function MatchingScreen() {
-  const router = useRouter();
   const { profile } = useOnboarding();
-
-  const [partnerName, setPartnerName] = useState('');
-  const [partnerDate, setPartnerDate] = useState({ day: 1, month: 1, year: 2000 });
+  const [partner, setPartner] = useState<BirthDetails>(emptyBirthDetails);
   const [result, setResult] = useState<MatchResult | null>(null);
 
-  const dayOptions = useMemo(() => {
-    const total = daysInMonth(partnerDate.month, partnerDate.year);
-    return Array.from({ length: total }, (_, i) => ({ label: `${i + 1}`, value: i + 1 }));
-  }, [partnerDate.month, partnerDate.year]);
-
-  const monthOptions = useMemo(
-    () => MONTHS.map((label, i) => ({ label, value: i + 1 })),
-    [],
-  );
-
-  const yearOptions = useMemo(
-    () =>
-      Array.from({ length: CURRENT_YEAR - FIRST_YEAR + 1 }, (_, i) => ({
-        label: `${FIRST_YEAR + i}`,
-        value: FIRST_YEAR + i,
-      })),
-    [],
-  );
-
-  const setPart = (patch: Partial<typeof partnerDate>) => {
-    const next = { ...partnerDate, ...patch };
-    setPartnerDate({ ...next, day: Math.min(next.day, daysInMonth(next.month, next.year)) });
-  };
-
+  const yours = useMemo(() => chartFor(profile), [profile]);
   const yourName = profile.name.trim() || 'You';
-  const ready = !!profile.birthDate && partnerName.trim().length > 0;
+  const ready = !!yours && partner.name.trim().length > 0;
 
-  /**
-   * Several kootas are asymmetric, so the method needs to know which chart is
-   * read as the groom's. Gender decides it where onboarding has one.
-   */
-  const check = () => {
-    if (!profile.birthDate) return;
-
-    const you = { name: yourName, date: profile.birthDate };
-    const partner = { name: partnerName.trim(), date: partnerDate };
-
-    setResult(
-      profile.gender === 'female' ? matchCharts(partner, you) : matchCharts(you, partner),
-    );
-  };
-
-  if (result) {
+  if (!yours) {
     return (
-      <Screen background={colors.white}>
-        <NavHeader title="Match result" bordered onBack={() => setResult(null)} />
-
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.score}>
-            <Text style={styles.scoreValue}>
-              {result.total}
-              <Text style={styles.scoreMax}> / {result.max}</Text>
-            </Text>
-            <Text style={styles.verdict}>{result.verdict}</Text>
-            <Text style={styles.summary}>{result.summary}</Text>
-          </View>
-
-          <View style={styles.people}>
-            {result.people.map((person) => (
-              <View key={person.name} style={styles.person}>
-                <Text style={styles.personName} numberOfLines={1}>
-                  {person.name}
-                </Text>
-                <Text style={styles.personMeta}>{person.rashi.vedic} rashi</Text>
-                <Text style={styles.personMeta}>{person.nakshatra}</Text>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.sectionTitle}>The eight kootas</Text>
-
-          <View style={styles.card}>
-            {result.kootas.map((koota, index) => (
-              <View key={koota.id} style={[styles.koota, index > 0 && styles.kootaDivider]}>
-                <View style={styles.kootaHead}>
-                  <Text style={styles.kootaLabel}>{koota.label}</Text>
-                  <Text
-                    style={[styles.kootaScore, koota.score === 0 && styles.kootaZero]}
-                  >
-                    {koota.score} / {koota.max}
-                  </Text>
-                </View>
-                <Text style={styles.kootaAbout}>{koota.about}</Text>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.note}>
-            Guna Milan is one test among several, and it reads only the two moon
-            positions. Mangal dosha, the seventh house and the timing of the wedding are
-            not in this count.
-          </Text>
-
-          <View style={styles.actions}>
-            <PrimaryButton
-              label="Discuss this with an astrologer"
-              onPress={() => router.push('/(tabs)/chat')}
-            />
-            <PrimaryButton
-              label="Check another match"
-              variant="outline"
-              onPress={() => setResult(null)}
-            />
-          </View>
-        </ScrollView>
+      <Screen>
+        <NavHeader title="Kundali Milan" bordered />
+        <NeedsBirth what="Matching compares your moon sign and birth star against theirs, so your own birth date is needed first." />
       </Screen>
     );
   }
 
+  const run = () => {
+    const theirs = chartFromDetails(partner);
+    // The koot tables are written groom-first, so the male chart goes first
+    // whichever side of the match the account holder is on.
+    const isGroom = profile.gender !== 'female';
+    setResult(isGroom ? matchCharts(yours, theirs) : matchCharts(theirs, yours));
+  };
+
   return (
-    <Screen background={colors.white}>
-      <NavHeader title="Kundli matching" bordered />
+    <Screen>
+      <NavHeader title="Kundali Milan" bordered />
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.you}>
-            <Text style={styles.youLabel}>Your details</Text>
-            <Text style={styles.youValue}>{yourName}</Text>
-            <Text style={styles.youMeta}>
-              {profile.birthDate
-                ? `${profile.birthDate.day} ${MONTHS[profile.birthDate.month - 1]} ${profile.birthDate.year}`
-                : 'No birth date saved yet'}
-            </Text>
-          </View>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {result ? (
+            <>
+              <Card accent style={styles.card}>
+                <Text style={styles.totalLabel}>
+                  {yourName} and {partner.name.trim()}
+                </Text>
+                <Text style={styles.total}>
+                  {result.total}
+                  <Text style={styles.totalMax}> / 36</Text>
+                </Text>
+                <Tag
+                  label={result.verdict}
+                  tone={result.total >= 26 ? 'good' : result.total >= 18 ? 'accent' : 'bad'}
+                />
+                <Text style={styles.summary}>{result.summary}</Text>
+              </Card>
 
-          {profile.birthDate ? null : (
-            <PrimaryButton
-              label="Add your birth details"
-              onPress={() => router.push('/onboarding/name')}
-              style={styles.addDetails}
-            />
+              <Card title="Mangal dosha" style={styles.card}>
+                <Text style={styles.body}>{result.mangal.note}</Text>
+              </Card>
+
+              <Text style={styles.sectionTitle}>The eight koots</Text>
+              <Card style={styles.card}>
+                {result.koots.map((koot, index) => (
+                  <View key={koot.id} style={index > 0 ? styles.kootSpaced : undefined}>
+                    <ScoreBar
+                      value={(koot.score / koot.max) * 100}
+                      label={`${koot.name} · ${koot.np}`}
+                      caption={`${koot.score} / ${koot.max}`}
+                    />
+                    <Text style={styles.kootAbout}>{koot.about}</Text>
+                    <Text style={styles.kootFinding}>{koot.finding}</Text>
+                    {koot.cancellation ? (
+                      <Text style={styles.cancellation}>Cancelled — {koot.cancellation}</Text>
+                    ) : null}
+                  </View>
+                ))}
+              </Card>
+
+              {result.concerns.length ? (
+                <Card style={styles.card}>
+                  <Text style={styles.concernTitle}>What to look at</Text>
+                  {result.concerns.map((koot) => (
+                    <Text key={koot.id} style={styles.bullet}>
+                      • {koot.name} scored nothing. {koot.finding}
+                    </Text>
+                  ))}
+                  <Text style={styles.concernNote}>
+                    An afflicted koot is a reason to sit with an astrologer over the two
+                    charts, not a reason to call the match off. Most have recognised
+                    exemptions, and a chart is read whole.
+                  </Text>
+                </Card>
+              ) : null}
+
+              <PrimaryButton
+                label="Match someone else"
+                variant="outline"
+                onPress={() => setResult(null)}
+                style={styles.cta}
+              />
+            </>
+          ) : (
+            <>
+              <Card style={styles.card}>
+                <Text style={styles.yoursTitle}>Your side</Text>
+                <Text style={styles.yoursBody}>
+                  {yourName} — {yours.rashi.vedic} moon, {yours.nakshatra.name} nakshatra,{' '}
+                  {yours.nakshatra.gana} gana, {yours.nakshatra.nadi} nadi.
+                </Text>
+              </Card>
+
+              <Card style={styles.card}>
+                <BirthDetailsForm
+                  title="Their details"
+                  value={partner}
+                  onChange={setPartner}
+                />
+              </Card>
+
+              <PrimaryButton
+                label="Match the charts"
+                onPress={run}
+                disabled={!ready}
+                style={styles.cta}
+              />
+              <Text style={styles.footnote}>
+                The eight koots weigh temperament, affinity, health and the household —
+                nadi alone is worth eight of the thirty-six. Everything is computed from
+                the two moon positions; nothing is sent anywhere.
+              </Text>
+            </>
           )}
-
-          <Text style={styles.sectionTitle}>Their details</Text>
-
-          <TextInput
-            value={partnerName}
-            onChangeText={setPartnerName}
-            placeholder="Their name"
-            placeholderTextColor={colors.subtle}
-            style={styles.input}
-            autoCapitalize="words"
-            autoCorrect={false}
-            accessibilityLabel="Their name"
-          />
-
-          <Text style={styles.fieldLabel}>Their birth date</Text>
-
-          <WheelPicker>
-            <WheelColumn
-              options={dayOptions}
-              value={partnerDate.day}
-              onChange={(day) => setPart({ day: day as number })}
-            />
-            <WheelColumn
-              options={monthOptions}
-              value={partnerDate.month}
-              flex={1.6}
-              onChange={(month) => setPart({ month: month as number })}
-            />
-            <WheelColumn
-              options={yearOptions}
-              value={partnerDate.year}
-              flex={1.1}
-              onChange={(year) => setPart({ year: year as number })}
-            />
-          </WheelPicker>
-
-          <Text style={styles.note}>
-            The count is read from both moon positions, so the birth dates are enough.
-            Birth times would sharpen it, and an astrologer will ask for them.
-          </Text>
-
-          <PrimaryButton
-            label="Check compatibility"
-            disabled={!ready}
-            onPress={check}
-            style={styles.submit}
-          />
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
@@ -231,152 +174,24 @@ export default function MatchingScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: GUTTER,
-    paddingTop: space.lg,
-    paddingBottom: space.xxl,
-  },
-  you: {
-    padding: space.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.saffronSoft,
-    borderWidth: 1,
-    borderColor: colors.saffronBorder,
-  },
-  youLabel: {
-    ...type.caption,
-    color: colors.saffronDeep,
-  },
-  youValue: {
-    ...type.section,
-    color: colors.ink,
-  },
-  youMeta: {
-    ...type.small,
-    color: colors.muted,
-  },
-  addDetails: {
-    marginTop: space.md,
-  },
-  sectionTitle: {
-    ...type.section,
-    color: colors.ink,
-    marginTop: space.xl,
-    marginBottom: space.md,
-  },
-  input: {
-    height: 52,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.white,
-    paddingHorizontal: space.lg,
-    ...type.body,
-    color: colors.ink,
-  },
-  fieldLabel: {
-    ...type.caption,
-    color: colors.muted,
-    marginTop: space.lg,
-    marginBottom: space.sm,
-  },
-  note: {
-    ...type.small,
-    color: colors.muted,
-    marginTop: space.lg,
-  },
-  submit: {
-    marginTop: space.xl,
-  },
-
-  score: {
-    alignItems: 'center',
-    paddingVertical: space.lg,
-  },
-  scoreValue: {
-    fontFamily: font.bold,
-    fontSize: 48,
-    lineHeight: 58,
-    color: colors.saffronDeep,
-  },
-  scoreMax: {
-    fontFamily: font.regular,
-    fontSize: 22,
-    color: colors.muted,
-  },
-  verdict: {
-    ...type.section,
-    color: colors.ink,
-  },
-  summary: {
-    ...type.body,
-    color: colors.muted,
-    textAlign: 'center',
-    marginTop: space.sm,
-  },
-  people: {
-    flexDirection: 'row',
-    gap: space.md,
-    marginTop: space.md,
-  },
-  person: {
-    flex: 1,
-    padding: space.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  personName: {
-    ...type.label,
-    color: colors.ink,
-  },
-  personMeta: {
-    ...type.caption,
-    color: colors.muted,
-  },
-  card: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: 'hidden',
-  },
-  koota: {
-    paddingHorizontal: space.lg,
-    paddingVertical: space.md,
-  },
-  kootaDivider: {
-    borderTopWidth: 1,
-    borderTopColor: colors.divider,
-  },
-  kootaHead: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: space.md,
-  },
-  kootaLabel: {
-    ...type.label,
-    color: colors.ink,
-  },
-  kootaScore: {
-    fontFamily: font.semibold,
-    fontSize: 15,
-    lineHeight: 21,
-    color: colors.green,
-    fontVariant: ['tabular-nums'],
-  },
-  kootaZero: {
-    color: colors.red,
-  },
-  kootaAbout: {
-    ...type.small,
-    color: colors.muted,
-  },
-  actions: {
-    marginTop: space.xl,
-    gap: space.md,
-  },
+  flex: { flex: 1 },
+  content: { paddingTop: space.lg, paddingBottom: space.xxl },
+  card: { marginHorizontal: GUTTER, marginTop: space.md },
+  totalLabel: { ...type.label, color: colors.saffronDeep },
+  total: { ...type.display, fontSize: 44, lineHeight: 52, color: colors.ink },
+  totalMax: { ...type.title, color: colors.muted },
+  summary: { ...type.body, color: colors.body, marginTop: space.sm },
+  body: { ...type.body, color: colors.body },
+  sectionTitle: { ...type.section, color: colors.ink, paddingHorizontal: GUTTER, marginTop: space.xl },
+  kootSpaced: { marginTop: space.lg, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: space.lg },
+  kootAbout: { ...type.small, color: colors.muted, marginTop: space.xs },
+  kootFinding: { ...type.small, color: colors.body, marginTop: 2 },
+  cancellation: { ...type.small, color: colors.green, marginTop: 2 },
+  concernTitle: { ...type.section, color: colors.ink, marginBottom: space.sm },
+  bullet: { ...type.small, color: colors.body, marginBottom: space.xs },
+  concernNote: { ...type.small, color: colors.muted, marginTop: space.sm },
+  yoursTitle: { ...type.section, color: colors.ink },
+  yoursBody: { ...type.body, color: colors.muted, marginTop: space.xs },
+  cta: { marginHorizontal: GUTTER, marginTop: space.xl },
+  footnote: { ...type.small, color: colors.subtle, paddingHorizontal: GUTTER, marginTop: space.lg },
 });

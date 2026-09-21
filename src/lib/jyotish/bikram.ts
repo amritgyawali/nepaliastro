@@ -15,7 +15,7 @@ import * as Astronomy from 'astronomy-engine';
 import NepaliDate, { dateConfigMap } from 'nepali-date-converter';
 
 import { siderealLongitude } from './ephemeris';
-import { VARA, devanagariNumber, nepaliClock } from './time';
+import { VARA, devanagariNumber, fromNepaliClock, nepaliClock } from './time';
 
 /** Bikram Sambat month names, in order. */
 export const BS_MONTHS = [
@@ -87,7 +87,15 @@ export function toBs(at: Date): BsDate | null {
   }
 }
 
-/** Bikram Sambat date -> the Gregorian day it falls on, at Nepal midnight. */
+/**
+ * Bikram Sambat date -> the instant that day begins in Nepal.
+ *
+ * Nepal midnight rather than the device's own midnight. A phone in London
+ * building a date from its local midnight produces an instant that is still
+ * the previous day in Kathmandu, and every comparison downstream — is this
+ * the day of the festival, is this today — then lands a day out for every
+ * user outside Nepal. Anchoring here means it cannot.
+ */
 export function fromBs(year: number, month: number, day: number): Date | null {
   if (!isBsYearSupported(year)) return null;
   if (month < 1 || month > 12) return null;
@@ -95,7 +103,7 @@ export function fromBs(year: number, month: number, day: number): Date | null {
 
   try {
     const ad = new NepaliDate(year, month - 1, day).getAD();
-    return new Date(ad.year, ad.month, ad.date);
+    return fromNepaliClock(ad.year, ad.month + 1, ad.date);
   } catch {
     return null;
   }
@@ -179,7 +187,10 @@ export function toNepalSambat(at: Date): NepalSambat {
 
 export type PatroDay = {
   bsDay: number;
+  /** The instant this day begins in Nepal. */
   gregorian: Date;
+  /** Day of the Gregorian month, read in Nepal time. */
+  gregorianDay: number;
   /** 0 = Sunday, for placing the cell in its column. */
   weekday: number;
   isToday: boolean;
@@ -200,13 +211,17 @@ export function bsMonthGrid(year: number, month: number, today = new Date()): Pa
   for (let day = 1; day <= length; day += 1) {
     const gregorian = fromBs(year, month, day);
     if (!gregorian) continue;
+    // Read in Nepal time: the weekday and the day number a patro prints are
+    // Kathmandu's, whatever zone the phone is in.
+    const clock = nepaliClock(gregorian);
     days.push({
       bsDay: day,
       gregorian,
-      weekday: gregorian.getDay(),
+      gregorianDay: clock.day,
+      weekday: clock.weekday,
       isToday:
         !!todayBs && todayBs.year === year && todayBs.month === month && todayBs.day === day,
-      isSaturday: gregorian.getDay() === 6,
+      isSaturday: clock.weekday === 6,
     });
   }
 

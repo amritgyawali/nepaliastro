@@ -15,11 +15,11 @@
 import { siderealLongitude } from './ephemeris';
 import type { Place } from './places';
 import { KATHMANDU } from './places';
-import { NAKSHATRAS, RASHIS } from './signs';
+import { RASHIS } from './signs';
 import { panchangFor, type Panchang, type Window } from './panchang';
 import { ascendantAt } from './chart';
 import type { Chart } from './chart';
-import { addDays, startOfNepaliDay } from './time';
+import { addDays, nepaliClock, startOfNepaliDay } from './time';
 
 /* ------------------------------------------------------------------ *
  * Activities
@@ -248,7 +248,8 @@ export function scoreDay(
   }
 
   // --- Vara.
-  const weekday = panchang.date.getDay();
+  // Nepal's weekday, not the device's — the whole scoring is for Kathmandu.
+  const weekday = nepaliClock(panchang.date).weekday;
   if (activity.varas.includes(weekday)) {
     add(`${panchang.weekday.en} suits this work`, 8);
   } else if (weekday === 2 && activity.id !== 'medical') {
@@ -428,4 +429,3 @@ export function lagnaWindows(
   return windows;
 }
 
-export { NAKSHATRAS };

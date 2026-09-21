@@ -24,7 +24,7 @@ import {
   syncSchedule,
   type PermissionState,
 } from '@/lib/notifications';
-import { formatBirthMoment } from '@/lib/kundli';
+import { describeBirth } from '@/lib/jyotish';
 import {
   buildPrediction,
   composePrediction,
@@ -250,7 +250,7 @@ export function PredictionsProvider({ children }: { children: React.ReactNode })
                 {
                   firstName: who.name.trim().split(/\s+/)[0] ?? '',
                   gender: who.gender ?? 'not given',
-                  birthDetails: formatBirthMoment(pending[0].kundli.moment),
+                  birthDetails: describeBirth(pending[0].kundli.moment),
                   birthPlace: who.birthPlace.trim() || 'Kathmandu, Nepal',
                   language: who.languages[0] ?? 'English',
                 },

@@ -12,7 +12,7 @@ import { GRAHAS, type GrahaId } from './ephemeris';
 import { RASHIS, friendshipBetween, nakshatraAt } from './signs';
 import { panchangFor } from './panchang';
 import { luckyForRashi, GRAHA_TRAITS } from './lucky';
-import { addDays, startOfNepaliDay, VARA } from './time';
+import { addDays, nepaliClock, startOfNepaliDay, VARA } from './time';
 import { gocharSummary, transitsFrom, nextSignChange, type TransitReading } from './transit';
 import { siderealLongitude } from './ephemeris';
 
@@ -26,6 +26,8 @@ export type RashifalSection = {
 };
 
 export type Rashifal = {
+  /** Sign index 0–11 from Mesha, for looking up the rest of the row. */
+  index: number;
   rashi: string;
   np: string;
   western: string;
@@ -110,11 +112,14 @@ function dayFactor(rashiIndex: number, at: Date): DayFactor {
   let delta = 0;
 
   // The weekday's lord against the sign's lord.
-  const dayLord = VARA[panchang.date.getDay()].lord.toLowerCase() as GrahaId;
+  // Read in Nepal time: the weekday that rules the day is Kathmandu's, so a
+  // user in New York still gets the vara the panchang is computed for.
+  const vara = VARA[nepaliClock(panchang.date).weekday];
+  const dayLord = vara.lord.toLowerCase() as GrahaId;
   const toDayLord = friendshipBetween(rashi.lord, dayLord);
   if (dayLord === rashi.lord) {
     delta += 10;
-    lines.push(`${VARA[panchang.date.getDay()].en} is ruled by ${GRAHAS[dayLord].vedic}, your own sign lord — your strongest weekday`);
+    lines.push(`${vara.en} is ruled by ${GRAHAS[dayLord].vedic}, your own sign lord — your strongest weekday`);
   } else if (toDayLord === 'friend') {
     delta += 7;
     lines.push(`${GRAHAS[dayLord].vedic} rules today and is a friend of your lord ${GRAHAS[rashi.lord].vedic}`);
@@ -225,13 +230,14 @@ export function rashifalFor(
   }
 
   // A timing note, which is what turns a horoscope into something usable.
-  const timing = timingNote(period, midpoint, rashiIndex, byGraha);
+  const timing = timingNote(period, midpoint, byGraha);
   if (timing) sections.push(timing);
 
   const lucky = luckyForRashi(rashiIndex);
   const traits = GRAHA_TRAITS[rashi.lord];
 
   return {
+    index: rashi.index,
     rashi: rashi.vedic,
     np: rashi.np,
     western: rashi.western,
@@ -291,7 +297,6 @@ function headlineFor(
 function timingNote(
   period: Period,
   at: Date,
-  rashiIndex: number,
   byGraha: Record<GrahaId, TransitReading>,
 ): RashifalSection | null {
   const graha: GrahaId = period === 'daily' ? 'moon' : period === 'yearly' ? 'jupiter' : 'sun';
@@ -326,6 +331,6 @@ export function allRashifal(period: Period = 'daily', at: Date = new Date()): Ra
  */
 export function todayHeadline(at: Date = new Date()): string {
   const panchang = panchangFor(at);
-  const weekday = VARA[panchang.date.getDay()];
+  const weekday = VARA[nepaliClock(panchang.date).weekday];
   return `${weekday.en}, ${panchang.tithi.paksha} ${panchang.tithi.name} — the moon is in ${panchang.nakshatra.meta.name}, and ${GRAHAS[weekday.lord.toLowerCase() as GrahaId].vedic} rules the day.`;
 }

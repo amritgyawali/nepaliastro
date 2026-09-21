@@ -150,6 +150,26 @@ export function formatGregorian(at: Date): string {
   return `${day} ${GREGORIAN_MONTHS[month - 1]} ${year}`;
 }
 
+/** "Sun 21 Sep" — the day, short enough to sit beside a heading. */
+export function formatShortDay(at: Date): string {
+  const { day, month, weekday } = nepaliClock(at);
+  return `${VARA[weekday].en.slice(0, 3)} ${day} ${GREGORIAN_MONTHS_SHORT[month - 1]}`;
+}
+
+/**
+ * "Good morning" and the rest, on Nepal's clock.
+ *
+ * Read in Nepal time rather than the device's, so a user in Doha opening the
+ * app at their own midnight is greeted for the hour it is back home — which
+ * is the hour the rest of the screen is computed for.
+ */
+export function greetingFor(at: Date = new Date()): string {
+  const { hour } = nepaliClock(at);
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 const DEVANAGARI_DIGITS = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
 
 /** 2082 -> "२०८२". Used wherever a Nepali date is shown in Nepali. */

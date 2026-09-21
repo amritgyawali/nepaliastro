@@ -2,8 +2,9 @@
  * The reading a person is sent every five hours.
  *
  * Two things make a reading theirs rather than their sign's. The first is
- * their kundli: the moon sign, nakshatra and lagna already computed in
- * `kundli.ts`. The second is where the moon is *now* relative to that chart —
+ * their birth chart: the moon sign, nakshatra and lagna computed by the
+ * engine in `jyotish/`. The second is where the moon is *now* relative to that
+ * chart —
  * the house it is transiting from their natal moon, which is the oldest way of
  * answering "what about today, for me?" and is different for every rashi.
  *
@@ -15,15 +16,18 @@
  */
 import type { OnboardingProfile } from '@/store/onboarding';
 
-import { dayKey, seededPick, seededRange } from './astro';
-import { kundliFor, rashiAt, type Kundli, type Rashi } from './kundli';
 import {
+  chartFor,
   nakshatraAt,
-  siderealLongitudes,
-  tithiFor,
-  type Nakshatra,
+  rashiAt,
+  siderealLongitude,
+  tithiAt,
+  type Chart,
+  type NakshatraMeta,
+  type Rashi,
   type Tithi,
-} from './panchang';
+} from './jyotish';
+import { dayKey, seededPick, seededRange } from './seed';
 
 /* ------------------------------------------------------------------ *
  * The five-hour cycle
@@ -456,10 +460,10 @@ export type PredictionFacts = {
   phase: Phase;
   phaseLabel: string;
   /** Their chart. */
-  kundli: Kundli;
+  kundli: Chart;
   /** Where the moon is now. */
   moonRashi: Rashi;
-  moonNakshatra: Nakshatra;
+  moonNakshatra: NakshatraMeta;
   tithi: Tithi;
   /** 1-12, counted from their natal moon sign — the heart of the reading. */
   house: number;
@@ -526,10 +530,10 @@ function favourableWindow(at: Date, seed: string): string {
  * birth date yet and therefore have nothing honest to say.
  */
 export function factsFor(profile: OnboardingProfile, at: Date): PredictionFacts | null {
-  const kundli = kundliFor(profile);
+  const kundli = chartFor(profile);
   if (!kundli) return null;
 
-  const { moon } = siderealLongitudes(at);
+  const moon = siderealLongitude('moon', at);
   const moonRashi = rashiAt(moon);
   // Counted inclusively from their natal moon sign, the way a Vedic transit is
   // always read: the moon in their own rashi is the first house, not the zeroth.
@@ -547,8 +551,8 @@ export function factsFor(profile: OnboardingProfile, at: Date): PredictionFacts 
     phaseLabel: phase.label,
     kundli,
     moonRashi,
-    moonNakshatra: nakshatraAt(moon),
-    tithi: tithiFor(at),
+    moonNakshatra: nakshatraAt(moon).meta,
+    tithi: tithiAt(at),
     house,
     houseName: bhava.name,
     houseTheme: bhava.theme,

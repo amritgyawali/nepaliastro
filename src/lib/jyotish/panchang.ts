@@ -16,7 +16,7 @@ import {
   siderealLongitude,
 } from './ephemeris';
 import { KATHMANDU, type Place } from './places';
-import { NAKSHATRAS, RASHIS, nakshatraAt, type NakshatraMeta } from './signs';
+import { RASHIS, nakshatraAt, type NakshatraMeta } from './signs';
 import { VARA, startOfNepaliDay, nepaliClock } from './time';
 
 /* ------------------------------------------------------------------ *
@@ -455,4 +455,4 @@ export function activeWindow(windows: Window[], at: Date): Window | null {
   );
 }
 
-export { NAKSHATRAS, YOGA_NAMES };
+export { YOGA_NAMES };

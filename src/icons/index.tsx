@@ -457,3 +457,156 @@ export function DoubleCheck({ size = 14, color = colors.green }: IconProps) {
  * Remedies hero feature marks
  * ------------------------------------------------------------------ */
 
+
+/* ------------------------------------------------------------------ *
+ * Services
+ *
+ * One line weight, one 24-unit box, no fills: these sit in a grid of
+ * twenty and any that carried more detail would shout over its neighbours.
+ * ------------------------------------------------------------------ */
+
+export function Clock(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={strokeWidth} />
+      <Polyline points="12 7 12 12 16 14" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function Palette(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 3a9 9 0 1 0 0 18 2 2 0 0 0 1.6-3.2 2 2 0 0 1 1.6-3.2H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3Z"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+      />
+      <Circle cx="7.5" cy="11.5" r="1.1" fill={color} />
+      <Circle cx="10.5" cy="7.5" r="1.1" fill={color} />
+      <Circle cx="15.5" cy="8.5" r="1.1" fill={color} />
+    </Svg>
+  );
+}
+
+export function Numerals(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="3" y="3" width="18" height="18" rx="3" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="9" y1="3" x2="9" y2="21" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="15" y1="3" x2="15" y2="21" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="3" y1="9" x2="21" y2="9" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="3" y1="15" x2="21" y2="15" stroke={color} strokeWidth={strokeWidth} />
+    </Svg>
+  );
+}
+
+export function Compass(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={strokeWidth} />
+      <Polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" fill="none" />
+    </Svg>
+  );
+}
+
+export function Swap(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Polyline points="4 8 20 8" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Polyline points="16 4 20 8 16 12" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+      <Polyline points="20 16 4 16" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Polyline points="8 12 4 16 8 20" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function Orbit(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="3" stroke={color} strokeWidth={strokeWidth} />
+      <Ellipse cx="12" cy="12" rx="10" ry="4.5" stroke={color} strokeWidth={strokeWidth} transform="rotate(-28 12 12)" />
+      <Circle cx="20" cy="8.2" r="1.6" fill={color} />
+    </Svg>
+  );
+}
+
+export function QuestionMark(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={strokeWidth} />
+      <Path d="M9.2 9.2a2.9 2.9 0 1 1 3.6 2.8c-.6.2-.9.7-.9 1.3v.7" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" fill="none" />
+      <Circle cx="12" cy="16.6" r="1" fill={color} />
+    </Svg>
+  );
+}
+
+export function Shield(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 3 20 6v6c0 4.4-3.2 8.1-8 9-4.8-.9-8-4.6-8-9V6l8-3Z" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" fill="none" />
+      <Polyline points="9 12 11 14 15 10" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+export function DashaWheel(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={strokeWidth} />
+      <Circle cx="12" cy="12" r="3.4" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="12" y1="3" x2="12" y2="8.6" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="12" y1="15.4" x2="12" y2="21" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="3" y1="12" x2="8.6" y2="12" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="15.4" y1="12" x2="21" y2="12" stroke={color} strokeWidth={strokeWidth} />
+    </Svg>
+  );
+}
+
+export function Grid(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="3" y="4" width="18" height="17" rx="2.5" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="3" y1="9.5" x2="21" y2="9.5" stroke={color} strokeWidth={strokeWidth} />
+      <Line x1="8" y1="2.5" x2="8" y2="6" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="16" y1="2.5" x2="16" y2="6" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Circle cx="8" cy="14" r="1.1" fill={color} />
+      <Circle cx="12" cy="14" r="1.1" fill={color} />
+      <Circle cx="16" cy="14" r="1.1" fill={color} />
+    </Svg>
+  );
+}
+
+export function Baby(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="8" r="5" stroke={color} strokeWidth={strokeWidth} />
+      <Circle cx="10" cy="7.5" r="0.9" fill={color} />
+      <Circle cx="14" cy="7.5" r="0.9" fill={color} />
+      <Path d="M10.2 10.2a2.6 2.6 0 0 0 3.6 0" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" fill="none" />
+      <Path d="M5 21c1.2-3.6 3.8-5.4 7-5.4s5.8 1.8 7 5.4" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" fill="none" />
+    </Svg>
+  );
+}
+
+export function Sparkle(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2.5 13.9 9 20.5 11 13.9 13 12 19.5 10.1 13 3.5 11 10.1 9Z" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" fill="none" />
+      <Path d="M18.5 16.5 19.3 19 21.5 19.8 19.3 20.6 18.5 23 17.7 20.6 15.5 19.8 17.7 19Z" stroke={color} strokeWidth={strokeWidth * 0.8} strokeLinejoin="round" fill="none" />
+    </Svg>
+  );
+}

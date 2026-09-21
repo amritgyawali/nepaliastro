@@ -8,7 +8,7 @@
  * have usually been told they have it — but it should be reported as
  * cancelled, with the reason, because that is the useful answer.
  */
-import { angleBetween, siderealLongitude, type GrahaId } from './ephemeris';
+import { siderealLongitude, type GrahaId } from './ephemeris';
 import { GRAHAS } from './ephemeris';
 import { RASHIS } from './signs';
 import type { Chart } from './chart';
@@ -409,4 +409,3 @@ export function allDoshas(chart: Chart): Dosha[] {
   return [mangalDosha(chart), kaalSarpDosha(chart), gandmoolDosha(chart), pitruDosha(chart)];
 }
 
-export { angleBetween };

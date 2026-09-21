@@ -5,18 +5,19 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ChatDots, Home, Phone, PrayingHands } from '@/icons';
+import { ChatDots, Home, Phone, PrayingHands, Sparkle } from '@/icons';
 import { SCREEN_MAX_WIDTH, TAB_BAR_HEIGHT, colors, font, space, type } from '@/theme';
 
 const TAB_ICONS = {
   index: Home,
+  services: Sparkle,
   chat: ChatDots,
   call: Phone,
   remedies: PrayingHands,
 } as const;
 
 /**
- * A plain bottom bar: four tabs, icon over label, saffron for the current one.
+ * A plain bottom bar: five tabs, icon over label, saffron for the current one.
  *
  * It sits in the layout rather than floating over it, so nothing is ever
  * hidden behind it and no screen has to reserve space for it.
