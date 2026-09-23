@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Card, PageHeader, Reveal, Screen, ServiceIcon, Tag, Tappable } from '@/components';
+import { t } from '@/config/strings';
 import {
   SERVICES, SERVICE_GROUPS, searchServices, servicesInGroup, type Service,
 } from '@/data/services';
@@ -55,12 +56,15 @@ export default function ServicesScreen() {
             <Text style={styles.itemNp}>{service.np}</Text>
           </View>
           <Text style={styles.itemTagline}>{service.tagline}</Text>
-          {blocked ? (
+          {blocked || service.badge ? (
             <View style={styles.tagRow}>
-              <Tag
-                label={service.needsTime && !hasTime ? 'Needs birth time' : 'Needs birth date'}
-                tone="neutral"
-              />
+              {service.badge ? <Tag label={service.badge} tone="accent" /> : null}
+              {blocked ? (
+                <Tag
+                  label={service.needsTime && !hasTime ? 'Needs birth time' : 'Needs birth date'}
+                  tone="neutral"
+                />
+              ) : null}
             </View>
           ) : null}
         </View>
@@ -71,11 +75,11 @@ export default function ServicesScreen() {
   return (
     <Screen background={colors.white}>
       <PageHeader
-        title="Services"
+        title={t('services.title')}
         subtitle={
           chart
             ? `Read for ${chart.rashi.vedic} moon, ${chart.nakshatra.name}`
-            : 'Twenty readings, computed on your phone'
+            : t('services.subtitle')
         }
       />
 
@@ -89,7 +93,7 @@ export default function ServicesScreen() {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Search — rashifal, sait, china, milan…"
+            placeholder={t('services.search')}
             placeholderTextColor={colors.subtle}
             style={styles.searchInput}
             returnKeyType="search"
@@ -117,8 +121,7 @@ export default function ServicesScreen() {
         )}
 
         <Text style={styles.footnote}>
-          Every reading here is computed on this phone from the positions of the grahas,
-          not fetched from a server — so they work with no signal. {SERVICES.length} services.
+          {t('services.footnote')} {SERVICES.length} services.
         </Text>
       </ScrollView>
     </Screen>
@@ -172,7 +175,7 @@ const styles = StyleSheet.create({
   itemName: { ...type.label, color: colors.ink },
   itemNp: { ...type.caption, color: colors.subtle },
   itemTagline: { ...type.small, color: colors.muted },
-  tagRow: { marginTop: space.xs },
+  tagRow: { marginTop: space.xs, flexDirection: 'row', flexWrap: 'wrap', gap: space.xs },
   footnote: {
     ...type.small,
     color: colors.subtle,

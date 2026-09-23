@@ -3,38 +3,40 @@ import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar, NavHeader, Screen, Tappable } from '@/components';
+import { useOpenLink } from '@/components/CustomPageView';
+import { AppIcon } from '@/config/icons';
+import { useShownConfig } from '@/config/store';
+import { t } from '@/config/strings';
 import { profileGroups } from '@/data/content';
-import {
-  Calendar,
-  ChevronRight,
-  Headphones,
-  KundliChart,
-  LogOut,
-  Lotus,
-  MatchRings,
-  MessageSquare,
-  Star,
-  Sunrise,
-} from '@/icons';
+import { ChevronRight, LogOut } from '@/icons';
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
-const ROW_ICONS = {
-  message: MessageSquare,
-  headphones: Headphones,
-  lotus: Lotus,
-  calendar: Calendar,
-  kundli: KundliChart,
-  star: Star,
-  rings: MatchRings,
-  sunrise: Sunrise,
-} as const;
+type Row = { id: string; label: string; icon: string; href: string };
 
 /** Profile & settings: who the app thinks you are, and where to change it. */
 export default function ProfileScreen() {
   const router = useRouter();
   const { profile, hydrated, reset } = useOnboarding();
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const { branding } = useShownConfig();
+  const openLink = useOpenLink();
+
+  // "Help and support" is built from whatever contact details the dashboard
+  // filled in; a group with nothing in it is not shown.
+  const support: Row[] = [
+    branding.supportEmail.trim() && { id: 'email', label: branding.supportEmail.trim(), icon: 'message', href: `mailto:${branding.supportEmail.trim()}` },
+    branding.supportPhone.trim() && { id: 'phone', label: branding.supportPhone.trim(), icon: 'phone', href: `tel:${branding.supportPhone.replace(/s+/g, '')}` },
+    branding.website.trim() && { id: 'web', label: 'Website', icon: 'arrow', href: branding.website.trim() },
+    ...(['facebook', 'instagram', 'youtube', 'tiktok', 'x'] as const)
+      .filter((key) => branding.socials[key].trim())
+      .map((key) => ({ id: key, label: key === 'x' ? 'X' : key[0].toUpperCase() + key.slice(1), icon: 'arrow', href: branding.socials[key].trim() })),
+  ].filter(Boolean) as Row[];
+
+  const groups = [
+    ...profileGroups,
+    ...(support.length ? [{ title: t('profile.support'), items: support }] : []),
+  ];
 
   // Reached with nobody signed in — a browser back after logging out, say.
   // Only once storage has been read, or a reload would bounce a real profile.
@@ -64,7 +66,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen background={colors.white}>
-      <NavHeader title="Profile" bordered />
+      <NavHeader title={t('profile.title')} bordered />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.identity}>
@@ -79,26 +81,24 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {profileGroups.map((group) => (
+        {groups.map((group) => (
           <View key={group.title} style={styles.group}>
             <Text style={styles.groupTitle}>{group.title}</Text>
 
             <View style={styles.groupCard}>
               {group.items.map((item, index) => {
-                const Icon = ROW_ICONS[item.icon as keyof typeof ROW_ICONS];
-
                 return (
                   <Tappable
                     feel="card"
                     key={item.id}
                     accessibilityRole="button"
                     accessibilityLabel={item.label}
-                    onPress={() => router.push(item.href as Href)}
+                    onPress={() => openLink(item.href)}
                     style={[styles.row, index > 0 && styles.rowDivider]}
                     hoveredStyle={styles.rowPressed}
                     pressedStyle={styles.rowPressed}
                   >
-                    <Icon size={20} color={colors.saffronDeep} />
+                    <AppIcon name={item.icon} size={20} color={colors.saffronDeep} />
                     <Text style={styles.rowLabel} numberOfLines={1}>
                       {item.label}
                     </Text>
@@ -117,24 +117,40 @@ export default function ProfileScreen() {
             <Tappable
               feel="card"
               accessibilityRole="button"
+              accessibilityLabel="Admin dashboard"
+              onPress={() => router.push('/admin' as Href)}
+              style={styles.row}
+              hoveredStyle={styles.rowPressed}
+              pressedStyle={styles.rowPressed}
+            >
+              <AppIcon name="shield" size={20} color={colors.saffronDeep} />
+              <Text style={styles.rowLabel} numberOfLines={1}>
+                Admin dashboard
+              </Text>
+              <ChevronRight size={18} color={colors.subtle} />
+            </Tappable>
+            <Tappable
+              feel="card"
+              accessibilityRole="button"
               accessibilityLabel="Log out"
               onPress={() => setConfirmLogout(true)}
-              style={styles.row}
+              style={[styles.row, styles.rowDivider]}
               hoveredStyle={styles.rowPressed}
               pressedStyle={styles.rowPressed}
             >
               <LogOut size={20} color={colors.red} />
               <Text style={[styles.rowLabel, styles.logoutLabel]} numberOfLines={1}>
-                Log out
+                {t('profile.logout')}
               </Text>
             </Tappable>
           </View>
 
-          <Text style={styles.groupNote}>
-            Logging out clears the saved details on this device, so the next person
-            starts from the first question.
-          </Text>
+          <Text style={styles.groupNote}>{t('profile.logoutNote')}</Text>
         </View>
+
+        <Text style={styles.footer}>
+          {branding.footer.trim() || `${branding.appName} · ${branding.tagline}`}
+        </Text>
       </ScrollView>
 
       <Modal
@@ -206,6 +222,11 @@ const styles = StyleSheet.create({
   groupTitle: {
     ...type.caption,
     color: colors.muted,
+  },
+  footer: {
+    ...type.caption,
+    color: colors.subtle,
+    textAlign: 'center',
   },
   groupNote: {
     ...type.caption,

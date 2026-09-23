@@ -1,6 +1,5 @@
-import { scenes } from './images';
+import { scenes, type Scene } from './images';
 
-/** The four shortcuts under the home search field. */
 /**
  * The four shortcuts under the search field.
  *
@@ -8,22 +7,31 @@ import { scenes } from './images';
  * the patro everyone checks a date against, the sait before anything is
  * begun, and the chart itself. Everything else lives one tap away on the
  * Services tab.
+ *
+ * The lists in this file are the shipped defaults. The admin dashboard can
+ * publish its own, which `src/config/apply.ts` writes into these same arrays.
  */
-export const quickCategories = [
-  { id: 'daily-horoscope', label: 'Rashifal', icon: 'star' },
-  { id: 'patro', label: 'Patro', icon: 'grid' },
-  { id: 'sait', label: 'Shubha Sait', icon: 'clock' },
-  { id: 'free-kundli', label: 'Kundli', icon: 'kundli' },
-] as const;
+export type QuickCategory = {
+  id: string;
+  label: string;
+  /** A name from `src/config/icons.tsx`. */
+  icon: string;
+  href: string;
+};
 
-export type QuickCategory = (typeof quickCategories)[number];
+export const quickCategories: QuickCategory[] = [
+  { id: 'daily-horoscope', label: 'Rashifal', icon: 'star', href: '/horoscope' },
+  { id: 'patro', label: 'Patro', icon: 'grid', href: '/patro' },
+  { id: 'sait', label: 'Shubha Sait', icon: 'clock', href: '/muhurta' },
+  { id: 'free-kundli', label: 'Kundli', icon: 'kundli', href: '/kundli' },
+];
 
 /** Filter chips on both astrologer directories. */
-export const directoryFilters = [
+export const directoryFilters: { id: string; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'tarot', label: 'Tarot' },
   { id: 'palmistry', label: 'Palmistry' },
-] as const;
+];
 
 /** The languages grid on the last onboarding step. */
 export const languageOptions = [
@@ -41,8 +49,18 @@ export const languageOptions = [
   'Nepali',
 ];
 
+export type RemedyService = {
+  id: string;
+  title: string;
+  description: string;
+  image: Scene;
+  price: number;
+  lead: string;
+  includes: string[];
+};
+
 /** The remedies the app can arrange, one card each. */
-export const remedyServices = [
+export const remedyServices: RemedyService[] = [
   {
     id: 'pooja',
     title: 'Book a Pooja',
@@ -101,15 +119,18 @@ export const remedyServices = [
   },
 ];
 
-export type RemedyService = (typeof remedyServices)[number];
-
 /** Find one remedy by the id a route carries. */
 export function findRemedy(id: string): RemedyService | undefined {
   return remedyServices.find((service) => service.id === id);
 }
 
+export type ProfileGroup = {
+  title: string;
+  items: { id: string; label: string; icon: string; href: string }[];
+};
+
 /** Grouped rows on Profile & Settings. Every row goes somewhere. */
-export const profileGroups = [
+export const profileGroups: ProfileGroup[] = [
   {
     title: 'Consult',
     items: [
@@ -136,7 +157,7 @@ export const profileGroups = [
       { id: 'alerts', label: 'Prediction alerts', icon: 'sunrise', href: '/notifications' },
     ],
   },
-] as const;
+];
 
 /** Tap-to-send prompts above the chat composer. */
 export const quickPrompts = [

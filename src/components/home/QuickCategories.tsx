@@ -1,36 +1,30 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { quickCategories } from '@/data/content';
-import { Clock, Grid, KundliChart, Star } from '@/icons';
+import { AppIcon } from '@/config/icons';
+import { quickCategories, type QuickCategory } from '@/data/content';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 import { Tappable } from '../Tappable';
 
-const ICONS = {
-  star: Star,
-  grid: Grid,
-  clock: Clock,
-  kundli: KundliChart,
-} as const;
-
-/** Four shortcuts under the search field — the things people open first. */
-export function QuickCategories({ onSelect }: { onSelect?: (id: string) => void }) {
+/**
+ * The shortcuts under the search field — the things people open first.
+ * Which ones, their icons and where they go are set in the dashboard.
+ */
+export function QuickCategories({ onSelect }: { onSelect?: (category: QuickCategory) => void }) {
   return (
     <View style={styles.row}>
       {quickCategories.map((category) => {
-        const Icon = ICONS[category.icon];
-
         return (
           <Tappable
             key={category.id}
             accessibilityRole="button"
             accessibilityLabel={category.label}
-            onPress={() => onSelect?.(category.id)}
+            onPress={() => onSelect?.(category)}
             style={styles.item}
             pressedStyle={styles.pressed}
           >
             <View style={styles.tile}>
-              <Icon size={26} color={colors.saffronDeep} strokeWidth={1.8} />
+              <AppIcon name={category.icon} size={26} color={colors.saffronDeep} strokeWidth={1.8} />
             </View>
             <Text style={styles.label} numberOfLines={1}>
               {category.label}

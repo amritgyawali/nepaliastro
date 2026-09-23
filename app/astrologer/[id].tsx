@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { formatMoney } from '@/config/format';
 import { Avatar, NavHeader, PrimaryButton, Screen, VerifiedBadge } from '@/components';
 import { findAstrologer } from '@/data/astrologers';
 import { Star } from '@/icons';
@@ -85,7 +86,7 @@ export default function AstrologerScreen() {
           <View>
             <Text style={styles.rateLabel}>Consultation</Text>
             <Text style={styles.rate}>
-              {free ? 'Free, for as long as you like' : `USD ${rate.toFixed(2)} per minute`}
+              {free ? 'Free, for as long as you like' : `${formatMoney(rate)} per minute`}
             </Text>
           </View>
           <Text style={[styles.status, astrologer.online && styles.statusOnline]}>
@@ -119,7 +120,7 @@ export default function AstrologerScreen() {
 
         <View style={styles.actions}>
           <PrimaryButton
-            label={free ? 'Chat free' : `Chat · USD ${rate.toFixed(2)}/min`}
+            label={free ? 'Chat free' : `Chat · ${formatMoney(rate, undefined, { perMinute: true })}`}
             onPress={() => router.push(`/chat/${astrologer.id}`)}
           />
           {/* Baba answers in writing only — there is no voice to call. */}

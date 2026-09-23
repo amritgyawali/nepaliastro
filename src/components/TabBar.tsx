@@ -12,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AppIcon } from '@/config/icons';
+import { useShownConfig } from '@/config/store';
 import { ChatDots, Home, Phone, PrayingHands, Sparkle } from '@/icons';
 import { SCREEN_MAX_WIDTH, TAB_BAR_HEIGHT, colors, font, motion, radius, space, type } from '@/theme';
 
@@ -33,16 +35,26 @@ const TAB_ICONS = {
  */
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { tabs } = useShownConfig().navigation;
 
   return (
     <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, space.sm) }]}>
       <View style={styles.row}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
+          // A tab the dashboard hid keeps its route, so links to it still
+          // work, but gets no button in the bar.
+          const tab = tabs.find((candidate) => candidate.id === route.name);
+          if (tab && !tab.visible) return null;
           const label = options.title ?? route.name;
           const focused = state.index === index;
-          const Icon = TAB_ICONS[route.name as keyof typeof TAB_ICONS] ?? Home;
+          const fallback = TAB_ICONS[route.name as keyof typeof TAB_ICONS] ?? Home;
           const tint = focused ? colors.saffronDeep : colors.muted;
+          const icon = tab ? (
+            <AppIcon name={tab.icon} size={24} color={tint} filled={focused} />
+          ) : (
+            React.createElement(fallback, { size: 24, color: tint, filled: focused })
+          );
 
           const onPress = () => {
             const event = navigation.emit({
@@ -68,9 +80,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
             >
               <TabMark focused={focused} />
-              <TabIcon focused={focused}>
-                <Icon size={24} color={tint} filled={focused} />
-              </TabIcon>
+              <TabIcon focused={focused}>{icon}</TabIcon>
               <Text style={[styles.label, { color: tint }, focused && styles.labelActive]}>
                 {label}
               </Text>

@@ -1,7 +1,8 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { screenTitleFor } from '@/config/screens';
 import { ChevronLeft } from '@/icons';
 import { GUTTER, TOUCH_SIZE, colors, type } from '@/theme';
 import { Tappable } from './Tappable';
@@ -22,6 +23,8 @@ type NavHeaderProps = {
  */
 export function NavHeader({ title, right, bordered = false, onBack }: NavHeaderProps) {
   const router = useRouter();
+  // The dashboard can rename any screen; its heading wins over the screen's own.
+  const heading = screenTitleFor(usePathname(), title);
 
   const handleBack = () => {
     if (onBack) return onBack();
@@ -44,7 +47,7 @@ export function NavHeader({ title, right, bordered = false, onBack }: NavHeaderP
       </Tappable>
 
       <Text style={styles.title} numberOfLines={1}>
-        {title}
+        {heading}
       </Text>
 
       <View style={styles.right}>{right}</View>

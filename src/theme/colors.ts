@@ -48,6 +48,10 @@ export const colors = {
   shadow: '#000000',
   overlay: 'rgba(24,20,15,0.45)',
   transparent: 'transparent',
-} as const;
+};
+
+// Deliberately not `as const`: these are the defaults, and the admin
+// dashboard's theme is written over them in place (`src/config/apply.ts`), so
+// every `colors.x` read at render time gets the published value.
 
 export type ColorToken = keyof typeof colors;

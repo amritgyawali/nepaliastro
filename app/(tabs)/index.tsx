@@ -13,12 +13,17 @@ import {
   SearchResults,
   TodayPanchang,
 } from '@/components';
+import { useOpenLink } from '@/components/CustomPageView';
+import { HomeBanners, NoticeBar } from '@/components/home/HomeBanners';
+import type { HomeSectionId } from '@/config/schema';
+import { useShownConfig } from '@/config/store';
 import {
   callAstrologers,
   chatAstrologers,
   featuredAstrologers,
   type Astrologer,
 } from '@/data/astrologers';
+import { quickCategories } from '@/data/content';
 import {
   chartFor, formatShortDay, greetingFor, panchangFor, placeOf, rashifalFor,
 } from '@/lib/jyotish';
@@ -34,6 +39,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { profile } = useOnboarding();
   const { current: prediction, upcoming } = usePredictions();
+  const { home, features } = useShownConfig();
 
   const scrollRef = useRef<ScrollView>(null);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -130,24 +136,69 @@ export default function HomeScreen() {
   const openAstrologer = (astrologer: Astrologer) =>
     router.push(`/astrologer/${astrologer.id}`);
 
-  const openCategory = (id: string) => {
+  const openLink = useOpenLink();
+
+  /* ---------------------------------------------------------------- *
+   * Sections, in the order the dashboard sets. Each is built only if it
+   * is switched on, and the stagger follows what is actually on screen.
+   * ---------------------------------------------------------------- */
+
+  const sectionFor = (id: HomeSectionId, title: string): React.ReactNode => {
     switch (id) {
-      case 'daily-horoscope':
-        router.push('/horoscope');
-        break;
-      case 'patro':
-        router.push('/patro');
-        break;
-      case 'sait':
-        router.push('/muhurta');
-        break;
-      case 'free-kundli':
-        router.push('/kundli');
-        break;
-      default:
-        router.push('/(tabs)/services');
+      case 'notice':
+        return <NoticeBar />;
+      case 'banners':
+        return <HomeBanners />;
+      case 'quick':
+        return quickCategories.length ? <QuickCategories onSelect={(category) => openLink(category.href)} /> : null;
+      case 'nextReading':
+        return prediction ? (
+          <View style={styles.reading}>
+            <NextReadingCard
+              reading={prediction}
+              next={upcoming[0]}
+              now={now}
+              onOpen={() => router.push(`/prediction/${prediction.id}`)}
+              onSeeAll={() => router.push('/predictions')}
+            />
+          </View>
+        ) : null;
+      case 'daily':
+        return (
+          <View style={styles.reading}>
+            <DailyInsightCard reading={reading} dateLabel={dateLabel} onOpen={() => router.push('/horoscope')} />
+          </View>
+        );
+      case 'availableNow':
+        return availableNow.length ? (
+          <AstrologerRail
+            title={title}
+            data={availableNow}
+            onViewAll={() => router.push('/(tabs)/chat')}
+            onSelect={openAstrologer}
+            onAction={(astrologer) => router.push(`/chat/${astrologer.id}`)}
+          />
+        ) : null;
+      case 'panchang':
+        return <TodayPanchang panchang={panchang} dateLabel={dateLabel} onSeeAll={() => router.push('/panchang')} />;
+      case 'bookCall':
+        return callAstrologers.length ? (
+          <AstrologerRail
+            title={title}
+            data={callAstrologers}
+            mode="call"
+            onViewAll={() => router.push('/(tabs)/call')}
+            onSelect={openAstrologer}
+            onAction={(astrologer) => router.push(`/call/${astrologer.id}`)}
+          />
+        ) : null;
     }
   };
+
+  const sections = home.sections
+    .filter((section) => section.visible)
+    .map((section) => ({ id: section.id, node: sectionFor(section.id, section.title) }))
+    .filter((section) => section.node);
 
   return (
     <Screen background={colors.white}>
@@ -161,12 +212,14 @@ export default function HomeScreen() {
         // ones included, and there is no soft keyboard to dismiss there.
         keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.muted}
-            colors={[colors.saffron]}
-          />
+          features.pullToRefresh ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.muted}
+              colors={[colors.saffron]}
+            />
+          ) : undefined
         }
       >
         <HomeHeader
@@ -174,6 +227,8 @@ export default function HomeScreen() {
           contextLine={contextLine}
           query={query}
           onQueryChange={setQuery}
+          showSearch={home.showSearch}
+          searchPlaceholder={home.searchPlaceholder}
         />
 
         {searching ? (
@@ -186,56 +241,11 @@ export default function HomeScreen() {
           />
         ) : (
           <View>
-            <Reveal index={0}>
-              <QuickCategories onSelect={openCategory} />
-            </Reveal>
-
-            {prediction ? (
-              <Reveal index={1} style={styles.reading}>
-                <NextReadingCard
-                  reading={prediction}
-                  next={upcoming[0]}
-                  now={now}
-                  onOpen={() => router.push(`/prediction/${prediction.id}`)}
-                  onSeeAll={() => router.push('/predictions')}
-                />
+            {sections.map((section, index) => (
+              <Reveal key={section.id} index={index}>
+                {section.node}
               </Reveal>
-            ) : null}
-
-            <Reveal index={2} style={styles.reading}>
-              <DailyInsightCard
-                reading={reading}
-                dateLabel={dateLabel}
-                onOpen={() => router.push('/horoscope')}
-              />
-            </Reveal>
-
-            <Reveal index={3}>
-              <AstrologerRail
-                title="Available now"
-                data={availableNow}
-                onViewAll={() => router.push('/(tabs)/chat')}
-                onSelect={openAstrologer}
-                onAction={(astrologer) => router.push(`/chat/${astrologer.id}`)}
-              />
-            </Reveal>
-
-            <Reveal index={4}>
-              <TodayPanchang
-                panchang={panchang}
-                dateLabel={dateLabel}
-                onSeeAll={() => router.push('/panchang')}
-              />
-            </Reveal>
-
-            <AstrologerRail
-              title="Book a call"
-              data={callAstrologers}
-              mode="call"
-              onViewAll={() => router.push('/(tabs)/call')}
-              onSelect={openAstrologer}
-              onAction={(astrologer) => router.push(`/call/${astrologer.id}`)}
-            />
+            ))}
           </View>
         )}
       </ScrollView>

@@ -12,6 +12,7 @@
  * published build, point `EXPO_PUBLIC_ASTRO_AI_URL` at your own endpoint that
  * holds the real key and forwards to Groq.
  */
+import { liveAi } from '@/config/live';
 
 /** Groq's endpoint, unless a proxy takes its place. */
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -58,7 +59,14 @@ type ChatOptions = {
   json?: boolean;
   /** A phone should not sit on a request for minutes. */
   timeoutMs?: number;
+  /** Overrides the model the dashboard published, for its own test console. */
+  model?: string;
 };
+
+/** The model the dashboard published, or the one this file names. */
+export function currentModel(): string {
+  return liveAi()?.model?.trim() || AI_MODEL;
+}
 
 type Completion = {
   choices?: { message?: { content?: string } }[];
@@ -69,7 +77,7 @@ type Completion = {
 export async function groqChat(
   apiKey: string,
   messages: GroqMessage[],
-  { maxTokens, temperature = 0.7, json = false, timeoutMs = 45_000 }: ChatOptions,
+  { maxTokens, temperature = 0.7, json = false, timeoutMs = 45_000, model }: ChatOptions,
 ): Promise<string> {
   if (!canUseAi(apiKey)) throw new AiError('No AI key is configured.');
 
@@ -90,7 +98,7 @@ export async function groqChat(
           Authorization: `Bearer ${apiKey.trim() || 'via-proxy'}`,
         },
         body: JSON.stringify({
-          model: AI_MODEL,
+          model: model ?? currentModel(),
           messages,
           max_completion_tokens: maxTokens,
           temperature,

@@ -1,7 +1,8 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { screenTitleFor } from '@/config/screens';
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, colors, space, type } from '@/theme';
 
@@ -20,11 +21,12 @@ type PageHeaderProps = {
 export function PageHeader({ title, subtitle }: PageHeaderProps) {
   const router = useRouter();
   const { profile } = useOnboarding();
+  const heading = screenTitleFor(usePathname(), title);
 
   return (
     <View style={styles.root}>
       <View style={styles.text}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{heading}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
 

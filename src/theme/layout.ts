@@ -12,7 +12,12 @@ export const TAB_BAR_HEIGHT = 58;
 /** Minimum comfortable target for anything tappable. */
 export const TOUCH_SIZE = 44;
 
-/** One spacing scale. Multiples of four, four steps, no in-between values. */
+/**
+ * One spacing scale. Multiples of four, four steps, no in-between values.
+ *
+ * Not `as const`: the admin dashboard can publish a different scale, which
+ * `src/config/apply.ts` writes into this same object while the app runs.
+ */
 export const space = {
   xs: 4,
   sm: 8,
@@ -20,14 +25,14 @@ export const space = {
   lg: 16,
   xl: 24,
   xxl: 32,
-} as const;
+};
 
 export const radius = {
   sm: 8,
   md: 12,
   lg: 16,
   pill: 999,
-} as const;
+};
 
 /**
  * Cross-platform elevation.

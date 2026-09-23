@@ -1,8 +1,12 @@
+import { usePathname } from 'expo-router';
 import React from 'react';
 import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
+import { screenRuleFor } from '@/config/screens';
 import { SCREEN_MAX_WIDTH, colors } from '@/theme';
+
+import { ScreenUnavailable } from './ScreenUnavailable';
 
 type ScreenProps = {
   children: React.ReactNode;
@@ -25,13 +29,19 @@ export function Screen({
   edges = ['top'],
   style,
 }: ScreenProps) {
+  // A screen the dashboard has switched off shows its message instead. Every
+  // route renders inside Screen, so this one check covers all of them.
+  const pathname = usePathname();
+  const rule = screenRuleFor(pathname);
+  const off = rule && !rule.enabled;
+
   return (
     <View style={[styles.page, { backgroundColor: background }]}>
       <SafeAreaView
         edges={edges}
         style={[styles.canvas, { backgroundColor: background }, style]}
       >
-        {children}
+        {off ? <ScreenUnavailable title={rule.title} message={rule.message} /> : children}
       </SafeAreaView>
     </View>
   );

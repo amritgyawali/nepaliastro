@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/config/icons';
 import type { ServiceIcon as ServiceIconId } from '@/data/services';
 import {
   Baby, Calendar, Clock, Compass, DashaWheel, Gem, Grid, KundliChart, Lotus,
@@ -32,6 +33,9 @@ const ICONS: Record<ServiceIconId, React.ComponentType<IconProps>> = {
 
 /** Resolves a service's icon id to its component. */
 export function ServiceIcon({ name, ...props }: IconProps & { name: ServiceIconId }) {
-  const Icon = ICONS[name] ?? Star;
+  const Icon = ICONS[name];
+  // The dashboard can give a service any icon in the app's set, not only
+  // the twenty service ones.
+  if (!Icon) return <AppIcon name={name} {...props} />;
   return <Icon {...props} />;
 }

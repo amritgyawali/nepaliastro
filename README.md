@@ -122,6 +122,8 @@ done
 | `/prediction/[id]` | One reading in full — where a tapped notification lands, with an astrologer at the bottom |
 | `/notifications` | Prediction alerts: the cadence, the AI key, and a test notification |
 | `/profile` | Your details and the way back into each part of the app |
+| `/page/[slug]` | A page built in the admin dashboard |
+| `/admin/*` | The admin dashboard — see below |
 
 ## Design
 
@@ -260,3 +262,92 @@ The five-hourly readings, the alert settings and the Groq key live in
 `src/store/predictions.tsx`, persisted under a signature of the birth details
 they were written from — change a birth time, or log out, and the old readings
 are dropped rather than shown to the next person.
+
+## The admin dashboard
+
+`/admin` is a control room for the whole app. Open it from **Profile → Admin
+dashboard**, or go to `/admin` directly. On a computer it has a sidebar; on a
+tablet an icon rail; on a phone a top bar, a drawer and a bottom dock. Press
+`Ctrl K` (or the search icon) to find any of its 130-odd tools by what they do.
+
+The first person to open it creates the **owner** account. After that only
+someone signed in can add anyone else.
+
+### What it changes
+
+| Section | What it covers |
+| --- | --- |
+| Branding | Name, tagline, logo upload, monogram and shape, contact details, social links, currency and price format, footer |
+| Colours | Brand colour with its shades worked out, ten presets (two dark), every colour token, a WCAG contrast check with one-tap fixes, colour ideas, palette copy and paste, a live phone preview |
+| Type and layout | Text size, the eight type steps, weights, spacing density and steps, corner radius, screen edges, width on tablets and computers, tab bar height, touch target size |
+| Home and menus | Home section order, visibility and titles, the search bar, the shortcuts, the bottom tabs (order, names, icons, visibility), the first screen, the profile menu |
+| Screens and pages | Switch any screen off with a message in its place, rename screens, feature switches, and a page builder with thirteen block types and five templates |
+| Services, Astrologers, Remedies | Every record: add, edit, copy, delete, reorder, hide; badges, listings, availability, bulk price changes, AI Baba's card, directory filters, the free first minute |
+| Media | Upload pictures (scaled down and kept inside the config), replace any bundled photograph, swap a picture everywhere at once, find unused and broken pictures |
+| Text | Every rewritable line of screen text, find and replace across the app, chat suggestions, Baba's openers, languages, a check for missing text |
+| Announcements | Home banners with dates, a launch popup, a notice bar, maintenance mode, a test notification, a schedule view |
+| AI astrologer | Model, tone and length, extra instructions for Baba and for the readings, the device's key, and a console to try the draft settings |
+| Analytics | Screen views and app starts on this device, by day and by screen |
+| Publish | Review every changed field, preview the draft in the real app, publish with a note, schedule a publish, roll back to any of the last fifteen versions |
+| Team, Roles, Activity | Accounts, seven built-in roles plus your own, a permission matrix, and a log of every change and sign-in |
+| System | Sign-in rules, export and import, sync with a server, per-part and full reset, storage, device details, an engine check |
+
+### Draft, publish, roll back
+
+Nothing the dashboard edits reaches the app straight away. Every change goes
+into a **draft**; **Publish** makes the draft live, keeps the previous version
+for rollback, and redraws the app from the new config. The kundli in the top
+bar is the draft's state at a glance: each of its twelve houses stands for a
+part of the app and fills with saffron while that part has unpublished changes.
+
+A role can be allowed to edit without being allowed to publish, so an editor
+can prepare a change and an administrator can send it live.
+
+### How the app picks it up
+
+Everything the dashboard controls is one JSON document, `AppConfig`
+(`src/config/schema.ts`). `src/config/apply.ts` writes a published config into
+the same objects the screens already read — `colors`, `space`, `SERVICES`,
+`chatAstrologers`, `remedyServices` and the rest — and the root layout remounts
+the navigator so every screen draws again.
+
+Stylesheets are the one part that needed more. `StyleSheet.create` fixes its
+values when a file is first imported, so `babel/themed-styles.js` compiles
+every one in `app/` and `src/` (not the dashboard's own) into a stylesheet that
+rebuilds itself after a publish. The screens' source is unchanged. **After
+changing that plugin, restart Metro with `npx expo start -c`.**
+
+### What "on this device" means
+
+There is no server in this project, so accounts, the audit log, the draft and
+the live config are all kept in the device's storage, and the permission
+checks run in the app. That keeps a shared phone or a shop tablet honest; it is
+not the same as a server refusing a request, and someone with developer tools
+on the device can read or change what is stored. Passwords are stored as
+salted PBKDF2-SHA256 hashes, never as themselves.
+
+To run one app for many phones, give it somewhere to publish to:
+
+- In **System → Sync with a server**, set an address that accepts `PUT` (or
+  `POST`) of the config as JSON, with a token in the header you name —
+  your own endpoint, or a JSON store such as jsonbin.io.
+- Build the app with `EXPO_PUBLIC_CONFIG_URL` set to an address that returns
+  that JSON. Each phone reads it when it starts and takes it if its revision is
+  newer than its own.
+
+Team accounts, passwords and the Groq key are never part of the config, so
+they are never exported or synced.
+
+### Extending it
+
+- **A new line of editable text:** add the key and its default to
+  `src/config/strings.ts` and read it with `t('key')`. It appears in the Text
+  section on its own.
+- **A new screen:** add it to `APP_SCREENS` in `src/config/screens.ts` so it
+  can be switched off and renamed. It renders inside `<Screen>`, which does the
+  rest.
+- **A new setting:** add the field to `AppConfig`, give it a default in
+  `src/config/defaults.ts`, apply it in `apply.ts`, and give it a panel. Configs
+  saved before it existed are filled in with the default when they load.
+- **A new tool:** give its panel an `id` and list it in `src/admin/tools.ts`,
+  so search can find it and scroll to it.

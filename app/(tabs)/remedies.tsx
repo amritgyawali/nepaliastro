@@ -2,6 +2,8 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { formatPrice } from '@/config/format';
+import { t } from '@/config/strings';
 import { PageHeader, Photo, Reveal, Screen, Tappable } from '@/components';
 import { remedyServices } from '@/data/content';
 import { ArrowRight } from '@/icons';
@@ -21,8 +23,8 @@ export default function RemediesScreen() {
     <Screen background={colors.white}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <PageHeader
-          title="Remedies"
-          subtitle="Poojas, gemstones and healing sessions"
+          title={t('remedies.title')}
+          subtitle={t('remedies.subtitle')}
         />
 
         <View style={styles.list}>
@@ -41,11 +43,11 @@ export default function RemediesScreen() {
                 <View style={styles.cardText}>
                   <View style={styles.titleRow}>
                     <Text style={styles.cardTitle}>{service.title}</Text>
-                    <Text style={styles.price}>from USD {service.price}</Text>
+                    <Text style={styles.price}>from {formatPrice(service.price)}</Text>
                   </View>
                   <Text style={styles.cardBody}>{service.description}</Text>
                   <View style={styles.cue}>
-                    <Text style={styles.cueLabel}>See what it includes</Text>
+                    <Text style={styles.cueLabel}>{t('remedies.cue')}</Text>
                     <ArrowRight size={14} color={colors.saffronDeep} strokeWidth={2.2} />
                   </View>
                 </View>

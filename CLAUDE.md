@@ -100,3 +100,18 @@ alongside when the term isn't obvious. No exclamation marks, no hype, no emoji.
 2. Run it (`npm run web`) and look at the screen at phone width and on desktop.
 3. Check the table in §1 again. If anything you added is in the left column, remove it.
 4. New colour, type, spacing or motion values go into `src/theme/`, not into a screen.
+
+## 7. The admin dashboard is the one exception to §2
+
+Everything under `src/admin/` and `app/admin/` is the tool that edits the app's
+tokens, so it cannot be drawn with them: a team member trying a dark palette or
+a tiny type scale still needs a dashboard they can read. It has its own fixed
+tokens in `src/admin/ui/theme.ts` (the temple-red sidebar, brass, saffron for
+the thing to press) and its own kit in `src/admin/ui/`. Use those there, and
+only there. Every rule in §1, §4 and §5 still applies to it.
+
+The app's stylesheets follow the published theme because
+`babel/themed-styles.js` rebuilds every `StyleSheet.create` in `app/` and
+`src/` after a publish. Keep screens reading `colors`, `type`, `space`,
+`radius` and `GUTTER` from `@/theme` and they will keep following it. After
+changing the plugin, restart Metro with `npx expo start -c`.

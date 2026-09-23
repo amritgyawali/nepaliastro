@@ -12,6 +12,7 @@ import {
   WheelColumn,
   WheelPicker,
 } from '@/components';
+import { useShownConfig } from '@/config/store';
 import { topNearbyAstrologer } from '@/data/astrologers';
 import { Check } from '@/icons';
 import { useOnboarding } from '@/store/onboarding';
@@ -27,6 +28,7 @@ export default function BirthTimeStep() {
   // Birth date and time are all the chart needs, so the free-minute offer is
   // raised here rather than at the end of the questionnaire.
   const [offerVisible, setOfferVisible] = useState(false);
+  const offerOn = useShownConfig().astrologers.freeMinute.enabled;
 
   /** Claim — straight into the live chat, where the free minute starts. */
   const claimOffer = () => {
@@ -115,7 +117,13 @@ export default function BirthTimeStep() {
 
         <View style={styles.spacer} />
 
-        <PrimaryButton label="Continue" arrow onPress={() => setOfferVisible(true)} />
+        <PrimaryButton
+          label="Continue"
+          arrow
+          // With the offer switched off in the dashboard, or nobody to offer
+          // it with, Continue simply finishes onboarding.
+          onPress={() => (offerOn && topNearbyAstrologer.id ? setOfferVisible(true) : declineOffer())}
+        />
       </View>
 
       <FreeMinuteOffer
