@@ -21,6 +21,8 @@ export type Service = {
   needsBirth?: boolean;
   /** Needs the birth time too, which not everyone has. */
   needsTime?: boolean;
+  /** A short word on the card — "New", "Popular" — set in the dashboard. */
+  badge?: string;
 };
 
 export type ServiceIcon =

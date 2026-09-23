@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { formatMoney } from '@/config/format';
 import { Avatar, PrimaryButton, Screen, Tappable } from '@/components';
 import { findAstrologer } from '@/data/astrologers';
 import { Phone } from '@/icons';
@@ -65,7 +66,7 @@ export default function CallScreen() {
         <View style={styles.summary}>
           <Text style={styles.summaryTitle}>Call ended</Text>
           <Text style={styles.summaryBody}>
-            {formatElapsed(elapsed)} with {astrologer.name}, at USD {rate.toFixed(2)} a
+            {formatElapsed(elapsed)} with {astrologer.name}, at {formatMoney(rate)} a
             minute.
           </Text>
 
@@ -76,7 +77,7 @@ export default function CallScreen() {
             </View>
             <View style={[styles.summaryRow, styles.summaryDivider]}>
               <Text style={styles.summaryLabel}>Charged</Text>
-              <Text style={styles.summaryValue}>USD {cost}</Text>
+              <Text style={styles.summaryValue}>{formatMoney(Number(cost))}</Text>
             </View>
           </View>
 
@@ -103,8 +104,8 @@ export default function CallScreen() {
           </Text>
           <Text style={styles.rate}>
             {state === 'ringing'
-              ? `USD ${rate.toFixed(2)} a minute once connected`
-              : `USD ${cost} so far`}
+              ? `${formatMoney(rate)} a minute once connected`
+              : `${formatMoney(Number(cost))} so far`}
           </Text>
         </View>
 

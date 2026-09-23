@@ -2,11 +2,13 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { useShownConfig } from '@/config/store';
 import { Close, Search } from '@/icons';
 import { useOnboarding } from '@/store/onboarding';
 import { GUTTER, TOUCH_SIZE, colors, radius, space, type } from '@/theme';
 
 import { Avatar } from '../Avatar';
+import { BrandMark } from '../BrandMark';
 import { Tappable } from '../Tappable';
 
 type HomeHeaderProps = {
@@ -17,6 +19,9 @@ type HomeHeaderProps = {
   query: string;
   onQueryChange: (value: string) => void;
   inputRef?: React.RefObject<TextInput | null>;
+  /** Set in the dashboard; on unless it says otherwise. */
+  showSearch?: boolean;
+  searchPlaceholder?: string;
 };
 
 /**
@@ -32,14 +37,18 @@ export function HomeHeader({
   query,
   onQueryChange,
   inputRef,
+  showSearch = true,
+  searchPlaceholder = 'Search astrologers',
 }: HomeHeaderProps) {
   const router = useRouter();
   const { profile } = useOnboarding();
+  const { branding } = useShownConfig();
   const hasQuery = query.length > 0;
 
   return (
     <View style={styles.root}>
       <View style={styles.bar}>
+        {branding.showLogoOnHome ? <BrandMark branding={branding} size={44} /> : null}
         <View style={styles.greetingBlock}>
           <Text style={styles.greeting} numberOfLines={1}>
             {greeting}
@@ -61,38 +70,40 @@ export function HomeHeader({
         </Tappable>
       </View>
 
-      <View style={styles.searchWrap}>
-        <View style={styles.searchIcon} pointerEvents="none">
-          <Search size={19} color={colors.subtle} strokeWidth={2} />
+      {showSearch ? (
+        <View style={styles.searchWrap}>
+          <View style={styles.searchIcon} pointerEvents="none">
+            <Search size={19} color={colors.subtle} strokeWidth={2} />
+          </View>
+
+          <TextInput
+            ref={inputRef}
+            value={query}
+            onChangeText={onQueryChange}
+            placeholder={searchPlaceholder}
+            placeholderTextColor={colors.subtle}
+            style={styles.searchInput}
+            returnKeyType="search"
+            autoCorrect={false}
+            autoCapitalize="none"
+            accessibilityLabel="Search astrologers by name, skill or language"
+          />
+
+          {hasQuery ? (
+            <Tappable
+              feel="icon"
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
+              onPress={() => onQueryChange('')}
+              hitSlop={12}
+              style={styles.clear}
+              pressedStyle={styles.pressed}
+            >
+              <Close size={13} color={colors.muted} strokeWidth={2.4} />
+            </Tappable>
+          ) : null}
         </View>
-
-        <TextInput
-          ref={inputRef}
-          value={query}
-          onChangeText={onQueryChange}
-          placeholder="Search astrologers"
-          placeholderTextColor={colors.subtle}
-          style={styles.searchInput}
-          returnKeyType="search"
-          autoCorrect={false}
-          autoCapitalize="none"
-          accessibilityLabel="Search astrologers by name, skill or language"
-        />
-
-        {hasQuery ? (
-          <Tappable
-            feel="icon"
-            accessibilityRole="button"
-            accessibilityLabel="Clear search"
-            onPress={() => onQueryChange('')}
-            hitSlop={12}
-            style={styles.clear}
-            pressedStyle={styles.pressed}
-          >
-            <Close size={13} color={colors.muted} strokeWidth={2.4} />
-          </Tappable>
-        ) : null}
-      </View>
+      ) : null}
     </View>
   );
 }

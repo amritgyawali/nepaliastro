@@ -1,6 +1,8 @@
 import React from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 
+import { formatMoney } from '@/config/format';
+import { t } from '@/config/strings';
 import { topNearbyAstrologer } from '@/data/astrologers';
 import { colors, radius, space, type } from '@/theme';
 
@@ -27,11 +29,8 @@ export function FreeMinuteOffer({ visible, onClaim, onCancel }: FreeMinuteOfferP
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.backdrop}>
         <View style={styles.card}>
-          <Text style={styles.title}>Your first minute is free</Text>
-          <Text style={styles.body}>
-            Your birth details are saved. Start with the highest-rated astrologer near
-            you — you are not charged until the minute is up.
-          </Text>
+          <Text style={styles.title}>{t('offer.title')}</Text>
+          <Text style={styles.body}>{t('offer.body')}</Text>
 
           <View style={styles.astrologer}>
             <Avatar uri={astrologer.photo} name={astrologer.name} size={48} />
@@ -43,12 +42,12 @@ export function FreeMinuteOffer({ visible, onClaim, onCancel }: FreeMinuteOfferP
                 {astrologer.skills} · {astrologer.city}
               </Text>
               <Text style={styles.meta} numberOfLines={1}>
-                USD {astrologer.rate.toFixed(2)}/min after the free minute
+                {formatMoney(astrologer.rate, undefined, { perMinute: true })} after the free minute
               </Text>
             </View>
           </View>
 
-          <PrimaryButton label="Start free chat" onPress={onClaim} style={styles.claim} />
+          <PrimaryButton label={t('offer.cta')} onPress={onClaim} style={styles.claim} />
 
           <Tappable
             accessibilityRole="button"
@@ -57,7 +56,7 @@ export function FreeMinuteOffer({ visible, onClaim, onCancel }: FreeMinuteOfferP
             style={styles.skip}
             pressedStyle={styles.pressed}
           >
-            <Text style={styles.skipLabel}>Maybe later</Text>
+            <Text style={styles.skipLabel}>{t('offer.skip')}</Text>
           </Tappable>
         </View>
       </View>

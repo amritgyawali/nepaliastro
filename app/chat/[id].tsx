@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 
 import { Avatar, Screen, Tappable, VerifiedBadge } from '@/components';
+import { ScreenUnavailable } from '@/components/ScreenUnavailable';
+import { formatMoney } from '@/config/format';
+import { useShownConfig } from '@/config/store';
 import { findAstrologer, ongoingSession } from '@/data/astrologers';
 import { astroReplies, babaPrompts, quickPrompts } from '@/data/content';
 import { ChevronLeft, DoubleCheck, Send } from '@/icons';
@@ -81,6 +84,13 @@ export default function ChatScreen() {
   const apiKey = settings.apiKey.trim() || BUILD_TIME_KEY;
   const aiConfigured = canUseAi(apiKey);
   const haveChart = chartReady(profile);
+  const aiCard = useShownConfig().astrologers.ai;
+
+  /** What this astrologer charges a minute, as the dashboard set it. */
+  const perMinute = useMemo(() => {
+    const found = findAstrologer(id ?? '');
+    return found ? found.discountedRate ?? found.rate : 0.49;
+  }, [id]);
 
   const astrologer = useMemo(() => {
     if (id === ongoingSession.id) {
@@ -280,6 +290,15 @@ export default function ChatScreen() {
     setPaid(true);
   };
 
+  // AI Baba switched off in the dashboard: an old link to his chat says so.
+  if (isAi && !aiCard.enabled) {
+    return (
+      <Screen background={colors.white}>
+        <ScreenUnavailable title={`${aiCard.name} is not available`} message="" />
+      </Screen>
+    );
+  }
+
   return (
     <Screen background={colors.white} edges={['top']}>
       {/* Header */}
@@ -353,7 +372,7 @@ export default function ChatScreen() {
           </Text>
         </View>
         <Text style={[styles.infoRate, (isAi || !paid) && styles.infoRateFree]}>
-          {isAi ? 'Free, unlimited' : paid ? 'USD 0.49/min' : 'First minute free'}
+          {isAi ? 'Free, unlimited' : paid ? formatMoney(perMinute, undefined, { perMinute: true }) : 'First minute free'}
         </Text>
       </View>
 
@@ -489,7 +508,7 @@ export default function ChatScreen() {
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Your free minute is over</Text>
             <Text style={styles.modalBody}>
-              Keep talking to {astrologer.name} at USD 0.49 a minute, or end here —
+              Keep talking to {astrologer.name} at {formatMoney(perMinute)} a minute, or end here —
               what you have discussed is already saved.
             </Text>
             <View style={styles.modalActions}>

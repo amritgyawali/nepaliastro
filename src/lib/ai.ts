@@ -12,6 +12,8 @@
  * chart the model is handed is built in `chart-brief.ts`, which the AI
  * Astrologer Baba chat shares.
  */
+import { liveAi } from '@/config/live';
+
 import { kundliBrief, whoBrief, type AiPerson } from './chart-brief';
 import { AiError, groqChat, parseJsonReply } from './groq';
 import { ordinal, predictionId, type PredictionFacts, type PredictionText } from './predictions';
@@ -92,10 +94,12 @@ export async function writeReadings(
 ): Promise<Map<string, PredictionText>> {
   if (!facts.length) return new Map();
 
+  const tuning = liveAi();
+  const notes = tuning?.readingNotes?.trim();
   const reply = await groqChat(
     apiKey,
     [
-      { role: 'system', content: SYSTEM },
+      { role: 'system', content: notes ? `${SYSTEM}\n\nAlso, from the people who run the app:\n${notes}` : SYSTEM },
       { role: 'user', content: brief(person, facts) },
     ],
     {
@@ -103,7 +107,7 @@ export async function writeReadings(
       // purpose: it is a bounded output, not a conversation.
       maxTokens: 4096,
       // Short, formulaic writing that still has to differ window to window.
-      temperature: 0.8,
+      temperature: tuning?.readingTemperature ?? 0.8,
       json: true,
     },
   );

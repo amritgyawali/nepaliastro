@@ -10,6 +10,7 @@
  * right now against that chart. Every answer is read from that one person's
  * chart, and he is told plainly not to invent a placement he was not given.
  */
+import { liveAi } from '@/config/live';
 import type { OnboardingProfile } from '@/store/onboarding';
 
 import { chartBriefFor, dashaLineFor, grahaName, type ChartBrief } from './chart-brief';
@@ -59,7 +60,10 @@ Write in the language named in the brief, unless the person writes to you in ano
 
 /** The whole system turn: who he is, plus who he is talking to. */
 function systemFor(brief: ChartBrief): string {
-  return `${PERSONA}
+  // Anything the dashboard added goes after the house rules, so it can add
+  // to them but reads as the smaller voice.
+  const notes = liveAi()?.personaNotes?.trim();
+  return `${PERSONA}${notes ? `\n\nAlso, from the people who run the app:\n${notes}` : ''}
 
 --- The person you are talking to ---
 
@@ -117,10 +121,11 @@ export async function askBaba(
     ...recent.map((turn) => ({ role: turn.role, content: turn.content }) as GroqMessage),
   ];
 
+  const tuning = liveAi();
   const reply = await groqChat(apiKey, messages, {
     // Two or three short paragraphs, with room for a long script like Nepali.
-    maxTokens: 900,
-    temperature: 0.75,
+    maxTokens: tuning?.chatMaxTokens || 900,
+    temperature: tuning?.chatTemperature ?? 0.75,
   });
 
   return reply.replace(/\n{3,}/g, '\n\n').trim();

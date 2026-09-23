@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { formatPrice } from '@/config/format';
 import { NavHeader, Photo, PrimaryButton, Screen } from '@/components';
 import { findRemedy } from '@/data/content';
 import { Check } from '@/icons';
@@ -42,7 +43,7 @@ export default function RemedyScreen() {
         <View style={styles.priceCard}>
           <View>
             <Text style={styles.priceLabel}>From</Text>
-            <Text style={styles.price}>USD {remedy.price}</Text>
+            <Text style={styles.price}>{formatPrice(remedy.price)}</Text>
           </View>
           <Text style={styles.lead} numberOfLines={2}>
             {remedy.lead}

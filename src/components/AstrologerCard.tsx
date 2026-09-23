@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { formatMoney } from '@/config/format';
 import type { Astrologer } from '@/data/astrologers';
 import { Star } from '@/icons';
 import { colors, radius, space, type } from '@/theme';
@@ -81,10 +82,10 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
 
       <View style={styles.side}>
         <Text style={[styles.price, free && styles.priceFree]}>
-          {free ? 'Free' : `USD ${rate.toFixed(2)}/min`}
+          {free ? 'Free' : formatMoney(rate, undefined, { perMinute: true })}
         </Text>
         {hasDiscount ? (
-          <Text style={styles.struck}>USD {astrologer.rate.toFixed(2)}</Text>
+          <Text style={styles.struck}>{formatMoney(astrologer.rate)}</Text>
         ) : null}
 
         <Tappable

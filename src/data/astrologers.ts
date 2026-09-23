@@ -2,7 +2,11 @@ import { AI_ASTROLOGER_ID, AI_ASTROLOGER_NAME } from '@/lib/baba';
 
 import { photos } from './images';
 
-export type Speciality = 'all' | 'tarot' | 'palmistry';
+/**
+ * A directory filter id. `all` always exists; the rest are whatever the
+ * admin dashboard lists under Directory filters (tarot and palmistry ship).
+ */
+export type Speciality = string;
 
 export type Astrologer = {
   id: string;

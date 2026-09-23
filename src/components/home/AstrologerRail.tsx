@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { formatMoney } from '@/config/format';
 import type { Astrologer } from '@/data/astrologers';
 import { GUTTER, colors, radius, space, type } from '@/theme';
 
@@ -81,7 +82,7 @@ function RailCard({ astrologer, mode, onSelect, onAction }: CardProps) {
     <View style={styles.card}>
       <Tappable
         accessibilityRole="button"
-        accessibilityLabel={`${astrologer.name}, ${astrologer.skills}, USD ${rate} per minute`}
+        accessibilityLabel={`${astrologer.name}, ${astrologer.skills}, ${formatMoney(rate)} per minute`}
         onPress={onSelect}
         feel="card"
         style={styles.cardBody}
@@ -103,7 +104,7 @@ function RailCard({ astrologer, mode, onSelect, onAction }: CardProps) {
           {astrologer.online ? 'Online now' : astrologer.waitTime ?? 'Busy'}
         </Text>
         <Text style={styles.price} numberOfLines={1}>
-          USD {rate}/min
+          {formatMoney(rate, undefined, { perMinute: true })}
         </Text>
       </Tappable>
 

@@ -2,6 +2,8 @@ import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useShownConfig } from '@/config/store';
+import { t } from '@/config/strings';
 import type { Astrologer, Speciality } from '@/data/astrologers';
 import { ongoingSession } from '@/data/astrologers';
 import { GUTTER, colors, space, type } from '@/theme';
@@ -18,8 +20,8 @@ type DirectoryScreenProps = {
 };
 
 const COPY = {
-  chat: { title: 'Chat', subtitle: 'Message an astrologer, minute by minute' },
-  call: { title: 'Call', subtitle: 'Speak to an astrologer, minute by minute' },
+  chat: { title: 'chat.title', subtitle: 'chat.subtitle' },
+  call: { title: 'call.title', subtitle: 'call.subtitle' },
 } as const;
 
 /**
@@ -29,6 +31,8 @@ const COPY = {
 export function DirectoryScreen({ mode, data }: DirectoryScreenProps) {
   const router = useRouter();
   const [filter, setFilter] = useState<Speciality>('all');
+  const { features, astrologers } = useShownConfig();
+  const showSession = features.sessionPill && astrologers.ongoing.visible;
 
   const visible = useMemo(
     () => (filter === 'all' ? data : data.filter((a) => a.specialities.includes(filter))),
@@ -50,13 +54,15 @@ export function DirectoryScreen({ mode, data }: DirectoryScreenProps) {
         contentContainerStyle={styles.content}
         style={styles.scroll}
       >
-        <PageHeader title={COPY[mode].title} subtitle={COPY[mode].subtitle} />
+        <PageHeader title={t(COPY[mode].title)} subtitle={t(COPY[mode].subtitle)} />
 
-        <View style={styles.session}>
-          <SessionPill onResume={() => router.push(`/chat/${ongoingSession.id}`)} />
-        </View>
+        {showSession ? (
+          <View style={styles.session}>
+            <SessionPill onResume={() => router.push(`/chat/${ongoingSession.id}`)} />
+          </View>
+        ) : null}
 
-        <FilterChips value={filter} onChange={setFilter} />
+        {features.directoryFilters ? <FilterChips value={filter} onChange={setFilter} /> : null}
 
         <View style={styles.list}>
           {visible.length === 0 ? (
