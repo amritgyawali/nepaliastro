@@ -172,25 +172,50 @@ export function Phone({ filled, ...props }: IconProps & { filled?: boolean }) {
   );
 }
 
-/** Namaste / folded prayer hands — the Remedies tab. */
-export function PrayingHands({ filled, ...props }: IconProps & { filled?: boolean }) {
+/**
+ * A diyo, the clay oil lamp lit at every puja and in every doorway at Tihar:
+ * a shallow bowl, the wick at its lip, and the flame.
+ */
+export function Diya({ filled, ...props }: IconProps & { filled?: boolean }) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
-  if (filled) {
-    return (
-      <Svg width={size} height={size} viewBox="0 0 24 24">
-        <Path
-          d="M12 2a1 1 0 0 0-1 1v7.5l-2.2-4.4a1 1 0 0 0-1.78.9l2.88 5.75A2 2 0 0 0 11.69 14H12v8h2v-8h.31a2 2 0 0 0 1.79-1.25l2.88-5.75a1 1 0 0 0-1.78-.9L15 10.5V3a1 1 0 0 0-1-1h-2z"
-          fill={color}
-        />
-      </Svg>
-    );
-  }
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 2.8c1.7 2.1 2.9 3.6 2.9 5.4a2.9 2.9 0 0 1-5.8 0c0-1.8 1.2-3.3 2.9-5.4z"
+        fill={filled ? color : 'none'}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M2.8 13.2h18.4c-.4 3.7-4.4 6.3-9.2 6.3s-8.8-2.6-9.2-6.3z"
+        fill={filled ? color : 'none'}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+      />
+      <Line x1="12" y1="11.1" x2="12" y2="13.2" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+      <Line x1="9" y1="21.5" x2="15" y2="21.5" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+/**
+ * The purna kalash: a water pot with mango leaves and a coconut in its
+ * mouth. Setting one up is Ghatasthapana, the first day of Dashain, and one
+ * stands at the start of every puja.
+ */
+export function Kalash(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-        <Path d="M12 4c-1.5 2-2 5-2 9v7h4v-7c0-4-.5-7-2-9z" />
-        <Path d="M7 11c-.5 1.5-1 3-1 6v3h3" />
-        <Path d="M17 11c.5 1.5 1 3 1 6v3h-3" />
+        <Circle cx="12" cy="7" r="2.7" />
+        <Path d="M9.3 9.9C7.6 10 5.7 9.1 4.6 7.4c1.9-.4 3.9.3 5.1 1.7" />
+        <Path d="M14.7 9.9c1.7.1 3.6-.8 4.7-2.5-1.9-.4-3.9.3-5.1 1.7" />
+        <Path d="M7.6 10.8h8.8" />
+        <Path d="M9.2 10.8v1.4C6.4 13.3 5 15.1 5 17.1 5 19.4 7.3 21 10.2 21h3.6c2.9 0 5.2-1.6 5.2-3.9 0-2-1.4-3.8-4.2-4.9v-1.4" />
+        <Path d="M5.6 16h12.8" />
       </G>
     </Svg>
   );
@@ -282,7 +307,6 @@ export function Sunrise(props: IconProps) {
   );
 }
 
-/** Sunset: the sunrise mark with the arrow pointing back down. */
 export function Close(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 2.2, ...props });
   return (
@@ -345,25 +369,28 @@ export function Gem(props: IconProps) {
       <Polyline points="7 9 12 21 17 9" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" fill="none" />
       <Line x1="6" y1="3" x2="10" y2="9" stroke={color} strokeWidth={strokeWidth} />
       <Line x1="18" y1="3" x2="14" y2="9" stroke={color} strokeWidth={strokeWidth} />
-      <Path d="M19 2l.5 1.5L21 4l-1.5.5L19 6l-.5-1.5L17 4l1.5-.5z" fill={color} />
-      <Path d="M4 1.5l.3 1 .9.3-.9.3-.3 1-.3-1-.9-.3.9-.3z" fill={color} />
     </Svg>
   );
 }
 
-/** Two interlinked rings — kundli matching. */
+/** Two linked rings, one set with a stone — kundli milan, matching for marriage. */
 export function MatchRings(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="8.5" cy="13.5" r="5" stroke={color} strokeWidth={strokeWidth} />
-      <Circle cx="15.5" cy="13.5" r="5" stroke={color} strokeWidth={strokeWidth} />
-      <Path d="M8.5 7L7.5 8.5H9.5L8.5 7Z" fill={color} />
+      <Circle cx="8.6" cy="14.6" r="5.6" stroke={color} strokeWidth={strokeWidth} />
+      <Circle cx="15.4" cy="14.6" r="5.6" stroke={color} strokeWidth={strokeWidth} />
+      <Polygon
+        points="8.6 4 10.6 6.4 8.6 9 6.6 6.4"
+        stroke={color}
+        strokeWidth={strokeWidth * 0.85}
+        strokeLinejoin="round"
+        fill="none"
+      />
     </Svg>
   );
 }
 
-/** Reader with an open book — astrology blog. */
 export function Check(props: IconProps) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 3, color: colors.white, ...props });
   return (
@@ -433,15 +460,16 @@ export function Headphones(props: IconProps) {
   );
 }
 
+/** A lotus: the centre petal upright, one open to each side, on the water line. */
 export function Lotus(props: IconProps) {
-  const { size, color, strokeWidth } = useStroke({ strokeWidth: 2, ...props });
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-        <Path d="M12 3c-1.5 3-4 6-4 9a4 4 0 0 0 8 0c0-3-2.5-6-4-9z" />
-        <Path d="M6 13a4.5 4.5 0 0 0 6 4.5" />
-        <Path d="M18 13a4.5 4.5 0 0 1-6 4.5" />
-        <Path d="M12 17.5V21" />
+        <Path d="M12 18.5c-2.3-1.4-3.6-3.7-3.6-6.3 0-2.4 1.3-4.8 3.6-7.2 2.3 2.4 3.6 4.8 3.6 7.2 0 2.6-1.3 4.9-3.6 6.3z" />
+        <Path d="M10.2 18.3C6.8 18.1 4.1 16 3.2 12.6c1.6-.4 3.3-.3 4.8.4" />
+        <Path d="M13.8 18.3c3.4-.2 6.1-2.3 7-5.7-1.6-.4-3.3-.3-4.8.4" />
+        <Path d="M4 21h16" />
       </G>
     </Svg>
   );
@@ -469,11 +497,6 @@ export function DoubleCheck({ size = 14, color = colors.green }: IconProps) {
     </Svg>
   );
 }
-
-/* ------------------------------------------------------------------ *
- * Remedies hero feature marks
- * ------------------------------------------------------------------ */
-
 
 /* ------------------------------------------------------------------ *
  * Services
@@ -618,12 +641,107 @@ export function Baby(props: IconProps) {
   );
 }
 
-export function Sparkle(props: IconProps) {
+/**
+ * Four tiles: "everything the app does". The Services tab; the filled form
+ * marks it as the current tab.
+ */
+export function Apps({ filled, ...props }: IconProps & { filled?: boolean }) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  const tile = { rx: 2, stroke: color, strokeWidth, fill: filled ? color : 'none' };
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="3.5" y="3.5" width="7" height="7" {...tile} />
+      <Rect x="13.5" y="3.5" width="7" height="7" {...tile} />
+      <Rect x="3.5" y="13.5" width="7" height="7" {...tile} />
+      <Rect x="13.5" y="13.5" width="7" height="7" {...tile} />
+    </Svg>
+  );
+}
+
+/**
+ * A crescent moon. Rashifal is read from the moon sign, not the sun sign, so
+ * this is the mark for it rather than a star.
+ */
+export function Moon({ filled, ...props }: IconProps & { filled?: boolean }) {
   const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2.5 13.9 9 20.5 11 13.9 13 12 19.5 10.1 13 3.5 11 10.1 9Z" stroke={color} strokeWidth={strokeWidth} strokeLinejoin="round" fill="none" />
-      <Path d="M18.5 16.5 19.3 19 21.5 19.8 19.3 20.6 18.5 23 17.7 20.6 15.5 19.8 17.7 19Z" stroke={color} strokeWidth={strokeWidth * 0.8} strokeLinejoin="round" fill="none" />
+      <Path
+        d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"
+        fill={filled ? color : 'none'}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** The lagna: a sign rising over the eastern horizon. */
+export function Ascendant(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M3 19h18" />
+        <Path d="M6 19a6 6 0 0 1 12 0" />
+        <Path d="M12 15V3.5M8.5 7 12 3.5 15.5 7" />
+      </G>
+    </Svg>
+  );
+}
+
+/** The sun inside a turning arrow: the year, counted from the solar return. */
+export function SolarYear(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M20.5 12a8.5 8.5 0 1 1-2.5-6" />
+        <Path d="M20.5 3v4.5H16" />
+        <Circle cx="12" cy="12" r="2.2" />
+        <Path d="M12 7.6v.6M12 15.8v.6M7.6 12h.6M15.8 12h.6M8.9 8.9l.4.4M14.7 14.7l.4.4M8.9 15.1l.4-.4M14.7 9.3l.4-.4" />
+      </G>
+    </Svg>
+  );
+}
+
+/** A bell: the prediction alerts. */
+export function Bell(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M6 9a6 6 0 0 1 12 0c0 6.2 2.5 8 2.5 8h-17S6 15.2 6 9z" />
+        <Path d="M10.2 20.5a2 2 0 0 0 3.6 0" />
+      </G>
+    </Svg>
+  );
+}
+
+/** A written page: one reading, in full. */
+export function Reading(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+        <Path d="M14 3v5h5" />
+        <Path d="M8.5 12.5h7M8.5 16.5h4.5" />
+      </G>
+    </Svg>
+  );
+}
+
+/** Head and shoulders: your own details. */
+export function User(props: IconProps) {
+  const { size, color, strokeWidth } = useStroke({ strokeWidth: 1.8, ...props });
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <G stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="8" r="4" />
+        <Path d="M4.5 20.5c1-3.6 3.9-5.5 7.5-5.5s6.5 1.9 7.5 5.5" />
+      </G>
     </Svg>
   );
 }

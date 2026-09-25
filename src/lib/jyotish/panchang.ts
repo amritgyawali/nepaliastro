@@ -141,6 +141,14 @@ export type Tithi = {
   phase: number;
 };
 
+/**
+ * Just the tithi's number, 1–30, the same way `tithiAt` counts it but
+ * without searching for when it ends — for scans that test hundreds of days.
+ */
+export function tithiIndexAt(at: Date): number {
+  return Math.floor(tithiAngle(at) / 12) + 1;
+}
+
 export function tithiAt(at: Date): Tithi {
   const angle = tithiAngle(at);
   const index = Math.floor(angle / 12) + 1;

@@ -1,41 +1,13 @@
 import React from 'react';
 
 import { AppIcon } from '@/config/icons';
-import type { ServiceIcon as ServiceIconId } from '@/data/services';
-import {
-  Baby, Calendar, Clock, Compass, DashaWheel, Gem, Grid, KundliChart, Lotus,
-  MatchRings, Numerals, Orbit, Palette, PrayingHands, QuestionMark, Shield,
-  Sparkle, Star, Sunrise, Swap, type IconProps,
-} from '@/icons';
+import type { IconProps } from '@/icons';
 
-const ICONS: Record<ServiceIconId, React.ComponentType<IconProps>> = {
-  sunrise: Sunrise,
-  grid: Grid,
-  swap: Swap,
-  star: Star,
-  kundli: KundliChart,
-  dasha: DashaWheel,
-  rings: MatchRings,
-  shield: Shield,
-  clock: Clock,
-  calendar: Calendar,
-  palette: Palette,
-  numerals: Numerals,
-  gem: Gem,
-  baby: Baby,
-  orbit: Orbit,
-  question: QuestionMark,
-  compass: Compass,
-  lotus: Lotus,
-  sparkle: Sparkle,
-  praying: PrayingHands,
-};
-
-/** Resolves a service's icon id to its component. */
-export function ServiceIcon({ name, ...props }: IconProps & { name: ServiceIconId }) {
-  const Icon = ICONS[name];
-  // The dashboard can give a service any icon in the app's set, not only
-  // the twenty service ones.
-  if (!Icon) return <AppIcon name={name} {...props} />;
-  return <Icon {...props} />;
+/**
+ * A service's icon, by the name the catalogue (or the dashboard) gives it.
+ * The services draw from the same set as every other icon in the app, so a
+ * service and a shortcut to it can never disagree.
+ */
+export function ServiceIcon({ name, ...props }: IconProps & { name: string }) {
+  return <AppIcon name={name} {...props} />;
 }

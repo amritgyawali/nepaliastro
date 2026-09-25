@@ -88,7 +88,7 @@ function RailCard({ astrologer, mode, onSelect, onAction }: CardProps) {
         style={styles.cardBody}
         pressedStyle={styles.pressed}
       >
-        <Avatar uri={astrologer.photo} name={astrologer.name} size={64} />
+        <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={64} />
 
         <Text style={styles.name} numberOfLines={1}>
           {astrologer.name}

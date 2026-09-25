@@ -83,8 +83,10 @@ Rules:
   the same row to `assets/images/CREDITS.md`. A photo with no credit line doesn't ship.
 - Render photos with `<Photo scene={…} height={…} />`. Pass `credited` wherever
   the photo is shown large (detail screens, the next-festival card).
-- Never use AI-generated images. The astrologer portraits in `photos` are
-  legacy `aida-public` images waiting to be replaced. Don't add more of them.
+- Never use AI-generated images. Astrologers are shown by their initials
+  (`<Avatar>`) until a real photograph of that astrologer, given with their
+  consent, is set in the dashboard. The AI astrologer gets the kundli mark
+  (`<Avatar ai>`), never a face.
 - Don't use photos of real, identifiable people as fake astrologers.
 
 ## 5. Copy

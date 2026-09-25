@@ -1,10 +1,10 @@
 import React from 'react';
 
 import {
-  ArrowRight, Baby, Calendar, ChatDots, Check, Clock, Compass, DashaWheel, Gem, Grid,
-  Headphones, Home, KundliChart, Lotus, MatchRings, MessageSquare, Numerals, Orbit,
-  Palette, Phone, PrayingHands, QuestionMark, Search, SealCheck, Shield, Sparkle, Star,
-  Sunrise, Swap, type IconProps,
+  Apps, ArrowRight, Ascendant, Baby, Bell, Calendar, ChatDots, Check, Clock, Compass,
+  DashaWheel, Diya, Gem, Grid, Headphones, Home, Kalash, KundliChart, Lotus, MatchRings,
+  MessageSquare, Moon, Numerals, Orbit, Palette, Phone, QuestionMark, Reading,
+  Search, SealCheck, Shield, SolarYear, Star, Sunrise, Swap, User, type IconProps,
 } from '@/icons';
 
 /**
@@ -15,13 +15,20 @@ import {
  */
 export const APP_ICONS = {
   home: { label: 'Home', component: Home, fillable: true },
-  sparkle: { label: 'Sparkle', component: Sparkle, fillable: false },
+  apps: { label: 'All services', component: Apps, fillable: true },
   chat: { label: 'Chat', component: ChatDots, fillable: true },
   phone: { label: 'Phone', component: Phone, fillable: true },
-  praying: { label: 'Praying hands', component: PrayingHands, fillable: true },
+  diya: { label: 'Diyo (oil lamp)', component: Diya, fillable: true },
+  kalash: { label: 'Kalash', component: Kalash, fillable: false },
   message: { label: 'Message', component: MessageSquare, fillable: false },
   headphones: { label: 'Headphones', component: Headphones, fillable: false },
   star: { label: 'Star', component: Star, fillable: false },
+  moon: { label: 'Moon', component: Moon, fillable: true },
+  ascendant: { label: 'Rising lagna', component: Ascendant, fillable: false },
+  year: { label: 'Solar year', component: SolarYear, fillable: false },
+  bell: { label: 'Bell', component: Bell, fillable: false },
+  reading: { label: 'Reading', component: Reading, fillable: false },
+  user: { label: 'Person', component: User, fillable: false },
   sunrise: { label: 'Sunrise', component: Sunrise, fillable: false },
   grid: { label: 'Calendar grid', component: Grid, fillable: false },
   calendar: { label: 'Calendar', component: Calendar, fillable: false },
@@ -54,6 +61,17 @@ export const APP_ICONS = {
 
 export type AppIconName = keyof typeof APP_ICONS;
 
+/**
+ * Names a published config may still carry for icons that are gone, and what
+ * each now draws. The sparkle (the Services tab, Varshaphal) read as "AI
+ * magic"; the praying hands (the Remedies tab) could not be told from a
+ * candle at tab size. The four tiles and the diyo say the same thing plainly.
+ */
+const RETIRED_ICONS: Record<string, AppIconName> = {
+  sparkle: 'apps',
+  praying: 'diya',
+};
+
 export const APP_ICON_NAMES = Object.keys(APP_ICONS) as AppIconName[];
 
 /** An icon by its stored name; a star for a name that no longer exists. */
@@ -62,7 +80,7 @@ export function AppIcon({
   filled,
   ...props
 }: IconProps & { name: string; filled?: boolean }) {
-  const entry = APP_ICONS[name as AppIconName] ?? APP_ICONS.star;
+  const entry = APP_ICONS[(RETIRED_ICONS[name] ?? name) as AppIconName] ?? APP_ICONS.star;
   const Icon = entry.component as React.ComponentType<IconProps & { filled?: boolean }>;
   return entry.fillable ? <Icon {...props} filled={filled} /> : <Icon {...props} />;
 }

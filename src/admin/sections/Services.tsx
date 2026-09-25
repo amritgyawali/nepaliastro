@@ -29,7 +29,7 @@ export default function Services() {
         id="service-list"
         title="Services"
         description="The Services tab lists these by group, in this order. Tap one to rename it, change its icon or where it opens."
-        icon="sparkle"
+        icon="apps"
         actions={<Badge label={`${services.items.filter((s) => !s.hidden).length} of ${services.items.length} shown`} />}
       >
         <RecordList<ServiceRecord>

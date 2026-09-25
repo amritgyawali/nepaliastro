@@ -12,9 +12,9 @@
  */
 import * as Astronomy from 'astronomy-engine';
 
-import { siderealLongitude } from './ephemeris';
+import { riseSet, siderealLongitude } from './ephemeris';
 import { KATHMANDU, type Place } from './places';
-import { panchangFor, tithiAt, type Window } from './panchang';
+import { panchangFor, tithiIndexAt, type Window } from './panchang';
 import { fromBs, toBs } from './bikram';
 import { addDays, fromNepaliClock, nepaliClock, startOfNepaliDay } from './time';
 
@@ -127,16 +127,22 @@ function amantaMonth(day: Date): number {
  */
 const SEARCH_DAYS = 100;
 
-/** Does the festival's tithi run at sunrise on this day, in the right month? */
+/**
+ * Does the festival's tithi run at sunrise on this day, in the right month?
+ *
+ * Only the sunrise and the tithi's number are needed, so this asks for those
+ * two and not for the whole panchang: a year's search tests a few thousand
+ * days, and the rest of a panchang (moonrise, the end of each limb, the day's
+ * windows) is most of the cost of one.
+ */
 function matches(day: Date, definition: FestivalDefinition, place: Place): boolean {
-  const panchang = panchangFor(day, place);
   const reference =
     definition.reference === 'midnight'
       ? new Date(startOfNepaliDay(day).getTime() + 86400_000)
-      : panchang.sunrise ?? day;
+      : riseSet('sun', startOfNepaliDay(day), place).rise ?? day;
 
   return (
-    tithiAt(reference).index === definition.tithi &&
+    tithiIndexAt(reference) === definition.tithi &&
     amantaMonth(reference) === definition.month
   );
 }
@@ -180,7 +186,7 @@ function findFestival(
   // than a day can do that. Take the day it was running at midday instead.
   for (let i = 0; i < SEARCH_DAYS; i += 1) {
     const day = addDays(new Date(start.getTime() + 12 * 3600_000), i);
-    if (tithiAt(day).index === definition.tithi && amantaMonth(day) === definition.month) {
+    if (tithiIndexAt(day) === definition.tithi && amantaMonth(day) === definition.month) {
       return startOfNepaliDay(day);
     }
   }
@@ -227,8 +233,32 @@ function tikaSait(day: Date, place: Place): { window: Window | null; note: strin
   };
 }
 
+/**
+ * A year's festivals depend only on the year and the place, and finding them
+ * tests a few thousand days, so each year is worked out once and kept. The
+ * patro, the festival list and the home screen all ask for the same years.
+ */
+const festivalYears = new Map<string, readonly Festival[]>();
+
+const yearKey = (year: number, place: Place) => `${year}|${place.latitude}|${place.longitude}`;
+
 /** Every festival in a Gregorian year, in date order. */
-export function festivalsIn(year: number, place: Place = KATHMANDU): Festival[] {
+export function festivalsIn(year: number, place: Place = KATHMANDU): readonly Festival[] {
+  const key = yearKey(year, place);
+  let festivals = festivalYears.get(key);
+  if (!festivals) {
+    festivals = findFestivalsIn(year, place);
+    festivalYears.set(key, festivals);
+  }
+  return festivals;
+}
+
+/** A year's festivals if they have already been worked out, without working them out. */
+export function festivalsInIfKnown(year: number, place: Place = KATHMANDU): readonly Festival[] | undefined {
+  return festivalYears.get(yearKey(year, place));
+}
+
+function findFestivalsIn(year: number, place: Place): Festival[] {
   const found: Festival[] = [];
 
   for (const definition of FESTIVALS) {

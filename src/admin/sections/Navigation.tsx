@@ -24,6 +24,7 @@ const SECTION_NOTES: Record<HomeSectionId, string> = {
   daily: 'Today’s rashifal card',
   availableNow: 'Astrologers online now',
   panchang: 'Today’s panchang',
+  festival: 'The next festival, with its photograph',
   bookCall: 'Astrologers to call',
 };
 

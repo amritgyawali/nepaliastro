@@ -97,7 +97,7 @@ export default function CallScreen() {
     <Screen background={colors.ink} edges={['top', 'bottom']}>
       <View style={styles.root}>
         <View style={styles.who}>
-          <Avatar uri={astrologer.photo} name={astrologer.name} size={120} />
+          <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={120} />
           <Text style={styles.name}>{astrologer.name}</Text>
           <Text style={styles.status}>
             {state === 'ringing' ? 'Calling…' : formatElapsed(elapsed)}

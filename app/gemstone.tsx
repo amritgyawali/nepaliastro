@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { Card, DataRow, NavHeader, NeedsBirth, Screen, Tag } from '@/components';
+import { Card, DataRow, NavHeader, NeedsBirth, Photo, Screen, Tag } from '@/components';
+import { scenes } from '@/data/images';
 import { chartFor, gemstoneFor, type Gemstone } from '@/lib/jyotish';
 import { useOnboarding } from '@/store/onboarding';
-import { GUTTER, colors, space, type } from '@/theme';
+import { GUTTER, colors, radius, space, type } from '@/theme';
 
 function StoneDetail({ stone }: { stone: Gemstone }) {
   return (
@@ -96,6 +97,9 @@ export default function GemstoneScreen() {
         ) : null}
 
         <Card title="Rudraksha, which is safe for anyone" style={styles.card}>
+          <View style={styles.photo}>
+            <Photo scene={scenes.mala} height={148} credited style={styles.photoImage} />
+          </View>
           <Text style={styles.body}>
             {advice.rudraksha} suits your chart. Unlike a gemstone, a rudraksha is not
             held to harm a chart it does not suit — it is the one thing here that can be
@@ -126,5 +130,7 @@ const styles = StyleSheet.create({
   avoidName: { ...type.label, color: colors.ink, flexShrink: 1 },
   avoidReason: { ...type.small, color: colors.muted, marginTop: 2 },
   body: { ...type.body, color: colors.body },
+  photo: { marginTop: space.md, marginBottom: space.md },
+  photoImage: { borderRadius: radius.md },
   caution: { ...type.small, color: colors.muted },
 });

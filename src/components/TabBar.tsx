@@ -14,15 +14,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppIcon } from '@/config/icons';
 import { useShownConfig } from '@/config/store';
-import { ChatDots, Home, Phone, PrayingHands, Sparkle } from '@/icons';
+import { Apps, ChatDots, Diya, Home, Phone } from '@/icons';
 import { SCREEN_MAX_WIDTH, TAB_BAR_HEIGHT, colors, font, motion, radius, space, type } from '@/theme';
 
 const TAB_ICONS = {
   index: Home,
-  services: Sparkle,
+  services: Apps,
   chat: ChatDots,
   call: Phone,
-  remedies: PrayingHands,
+  remedies: Diya,
 } as const;
 
 /**
