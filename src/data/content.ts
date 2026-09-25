@@ -20,7 +20,7 @@ export type QuickCategory = {
 };
 
 export const quickCategories: QuickCategory[] = [
-  { id: 'daily-horoscope', label: 'Rashifal', icon: 'star', href: '/horoscope' },
+  { id: 'daily-horoscope', label: 'Rashifal', icon: 'moon', href: '/horoscope' },
   { id: 'patro', label: 'Patro', icon: 'grid', href: '/patro' },
   { id: 'sait', label: 'Shubha Sait', icon: 'clock', href: '/muhurta' },
   { id: 'free-kundli', label: 'Kundli', icon: 'kundli', href: '/kundli' },
@@ -136,15 +136,15 @@ export const profileGroups: ProfileGroup[] = [
     items: [
       { id: 'chat-astrologer', label: 'Chat with an astrologer', icon: 'message', href: '/(tabs)/chat' },
       { id: 'call-astrologer', label: 'Call an astrologer', icon: 'headphones', href: '/(tabs)/call' },
-      { id: 'remedies', label: 'Remedies & poojas', icon: 'lotus', href: '/(tabs)/remedies' },
+      { id: 'remedies', label: 'Remedies & poojas', icon: 'diya', href: '/(tabs)/remedies' },
     ],
   },
   {
     title: 'Your chart',
     items: [
       { id: 'kundli', label: 'Your kundli', icon: 'kundli', href: '/kundli' },
-      { id: 'predictions', label: 'Your predictions', icon: 'star', href: '/predictions' },
-      { id: 'horoscope', label: 'Daily horoscope', icon: 'star', href: '/horoscope' },
+      { id: 'predictions', label: 'Your predictions', icon: 'reading', href: '/predictions' },
+      { id: 'horoscope', label: 'Daily horoscope', icon: 'moon', href: '/horoscope' },
       { id: 'matching', label: 'Kundli matching', icon: 'rings', href: '/matching' },
       { id: 'panchang', label: 'Today’s panchang', icon: 'sunrise', href: '/panchang' },
     ],
@@ -152,9 +152,9 @@ export const profileGroups: ProfileGroup[] = [
   {
     title: 'Your details',
     items: [
-      { id: 'birth-details', label: 'Name, gender & birth details', icon: 'calendar', href: '/onboarding/name' },
+      { id: 'birth-details', label: 'Name, gender & birth details', icon: 'user', href: '/onboarding/name' },
       { id: 'languages', label: 'Languages you read in', icon: 'message', href: '/onboarding/languages' },
-      { id: 'alerts', label: 'Prediction alerts', icon: 'sunrise', href: '/notifications' },
+      { id: 'alerts', label: 'Prediction alerts', icon: 'bell', href: '/notifications' },
     ],
   },
 ];

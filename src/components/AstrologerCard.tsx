@@ -49,7 +49,7 @@ export function AstrologerCard({ astrologer, mode, onPress, onAction }: Astrolog
         style={styles.body}
         pressedStyle={styles.pressed}
       >
-        <Avatar uri={astrologer.photo} name={astrologer.name} size={60} />
+        <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={60} />
 
         <View style={styles.details}>
           <View style={styles.nameRow}>

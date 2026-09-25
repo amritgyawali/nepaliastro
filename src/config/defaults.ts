@@ -154,6 +154,7 @@ const HOME_SECTIONS: HomeSection[] = [
   { id: 'daily', visible: true, title: 'Today’s rashifal' },
   { id: 'availableNow', visible: true, title: 'Available now' },
   { id: 'panchang', visible: true, title: 'Today’s panchang' },
+  { id: 'festival', visible: true, title: 'Next festival' },
   { id: 'bookCall', visible: true, title: 'Book a call' },
 ];
 
@@ -209,10 +210,10 @@ const DEFAULT_CONFIG: AppConfig = clone<AppConfig>({
   navigation: {
     tabs: [
       { id: 'index', title: 'Home', icon: 'home', visible: true },
-      { id: 'services', title: 'Services', icon: 'sparkle', visible: true },
+      { id: 'services', title: 'Services', icon: 'apps', visible: true },
       { id: 'chat', title: 'Chat', icon: 'chat', visible: true },
       { id: 'call', title: 'Call', icon: 'phone', visible: true },
-      { id: 'remedies', title: 'Remedies', icon: 'praying', visible: true },
+      { id: 'remedies', title: 'Remedies', icon: 'diya', visible: true },
     ],
     landingTab: 'index',
     profileMenu: profileGroups.map((group, index) => ({

@@ -26,9 +26,9 @@ export type Service = {
 };
 
 export type ServiceIcon =
-  | 'sunrise' | 'grid' | 'swap' | 'star' | 'kundli' | 'dasha' | 'rings'
-  | 'shield' | 'clock' | 'calendar' | 'palette' | 'numerals' | 'gem'
-  | 'baby' | 'orbit' | 'question' | 'compass' | 'lotus' | 'sparkle' | 'praying';
+  | 'sunrise' | 'grid' | 'swap' | 'moon' | 'kundli' | 'dasha' | 'rings'
+  | 'shield' | 'clock' | 'kalash' | 'palette' | 'numerals' | 'gem'
+  | 'baby' | 'orbit' | 'question' | 'compass' | 'ascendant' | 'year' | 'diya';
 
 export const SERVICE_GROUPS: { id: ServiceGroup; title: string; np: string }[] = [
   { id: 'daily', title: 'Every day', np: 'दैनिक' },
@@ -42,7 +42,7 @@ export const SERVICES: Service[] = [
   {
     id: 'rashifal', href: '/horoscope', name: 'Rashifal', np: 'राशिफल',
     tagline: 'Today, this week, this month and the year',
-    icon: 'star', group: 'daily',
+    icon: 'moon', group: 'daily',
   },
   {
     id: 'panchang', href: '/panchang', name: 'Panchang', np: 'पञ्चाङ्ग',
@@ -67,7 +67,7 @@ export const SERVICES: Service[] = [
   {
     id: 'festivals', href: '/festivals', name: 'Festivals and tika sait', np: 'चाडपर्व',
     tagline: 'Dashain, Tihar and the whole year, with tika timings',
-    icon: 'calendar', group: 'daily',
+    icon: 'kalash', group: 'daily',
   },
 
   /* Your chart -------------------------------------------------------- */
@@ -99,7 +99,7 @@ export const SERVICES: Service[] = [
   {
     id: 'varshaphal', href: '/varshaphal', name: 'Varshaphal', np: 'वर्षफल',
     tagline: 'The year ahead, from your solar return',
-    icon: 'sparkle', group: 'chart', needsBirth: true, needsTime: true,
+    icon: 'year', group: 'chart', needsBirth: true, needsTime: true,
   },
   {
     id: 'numerology', href: '/numerology', name: 'Ank Jyotish', np: 'अङ्क ज्योतिष',
@@ -116,7 +116,7 @@ export const SERVICES: Service[] = [
   {
     id: 'lagna', href: '/lagna', name: 'Shubha Lagna', np: 'शुभ लग्न',
     tagline: 'Which lagna is rising, hour by hour',
-    icon: 'orbit', group: 'timing',
+    icon: 'ascendant', group: 'timing',
   },
   {
     id: 'prashna', href: '/prashna', name: 'Prashna', np: 'प्रश्न ज्योतिष',
@@ -143,7 +143,7 @@ export const SERVICES: Service[] = [
   {
     id: 'remedies', href: '/(tabs)/remedies', name: 'Puja and remedies', np: 'पूजा र उपाय',
     tagline: 'Grah shanti, and what each one is actually for',
-    icon: 'praying', group: 'remedy',
+    icon: 'diya', group: 'remedy',
   },
 ];
 

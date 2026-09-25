@@ -93,7 +93,7 @@ done
 | Route | What it is |
 | --- | --- |
 | `/onboarding/*` | Six questions: name, gender, birth date, birth time, birth place, languages |
-| `/(tabs)` | Home: greeting, search, shortcuts, today's reading, astrologers, panchang |
+| `/(tabs)` | Home: greeting, search, shortcuts, today's reading, astrologers, panchang, the next festival |
 | `/(tabs)/services` | All twenty services, grouped and searchable |
 | `/horoscope` | Rashifal for any sign, daily to yearly |
 | `/panchang` | The five limbs with end times, and the day's good and bad windows |
@@ -151,9 +151,10 @@ One brand colour, one typeface, one spacing scale — all of it in
   off under the system's reduced-motion setting.
 - **Photography** of remedies and festivals is real, not generated: photos
   from Wikimedia Commons, bundled in `assets/images/` so they work offline, and
-  credited in `assets/images/CREDITS.md` and under each large photo. The
-  astrologer portraits still come from CDN URLs in `src/data/images.ts`; `Avatar`
-  falls back to an initials circle if one fails.
+  credited in `assets/images/CREDITS.md` and under each large photo. Astrologers
+  are shown by their initials until a real photograph of that astrologer, given
+  with their consent, is set in the dashboard; AI Astrologer Baba, who is not a
+  person, is shown by the kundli square he reads from.
 
 The rules behind all of this, including what counts as "AI-looking" design
 and is kept out of the app, are in [`CLAUDE.md`](CLAUDE.md). Read it before

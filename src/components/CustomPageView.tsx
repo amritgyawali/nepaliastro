@@ -125,7 +125,7 @@ function Block({ block }: { block: PageBlock }) {
       const rate = astrologer.discountedRate ?? astrologer.rate;
       return (
         <Tappable feel="card" accessibilityRole="button" onPress={() => open(`/astrologer/${astrologer.id}`)} style={styles.card} pressedStyle={styles.cardPressed}>
-          <Avatar uri={astrologer.photo} name={astrologer.name} size={48} />
+          <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={48} />
           <View style={styles.cardText}>
             <Text style={styles.cardTitle}>{astrologer.name}</Text>
             <Text style={styles.cardBody} numberOfLines={1}>

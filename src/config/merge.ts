@@ -61,10 +61,28 @@ function overlay(base: unknown, incoming: unknown): unknown {
   return base;
 }
 
+/**
+ * A home section added by a later build is missing from a config saved
+ * before it existed, and a list is taken whole rather than merged. Put each
+ * missing one back after the section it follows by default, so it shows —
+ * and can be hidden or moved in the dashboard — like the rest.
+ */
+function withEveryHomeSection(config: AppConfig, base: AppConfig): AppConfig {
+  const defaults = base.home.sections;
+  const sections = [...config.home.sections];
+  for (const [index, section] of defaults.entries()) {
+    if (sections.some((s) => s.id === section.id)) continue;
+    const previous = index > 0 ? sections.findIndex((s) => s.id === defaults[index - 1].id) : -1;
+    sections.splice(index === 0 ? 0 : previous >= 0 ? previous + 1 : sections.length, 0, { ...section });
+  }
+  if (sections.length === config.home.sections.length) return config;
+  return { ...config, home: { ...config.home, sections } };
+}
+
 export function normalizeConfig(input: unknown): AppConfig {
   const base = defaultConfig();
   if (!isPlainObject(input)) return base;
-  return overlay(base, input) as AppConfig;
+  return withEveryHomeSection(overlay(base, input) as AppConfig, base);
 }
 
 /** Why a pasted or downloaded config cannot be used, or `null` if it can. */

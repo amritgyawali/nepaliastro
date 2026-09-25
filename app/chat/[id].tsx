@@ -99,6 +99,7 @@ export default function ChatScreen() {
         name: ongoingSession.name,
         photo: ongoingSession.portrait,
         verified: true,
+        ai: false,
       };
     }
     const found = findAstrologer(id ?? '');
@@ -107,6 +108,7 @@ export default function ChatScreen() {
       name: found?.name ?? 'Astrologer',
       photo: found?.photo ?? ongoingSession.portrait,
       verified: found?.verified ?? true,
+      ai: found?.ai ?? false,
     };
   }, [id]);
 
@@ -324,7 +326,7 @@ export default function ChatScreen() {
             style={styles.who}
             pressedStyle={styles.pressed}
           >
-            <Avatar uri={astrologer.photo} name={astrologer.name} size={44} />
+            <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={44} />
 
             <View>
               <View style={styles.nameRow}>
@@ -398,7 +400,7 @@ export default function ChatScreen() {
           {messages.map((message) =>
             message.from === 'them' ? (
               <View key={message.id} style={styles.inRow}>
-                <Avatar uri={astrologer.photo} name={astrologer.name} size={28} />
+                <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={28} />
                 <View style={styles.inBubble}>
                   <Text style={styles.inText}>{message.text}</Text>
                   {message.insight ? (

@@ -129,6 +129,7 @@ export type HomeSectionId =
   | 'daily'
   | 'availableNow'
   | 'panchang'
+  | 'festival'
   | 'bookCall';
 
 export type HomeSection = { id: HomeSectionId; visible: boolean; title: string };

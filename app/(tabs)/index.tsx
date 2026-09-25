@@ -15,6 +15,7 @@ import {
 } from '@/components';
 import { useOpenLink } from '@/components/CustomPageView';
 import { HomeBanners, NoticeBar } from '@/components/home/HomeBanners';
+import { NextFestivalCard, useUpcomingFestivals } from '@/components/home/NextFestivalCard';
 import type { HomeSectionId } from '@/config/schema';
 import { useShownConfig } from '@/config/store';
 import {
@@ -75,6 +76,7 @@ export default function HomeScreen() {
   );
   const panchang = useMemo(() => panchangFor(now, placeOf(profile)), [now, profile]);
   const dateLabel = useMemo(() => formatShortDay(now), [now]);
+  const festivals = useUpcomingFestivals(now);
 
   const greeting = useMemo(() => {
     const base = greetingFor(now);
@@ -181,6 +183,10 @@ export default function HomeScreen() {
         ) : null;
       case 'panchang':
         return <TodayPanchang panchang={panchang} dateLabel={dateLabel} onSeeAll={() => router.push('/panchang')} />;
+      case 'festival':
+        return festivals?.length ? (
+          <NextFestivalCard title={title} festivals={festivals} now={now} onOpen={() => router.push('/festivals')} />
+        ) : null;
       case 'bookCall':
         return callAstrologers.length ? (
           <AstrologerRail

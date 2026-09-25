@@ -58,7 +58,7 @@ export default function AstrologerScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.head}>
-          <Avatar uri={astrologer.photo} name={astrologer.name} size={84} />
+          <Avatar uri={astrologer.photo} name={astrologer.name} ai={astrologer.ai} size={84} />
 
           <View style={styles.headText}>
             <View style={styles.nameRow}>

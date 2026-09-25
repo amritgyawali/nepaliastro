@@ -57,7 +57,7 @@ export const SECTIONS: Section[] = [
   { id: 'navigation', label: 'Home and menus', np: 'गृह र मेनु', icon: 'home', href: '/admin/navigation', permission: 'navigation.view', group: 'Look', description: 'Home screen order, shortcuts, tabs and the profile menu', areas: ['home', 'navigation'] },
   { id: 'screens', label: 'Screens and pages', np: 'पृष्ठ', icon: 'phone', href: '/admin/screens', permission: 'screens.view', group: 'Look', description: 'Turn screens off, rename them, and build new pages', areas: ['screens', 'pages', 'features'] },
 
-  { id: 'services', label: 'Services', np: 'सेवा', icon: 'sparkle', href: '/admin/services', permission: 'catalog.view', group: 'Content', description: 'The twenty services: names, order, badges, visibility', areas: ['services'] },
+  { id: 'services', label: 'Services', np: 'सेवा', icon: 'apps', href: '/admin/services', permission: 'catalog.view', group: 'Content', description: 'The twenty services: names, order, badges, visibility', areas: ['services'] },
   { id: 'astrologers', label: 'Astrologers', np: 'ज्योतिषी', icon: 'moon', href: '/admin/astrologers', permission: 'catalog.view', group: 'Content', description: 'Profiles, prices, availability and AI Baba', areas: ['astrologers'] },
   { id: 'remedies', label: 'Remedies', np: 'उपाय', icon: 'diyo', href: '/admin/remedies', permission: 'catalog.view', group: 'Content', description: 'Poojas, gemstones and sessions on offer', areas: ['remedies'] },
   { id: 'media', label: 'Media', np: 'तस्बिर', icon: 'image', href: '/admin/media', permission: 'media.view', group: 'Content', description: 'Uploads, bundled photographs and portraits', areas: ['media'] },

@@ -1,7 +1,5 @@
 import { AI_ASTROLOGER_ID, AI_ASTROLOGER_NAME } from '@/lib/baba';
 
-import { photos } from './images';
-
 /**
  * A directory filter id. `all` always exists; the rest are whatever the
  * admin dashboard lists under Directory filters (tarot and palmistry ship).
@@ -11,6 +9,10 @@ export type Speciality = string;
 export type Astrologer = {
   id: string;
   name: string;
+  /**
+   * A real photograph of this astrologer, given with their consent, or empty.
+   * Empty shows their initials. Never a generated face or a stock model.
+   */
   photo: string;
   /** Comma-joined skills line, e.g. "Tarot, Vastu". */
   skills: string;
@@ -52,7 +54,7 @@ export type Astrologer = {
 export const aiAstrologer: Astrologer = {
   id: AI_ASTROLOGER_ID,
   name: AI_ASTROLOGER_NAME,
-  photo: photos.ganesh,
+  photo: '',
   skills: 'Vedic, Kundli reading, Remedies',
   languages: 'English, Nepali, Hindi',
   rate: 0,
@@ -70,7 +72,7 @@ export const featuredAstrologers: Astrologer[] = [
   {
     id: 'dhruvansh',
     name: 'Dhruvansh Ji',
-    photo: photos.vinayyv,
+    photo: '',
     skills: 'Vedic, Numerology',
     languages: 'Hindi',
     experience: 18,
@@ -87,7 +89,7 @@ export const featuredAstrologers: Astrologer[] = [
   {
     id: 'suseela',
     name: 'Suseela',
-    photo: photos.vihana,
+    photo: '',
     skills: 'Vedic, Prashna',
     languages: 'Telugu, Hindi',
     experience: 9,
@@ -103,7 +105,7 @@ export const featuredAstrologers: Astrologer[] = [
   {
     id: 'deeptika',
     name: 'Deeptika',
-    photo: photos.vera,
+    photo: '',
     skills: 'Tarot, Life Coach',
     languages: 'English, Hindi',
     experience: 7,
@@ -124,7 +126,7 @@ export const chatAstrologers: Astrologer[] = [
   {
     id: 'vihana',
     name: 'Vihana Ji',
-    photo: photos.vihana,
+    photo: '',
     skills: 'Tarot, Vastu',
     languages: 'English',
     experience: 14,
@@ -140,7 +142,7 @@ export const chatAstrologers: Astrologer[] = [
   {
     id: 'vinayyv',
     name: 'VinayyV',
-    photo: photos.vinayyv,
+    photo: '',
     skills: 'Vedic, Face Reading, Life Coach',
     languages: 'Hindi',
     experience: 6,
@@ -156,7 +158,7 @@ export const chatAstrologers: Astrologer[] = [
   {
     id: 'vera',
     name: 'Vera',
-    photo: photos.vera,
+    photo: '',
     skills: 'Tarot, Psychic, Life Coach',
     languages: 'English, Hindi, Marathi',
     rate: 0.49,
@@ -172,7 +174,7 @@ export const callAstrologers: Astrologer[] = [
   {
     id: 'kailash',
     name: 'Kailash',
-    photo: photos.vinayyv,
+    photo: '',
     skills: 'Vedic, Nadi, Numerology',
     languages: 'Hindi, Bengali, Sanskrit',
     experience: 21,
@@ -190,7 +192,7 @@ export const callAstrologers: Astrologer[] = [
   {
     id: 'monishka',
     name: 'Monishka',
-    photo: photos.vera,
+    photo: '',
     skills: 'Tarot, Numerology, Vedic',
     languages: 'Hindi',
     experience: 5,
@@ -208,7 +210,7 @@ export const callAstrologers: Astrologer[] = [
   {
     id: 'vinayyv-call',
     name: 'VinayyV',
-    photo: photos.vinayyv,
+    photo: '',
     skills: 'Vedic, Face Reading, Life Coach',
     languages: 'Hindi',
     rate: 0.49,
@@ -241,8 +243,8 @@ export const topNearbyAstrologer = {
 export const ongoingSession = {
   id: 'kiran',
   name: 'Kiran Ji',
-  photo: photos.kiran,
-  portrait: photos.kiran,
+  photo: '',
+  portrait: '',
   status: 'Chat in progress',
   verified: true,
 };

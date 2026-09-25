@@ -78,7 +78,7 @@ export default function Analytics() {
           <RankList data={everyScreen} limit={40} />
         </Panel>
 
-        <Panel id="service-popularity" title="Services by use" description="The twenty services, by how often each was opened" icon="sparkle">
+        <Panel id="service-popularity" title="Services by use" description="The twenty services, by how often each was opened" icon="apps">
           <RankList data={services} limit={20} empty="No service opened yet." />
         </Panel>
 
